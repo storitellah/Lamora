@@ -1,6 +1,6 @@
 /* Lamora service worker — offline-first, cache-everything, no network analytics.
    Only same-origin app files are ever cached. Nothing is sent anywhere. */
-const CACHE = 'lamora-v1';
+const CACHE = 'lamora-v2';
 
 const ASSETS = [
   './',

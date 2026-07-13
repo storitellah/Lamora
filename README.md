@@ -23,10 +23,10 @@ Lamora is a **Progressive Web App (PWA)**: it installs like a native app on iPad
 | 🖍️ **Colour** | Tap-to-fill colouring pages (mermaid, dolphin, dragon, dinosaur, rocket, castle, sea, monster…), export as an image |
 | 🦄 **Sticker Book** | Earn stickers by learning, browse the collection, build & export sticker scenes |
 | 🧑‍🚀 **What Can I Be?** | Profession "dream cards" (doctor, pilot, marine biologist, programmer…) with an optional **local-only** photo — export as PNG |
-| 📖 **Stories** | Short interactive read-aloud stories about sharing, courage, curiosity, kindness and problem-solving, each with a memory quiz |
+| 📖 **Stories** | Short interactive stories about sharing, courage, curiosity, kindness and problem-solving, each with a memory quiz |
 | 🏆 **My Rewards** | Stars/gems/shells/dragon-egg rewards, streaks and simple progress bars — never comparisons or leaderboards |
 
-Plus: two demo child profiles (Maya, 5 and Kai, 8), six visual themes (Ocean Adventure, Rainbow Garden, Dragon Kingdom, Space Explorer, Nature Club, Dinosaur World), spoken instructions, and a full **Parent Zone**.
+Plus: two demo child profiles (Maya, 5 and Kai, 8), six visual themes (Ocean Adventure, Rainbow Garden, Dragon Kingdom, Space Explorer, Nature Club, Dinosaur World), friendly written tips on every page, and a full **Parent Zone**.
 
 ## 👨‍👩‍👧 Parent Zone
 
@@ -35,8 +35,8 @@ Protected by a press-and-hold gesture plus a grown-up verification step and a 4-
 - Set **daily screen-time limits** (10–90 min) with gentle 5-minute and 1-minute warnings and a calm break screen
 - Set session reminders and **reward-game length** (3–10 min)
 - Choose which sections children see, the difficulty, and the reward style
-- Manage profiles (name/nickname, age 5–10, avatar), reset rewards, review local progress
-- Toggle sounds, speech, music, large text, high contrast and reduced motion
+- Manage profiles (nickname, optional first name, age 5–10, avatar — and choose which name Lamora greets the child by), reset rewards, review local progress
+- Toggle sounds, music, large text, high contrast and reduced motion
 - **Export a progress summary**, change the PIN, or **delete all local data**
 
 See [PARENT-GUIDE.md](PARENT-GUIDE.md) for details.
@@ -60,8 +60,7 @@ To install as an app: open the site in a browser and use **“Add to Home Screen
 - **HTML + CSS + vanilla JavaScript** — no frameworks, fast on low-cost tablets
 - **Canvas API** for drawing, profession cards and PNG export
 - **SVG** for colouring pages and the world map
-- **Web Audio API** for all sound effects and gentle music (generated on-device, no audio downloads)
-- **Speech Synthesis API** for spoken instructions, word pronunciation and read-aloud stories
+- **Web Audio API** for all sound effects and gentle music (generated on-device, no audio downloads — and deliberately **no synthesized speech**, which can sound unsettling to young children)
 - **localStorage** for all profiles, progress, settings, drawings and scenes
 - **PWA manifest + service worker** for install and offline use
 
@@ -71,7 +70,7 @@ To install as an app: open the site in a browser and use **“Add to Home Screen
 index.html            app shell
 styles.css            all styling, themes & accessibility modes
 script.js             core: state, router, profiles, rewards, timer, parent zone, quiz engine
-audio/sounds.js       Web-Audio sound engine + speech helpers
+audio/sounds.js       Web-Audio sound engine (chimes & tones)
 lessons/              numeracy.js, literacy.js
 games/                brain.js (games + memory gym), chess.js, nature.js, world.js, draw.js
 colouring/            colouring.js (SVG pages)

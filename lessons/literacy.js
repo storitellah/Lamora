@@ -60,10 +60,9 @@ function letterSound(n) {
     const target = L.pick(ALPHA);
     const opts = L.shuffle(L.sample(ALPHA.filter((x) => x !== target), 3).concat(target));
     return {
-      prompt: 'Which letter makes this sound? 🔊',
-      speak: `Find the letter that says ${LETTER_SOUNDS[target]}.`,
+      prompt: `Which letter says "${LETTER_SOUNDS[target]}"?`,
       options: opts, answer: opts.indexOf(target),
-      hint: `It says ${LETTER_SOUNDS[target]}. Listen again!`,
+      hint: `Say it out loud: ${LETTER_SOUNDS[target]}!`,
       explain: `${target} says ${LETTER_SOUNDS[target]}.`
     };
   });
@@ -181,7 +180,6 @@ function wordBuilder() {
     hintEl.textContent = '';
     const draw = () => { slotsEl.textContent = word.split('').map((c, i) => (i < pos ? c.toUpperCase() : '_')).join(' '); };
     draw();
-    L.speak(`Build the word ${word}!`);
     const extra = L.sample(ALPHA.filter((x) => !word.toUpperCase().includes(x)), 3);
     const letters = L.shuffle(word.toUpperCase().split('').concat(extra));
     lettersEl.innerHTML = '';
@@ -195,7 +193,6 @@ function wordBuilder() {
           if (pos === word.length) {
             L.sfx('correct');
             hintEl.textContent = `You built "${word}"! 🎉`;
-            L.speak(`Yes! ${word.split('').join(', ')} spells ${word}!`);
             setTimeout(() => {
               round++;
               if (round < rounds.length) startRound();

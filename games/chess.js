@@ -219,11 +219,9 @@ function playChess(vsAI) {
         const winner = foe === 'w' ? 'White' : 'Black';
         msg.textContent = `Checkmate! ${winner} wins! 🎉`;
         L.sfx('win');
-        L.speak('Checkmate! Amazing game!');
         if (vsAI && foe === 'w') L.completeActivity({ skill: 'chess', stars: 5, onAgain: () => L.go('chess', 'play') });
       } else {
         msg.textContent = 'Stalemate — a friendly draw! 🤝';
-        L.speak('Stalemate! That means a draw. Well played!');
       }
       return;
     }
@@ -273,7 +271,6 @@ function playChess(vsAI) {
     if (m) {
       ui.draw(board, { hint: [m.from, m.to] });
       msg.textContent = `Hint: try moving the ${NAMES[board[m.from][1]]} from ${sqName(m.from)} to ${sqName(m.to)}.`;
-      L.speak('Here is an idea — look at the purple squares!');
     }
   }
 }

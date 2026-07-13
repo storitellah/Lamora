@@ -87,6 +87,8 @@ function newProfile(name, age, avatar, theme) {
   return {
     id: 'p' + Date.now() + Math.floor(Math.random() * 9999),
     name, age,
+    firstName: '',         // optional real first name (parents can add it)
+    showFirst: false,      // greet with the first name instead of the nickname
     avatar: avatar || '🦄',
     colour: '#6c5ce7',
     theme: theme || 'ocean',
@@ -120,7 +122,6 @@ const DEFAULT_STATE = () => ({
     difficulty: 'age',      // 'age' | 'easy' | 'medium' | 'hard'
     sound: true,
     music: false,
-    speech: true,
     reducedMotion: false,
     highContrast: false,
     largeText: false,
@@ -157,6 +158,10 @@ Object.defineProperty(L, 'state', { get: () => state });
 
 L.profile = () => state.profiles.find((p) => p.id === state.activeProfileId) || null;
 
+/* What the app calls the child: their first name if the parent chose that,
+   otherwise their nickname. */
+L.displayName = (p) => (p && p.showFirst && p.firstName ? p.firstName : (p ? p.name : ''));
+
 /* Difficulty band for the active child. */
 L.ageBand = function () {
   const p = L.profile();
@@ -172,10 +177,6 @@ L.ageBand = function () {
 L.sfx = function (name, arg) {
   if (!state.parent.sound) return;
   try { window.LamoraSounds.SFX[name] && window.LamoraSounds.SFX[name](arg); } catch (e) {}
-};
-L.speak = function (text) {
-  if (!state.parent.sound || !state.parent.speech) return;
-  window.LamoraSounds.speak(text);
 };
 function syncMusic() {
   if (state.parent.sound && state.parent.music) window.LamoraSounds.startMusic();
@@ -257,7 +258,6 @@ L.completeActivity = function (opts) {
   const rw = L.rewardStyle();
   const msg = L.pick(ENCOURAGE);
   L.sfx('win');
-  L.speak(msg + ' You earned ' + starsEarned + ' ' + rw.name.toLowerCase() + '!');
 
   overlay(h('div', { class: 'overlay-card', role: 'dialog', 'aria-label': 'Well done' },
     h('div', { class: 'celebrate-stars', 'aria-hidden': 'true' }, rw.icon.repeat(Math.min(starsEarned, 5))),
@@ -293,7 +293,6 @@ function endRewardSession() {
   rewardTimer = null;
   if (!location.hash.startsWith('#/game/')) return;
   L.sfx('ding');
-  L.speak('Great playing! Time to learn something new or take a break.');
   overlay(h('div', { class: 'overlay-card' },
     h('div', { class: 'celebrate-stars' }, '🎈'),
     h('h2', { text: 'Great playing!' }),
@@ -321,7 +320,6 @@ L.onLeave = (fn) => leaveHooks.push(fn);
 function render() {
   leaveHooks.forEach((fn) => { try { fn(); } catch (e) {} });
   leaveHooks = [];
-  window.LamoraSounds.stopSpeech();
   overlay(null);
 
   const parts = (location.hash || '#/').slice(2).split('/').filter(Boolean);
@@ -330,6 +328,14 @@ function render() {
 
   if (!L.profile() && name !== 'profiles') name = 'profiles';
   if (!routes[name]) name = 'home';
+
+  // the Parent Zone always needs the grown-up gate, even via a typed URL
+  if (name === 'parent' && !parentUnlocked) {
+    name = 'home';
+    setTimeout(() => askPin(() => L.go('parent')), 100);
+  } else if (name !== 'parent') {
+    parentUnlocked = false;   // re-lock as soon as the parent leaves
+  }
 
   const app = $app();
   app.innerHTML = '';
@@ -340,21 +346,21 @@ function render() {
 }
 window.addEventListener('hashchange', render);
 
-/* ---------------- page scaffolding ---------------- */
+/* ---------------- page scaffolding ----------------
+   opts.speak (kept from the old voice feature) is now shown as a
+   friendly written tip under the title instead of being spoken. */
 L.page = function (title, opts) {
   opts = opts || {};
   const app = $app();
   const head = h('div', { class: 'page-head' },
     opts.back === false ? null :
       h('button', { class: 'icon-btn', 'aria-label': 'Go back', onclick: () => (opts.backTo ? L.go(opts.backTo) : history.back()) }, '⬅️'),
-    h('h1', { text: title }),
-    h('button', {
-      class: 'icon-btn', 'aria-label': 'Hear instructions',
-      onclick: () => L.speak(opts.speak || title)
-    }, '🔊')
+    h('h1', { text: title })
   );
   app.appendChild(head);
-  if (opts.speakOnOpen !== false) L.speak(opts.speak || title);
+  if (opts.speak && opts.speak !== title) {
+    app.appendChild(h('p', { class: 'page-tip', text: opts.speak }));
+  }
   const body = h('div', { class: 'page-body' });
   app.appendChild(body);
   return body;
@@ -401,7 +407,6 @@ L.runQuiz = function (cfg) {
     hintEl.textContent = '';
     optsEl.innerHTML = '';
     optsEl.className = 'quiz-options' + (q.options.length === 2 ? ' two' : '');
-    L.speak(q.speak || q.prompt);
 
     q.options.forEach((opt, i) => {
       const label = typeof opt === 'object' ? opt.label : String(opt);
@@ -430,7 +435,6 @@ L.runQuiz = function (cfg) {
       if (misses === 1) {
         const hint = q.hint || 'Look carefully and try again — you can do it!';
         hintEl.textContent = '💡 ' + hint;
-        L.speak(hint);
       } else {
         // gentle reveal with a simple explanation
         const correctBtn = optsEl.querySelectorAll('button')[q.answer];
@@ -438,7 +442,6 @@ L.runQuiz = function (cfg) {
         lockOptions();
         const explain = q.explain || `The answer is ${typeof q.options[q.answer] === 'object' ? q.options[q.answer].label : q.options[q.answer]}.`;
         hintEl.textContent = '🌟 ' + explain;
-        L.speak(explain + '. Let’s try the next one!');
         const nextBtn = h('button', { class: 'btn', style: { marginTop: '10px' }, onclick: next }, 'Next ➡️');
         hintEl.appendChild(h('div', {}, nextBtn));
         nextBtn.focus();
@@ -478,7 +481,6 @@ function showBreakScreen() {
   breakActive = true;
   L.cancelRewardSession();
   window.LamoraSounds.stopMusic();
-  L.speak('Great job today! Screen time is finished. Time for a fun break.');
   overlay(h('div', { class: 'overlay-card', role: 'dialog', 'aria-label': 'Break time' },
     h('div', { class: 'celebrate-stars', 'aria-hidden': 'true' }, '🌤️'),
     h('h2', { text: 'Wonderful work today!' }),
@@ -506,15 +508,14 @@ setInterval(() => {
 
   const limit = state.parent.dailyLimitMin * 60;
   const remain = limit - u.seconds;
-  if (remain === 300 && !warned5) { warned5 = true; toast('5 minutes of screen time left ⏳'); L.speak('Five minutes left.'); }
-  if (remain === 60 && !warned1) { warned1 = true; toast('1 minute left — finish up! ⏳'); L.speak('One minute left. Finish up!'); }
+  if (remain === 300 && !warned5) { warned5 = true; toast('5 minutes of screen time left ⏳'); }
+  if (remain === 60 && !warned1) { warned1 = true; toast('1 minute left — finish up! ⏳'); }
   if (remain <= 0) { showBreakScreen(); return; }
 
   const sLimit = state.parent.sessionLimitMin * 60;
   if (sessionSeconds >= sLimit && !sessionWarned) {
     sessionWarned = true;
     toast('That was a long session — how about a stretch? 🤸');
-    L.speak('You have been playing a while. How about a little stretch?');
     setTimeout(() => { sessionWarned = false; sessionSeconds = 0; }, 60000);
   }
   updateStatusbar();
@@ -543,15 +544,20 @@ function adultGate(onPass) {
   }, 'This question keeps the settings safe for grown-ups.');
 }
 
+/* The parent route itself is guarded too, so typing #/parent into the
+   address bar cannot skip the PIN (see render()). */
+let parentUnlocked = false;
+
 function askPin(onPass) {
+  const pass = () => { parentUnlocked = true; onPass(); };
   if (!state.parent.pinHash) {
-    adultGate(() => setNewPin(onPass));
+    adultGate(() => setNewPin(pass));
     return;
   }
   pinPadDialog('Enter your parent PIN', 4, (entry) => {
-    if (pinHash(entry) === state.parent.pinHash) { onPass(); return true; }
+    if (pinHash(entry) === state.parent.pinHash) { pass(); return true; }
     return false;
-  }, null, () => adultGate(() => setNewPin(onPass)));
+  }, null, () => adultGate(() => setNewPin(pass)));
 }
 L.askPin = askPin;
 
@@ -640,12 +646,11 @@ L.route('profiles', () => {
         save();
         applyTheme();
         L.sfx('pop');
-        L.speak('Hello ' + p.name + '!');
         L.go('home');
       }
     },
       h('span', { class: 'avatar', 'aria-hidden': 'true' }, p.avatar),
-      h('span', {}, p.name),
+      h('span', {}, L.displayName(p)),
       h('small', { class: 'muted' }, `age ${p.age}`)
     ));
   });
@@ -675,7 +680,7 @@ L.route('home', () => {
 
   app.appendChild(h('div', { class: 'hero' },
     h('h1', { class: 'logo' }, '🌙 Lamora'),
-    h('p', { class: 'hello' }, `Hi ${p.name}! ${p.avatar}  ·  ${rw.icon} ${p.stars}  ·  🎟️ ${p.tokens || 0}`)
+    h('p', { class: 'hello' }, `Hi ${L.displayName(p)}! ${p.avatar}  ·  ${rw.icon} ${p.stars}  ·  🎟️ ${p.tokens || 0}`)
   ));
 
   const grid = h('div', { class: 'menu-grid' });
@@ -699,7 +704,6 @@ L.route('home', () => {
     h('button', { class: 'btn soft small', onclick: () => themePicker() }, '🎨 Theme'),
     holdButton('👨‍👩‍👧 Parents', 2000, () => askPin(() => L.go('parent')))
   ));
-  L.speak('Hi ' + p.name + '! What would you like to do?');
 });
 
 function themePicker() {
@@ -708,7 +712,7 @@ function themePicker() {
     h('h2', { text: 'Pick your world!' }),
     h('div', { class: 'menu-grid' },
       THEMES.map((t) => L.bigButton(t.icon, t.name, () => {
-        p.theme = t.id; save(); applyTheme(); overlay(null); L.speak(t.name + '!');
+        p.theme = t.id; save(); applyTheme(); overlay(null);
       }))
     ),
     h('button', { class: 'btn secondary', onclick: () => overlay(null) }, 'Close')
@@ -824,7 +828,7 @@ function selectRow(label, options, get, set) {
 }
 
 L.route('parent', () => {
-  const body = L.page('Parent Zone', { speak: '', speakOnOpen: false, backTo: 'home' });
+  const body = L.page('Parent Zone', { backTo: 'home' });
   const P = state.parent;
 
   body.appendChild(h('p', { class: 'small-note' },
@@ -841,7 +845,7 @@ L.route('parent', () => {
       () => P.rewardMinutes, (v) => P.rewardMinutes = +v),
     h('div', { class: 'setting-row' },
       h('span', { class: 'lbl' }, 'Time used today'),
-      h('span', {}, state.profiles.map((pr) => `${pr.name}: ${Math.round(usageFor(pr.id).seconds / 60)} min`).join(' · ')))
+      h('span', {}, state.profiles.map((pr) => `${L.displayName(pr)}: ${Math.round(usageFor(pr.id).seconds / 60)} min`).join(' · ')))
   );
   body.appendChild(time);
 
@@ -863,7 +867,6 @@ L.route('parent', () => {
   const acc = h('div', { class: 'card' }, h('h2', { text: '🔊 Sound & accessibility' }));
   acc.append(
     toggleRow('Sounds', () => P.sound, (v) => { P.sound = v; syncMusic(); }),
-    toggleRow('Spoken instructions', () => P.speech, (v) => P.speech = v),
     toggleRow('Background music', () => P.music, (v) => { P.music = v; syncMusic(); }),
     toggleRow('Large text', () => P.largeText, (v) => P.largeText = v),
     toggleRow('High contrast', () => P.highContrast, (v) => P.highContrast = v),
@@ -875,7 +878,7 @@ L.route('parent', () => {
   const prof = h('div', { class: 'card' }, h('h2', { text: '👧 Child profiles' }));
   state.profiles.forEach((pr) => {
     prof.appendChild(h('div', { class: 'setting-row' },
-      h('span', { class: 'lbl' }, `${pr.avatar} ${pr.name} (${pr.age})`),
+      h('span', { class: 'lbl' }, `${pr.avatar} ${pr.name}${pr.firstName ? ' · ' + pr.firstName : ''} (${pr.age})`),
       h('span', { class: 'row' },
         h('button', { class: 'btn soft small', onclick: () => editProfile(pr) }, 'Edit'),
         h('button', { class: 'btn soft small', onclick: async () => {
@@ -922,7 +925,12 @@ L.route('parent', () => {
 function editProfile(pr) {
   const isNew = !pr;
   if (isNew) pr = newProfile('', 6);
-  const nameIn = h('input', { type: 'text', value: pr.name, maxlength: '14', 'aria-label': 'Name or nickname', placeholder: 'Name or nickname' });
+  const nameIn = h('input', { type: 'text', value: pr.name, maxlength: '14', 'aria-label': 'Nickname', placeholder: 'Nickname (e.g. Sunny)' });
+  const firstIn = h('input', { type: 'text', value: pr.firstName || '', maxlength: '20', 'aria-label': 'First name (optional)', placeholder: 'First name (optional)' });
+  const callSel = h('select', { 'aria-label': 'Which name Lamora uses' },
+    h('option', { value: 'nick', selected: pr.showFirst ? null : '' }, 'Nickname'),
+    h('option', { value: 'first', selected: pr.showFirst ? '' : null }, 'First name')
+  );
   const ageSel = h('select', { 'aria-label': 'Age' });
   for (let a = 5; a <= 10; a++) ageSel.appendChild(h('option', { value: a, selected: pr.age === a ? '' : null }, String(a)));
   let avatar = pr.avatar;
@@ -939,6 +947,9 @@ function editProfile(pr) {
     h('h2', { text: isNew ? 'New child' : 'Edit ' + pr.name }),
     h('div', { class: 'stack' },
       nameIn,
+      firstIn,
+      h('label', {}, 'Greet the child by: ', callSel),
+      h('p', { class: 'small-note', style: { margin: '0' } }, 'Names stay on this device and are never shown to anyone else.'),
       h('label', {}, 'Age: ', ageSel),
       avatarWrap
     ),
@@ -946,8 +957,12 @@ function editProfile(pr) {
       h('button', { class: 'btn secondary', onclick: () => overlay(null) }, 'Cancel'),
       h('button', { class: 'btn', onclick: () => {
         const nm = nameIn.value.trim();
-        if (!nm) { toast('Please add a name or nickname'); return; }
-        pr.name = nm; pr.age = +ageSel.value; pr.avatar = avatar;
+        const fn = firstIn.value.trim();
+        if (!nm && !fn) { toast('Please add a nickname or first name'); return; }
+        pr.name = nm || fn;
+        pr.firstName = fn;
+        pr.showFirst = callSel.value === 'first' && !!fn;
+        pr.age = +ageSel.value; pr.avatar = avatar;
         if (isNew) state.profiles.push(pr);
         save(); overlay(null); render();
       } }, 'Save')
@@ -958,7 +973,7 @@ function editProfile(pr) {
 function exportProgress() {
   const lines = ['Lamora — progress summary', 'Date: ' + L.todayKey(), ''];
   state.profiles.forEach((p) => {
-    lines.push(`${p.name} (age ${p.age})`);
+    lines.push(`${p.name}${p.firstName && p.firstName !== p.name ? ' — ' + p.firstName : ''} (age ${p.age})`);
     lines.push(`  ${L.rewardStyle().name}: ${p.stars} · Stickers: ${p.stickers.length} · Play tokens: ${p.tokens || 0}`);
     const prog = Object.entries(p.progress);
     if (prog.length) prog.forEach(([k, v]) => lines.push(`  ${k}: ${v} activities completed`));

@@ -32,11 +32,11 @@ Forgot the PIN? Tap *Forgot PIN?* and answer a new grown-up question to set a fr
 - **Sections**: hide any section (e.g. hide Play on school nights, or hide Chess for younger children).
 
 ### 🔊 Sound & accessibility
-- Sounds, spoken instructions and background music can each be switched off.
+- Sounds and background music can each be switched off. (Lamora intentionally has no synthesized speech — robot voices frighten some children; instructions are written on screen instead.)
 - **Large text**, **high contrast** and **reduced motion** modes for comfort and accessibility.
 
 ### 👧 Profiles
-- Add as many children as you like: name or nickname, age (5–10) and an avatar.
+- Add as many children as you like: a nickname, an optional **first name**, age (5–10) and an avatar. You choose whether Lamora greets the child by their first name or their nickname; names never leave the device.
 - Each child has their own stars, stickers, streaks and progress. Lamora **never compares siblings** and has no leaderboards.
 - *Reset rewards* starts a child's collection fresh; *Delete* removes the profile and its data completely.
 

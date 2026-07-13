@@ -73,7 +73,7 @@ L.memoryPairs = function (opts) {
 
 /* ============ generic: Simon sequence (colour / sound memory) ============ */
 function simonGame(opts) {
-  const body = L.page(opts.title, { speak: 'Watch and listen, then copy the pattern!', backTo: opts.backTo });
+  const body = L.page(opts.title, { speak: 'Watch the pads light up, then copy the pattern!', backTo: opts.backTo });
   const PADS = [
     { c: '#e17055', icon: '🍊' }, { c: '#0984e3', icon: '💧' },
     { c: '#fdcb6e', icon: '⭐' }, { c: '#00b894', icon: '🍀' }
@@ -105,7 +105,7 @@ function simonGame(opts) {
     pos = 0;
     msg.textContent = `Watch carefully… (${seq.length} of ${target})`;
     seq.forEach((v, i) => timers.push(setTimeout(() => light(v), 700 * (i + 1))));
-    timers.push(setTimeout(() => { playing = false; msg.textContent = 'Your turn! Copy the pattern.'; L.speak('Your turn!'); }, 700 * (seq.length + 1)));
+    timers.push(setTimeout(() => { playing = false; msg.textContent = 'Your turn! Copy the pattern.'; }, 700 * (seq.length + 1)));
   }
 
   function tap(i) {
@@ -510,7 +510,6 @@ function gymLocationMemory(gym) {
     cells.forEach((c) => (c.textContent = ''));
     phase = 'guess';
     msg.textContent = 'Now tap where the ⭐ were!';
-    L.speak('Where were the stars? Tap the squares!');
   }, Math.max(2500, 5000 - d * 1000));
   L.onLeave(() => clearTimeout(t));
 }

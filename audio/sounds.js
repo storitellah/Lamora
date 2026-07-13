@@ -1,6 +1,7 @@
 /* Lamora sound engine.
-   All audio is generated on the device with the Web Audio API and the browser's
-   built-in speech voices, so everything works offline and nothing is downloaded
+   All audio is generated on the device with the Web Audio API — gentle chimes
+   and tones only. There is deliberately NO synthesized speech: robot voices
+   frighten some children. Everything works offline and nothing is downloaded
    or uploaded. */
 (function () {
   'use strict';
@@ -60,22 +61,5 @@
     if (musicTimer) { clearInterval(musicTimer); musicTimer = null; }
   }
 
-  function speak(text, opts) {
-    opts = opts || {};
-    try {
-      if (!('speechSynthesis' in window) || !text) return;
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(String(text));
-      u.rate = opts.rate || 0.92;
-      u.pitch = opts.pitch || 1.05;
-      u.lang = opts.lang || 'en-US';
-      window.speechSynthesis.speak(u);
-    } catch (e) { /* speech is optional — never break the app */ }
-  }
-
-  function stopSpeech() {
-    try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
-  }
-
-  window.LamoraSounds = { SFX, speak, stopSpeech, startMusic, stopMusic, unlock: audio };
+  window.LamoraSounds = { SFX, startMusic, stopMusic, unlock: audio };
 })();

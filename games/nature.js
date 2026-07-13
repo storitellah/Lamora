@@ -75,9 +75,8 @@ function soundQuiz() {
     const opts = L.shuffle(L.sample(SOUNDS.filter((s) => s[0] !== sound), 3).map((s) => s[1]).concat(icon));
     return {
       prompt: `Which animal says "${sound}"?`,
-      speak: `Which animal says ${sound}, ${sound}?`,
       options: opts, answer: opts.indexOf(icon),
-      hint: `Listen: ${sound}! ${sound}!`,
+      hint: `Say it out loud: ${sound}! ${sound}! Who talks like that?`,
       explain: `The ${animal} says ${sound}!`
     };
   });

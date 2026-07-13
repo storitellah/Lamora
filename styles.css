@@ -118,6 +118,14 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible, input:focus-vis
 }
 .icon-btn:active { transform: scale(0.92); }
 
+.page-tip {
+  margin: -6px 0 10px;
+  color: var(--ink-soft);
+  font-weight: 600;
+  font-size: 1.02rem;
+  text-align: center;
+}
+
 /* ---------- home & menu grids ---------- */
 .hero {
   text-align: center;

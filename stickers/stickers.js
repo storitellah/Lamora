@@ -73,7 +73,7 @@ L.route('stickers', (mode) => {
       class: 'sticker-cell' + (got ? '' : ' locked'),
       'aria-label': got ? s.name : 'locked sticker',
       onclick: () => {
-        if (got) { L.sfx('pop'); L.speak(s.name + '!'); L.toast(s.icon + ' ' + s.name); }
+        if (got) { L.sfx('pop'); L.toast(s.icon + ' ' + s.name); }
         else { L.sfx('tap'); L.toast('Keep learning to unlock this sticker! 🌟'); }
       }
     }, got ? s.icon : '❔');

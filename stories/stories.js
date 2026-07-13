@@ -97,7 +97,7 @@ L.route('stories', (id, pageNum) => {
 function readStory(story, idx) {
   const page = story.pages[idx];
   const isLast = idx === story.pages.length - 1;
-  const body = L.page(story.icon + ' ' + story.name, { speak: page.text, backTo: 'stories' });
+  const body = L.page(story.icon + ' ' + story.name, { backTo: 'stories' });
 
   body.appendChild(h('div', { class: 'progress-dots' },
     story.pages.map((_, i) => h('span', { class: 'dot' + (i < idx ? ' done' : i === idx ? ' now' : '') }))));
@@ -110,7 +110,6 @@ function readStory(story, idx) {
 
   body.appendChild(h('div', { class: 'row', style: { justifyContent: 'center' } },
     idx > 0 ? h('button', { class: 'btn secondary', onclick: () => L.go('stories', story.id, String(idx - 1)) }, '⬅️ Back') : null,
-    h('button', { class: 'btn soft', onclick: () => L.speak(page.text) }, '🔊 Read to me'),
     !isLast
       ? h('button', { class: 'btn', onclick: () => L.go('stories', story.id, String(idx + 1)) }, 'Next ➡️')
       : h('button', { class: 'btn', onclick: () => L.runQuiz({

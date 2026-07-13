@@ -54,7 +54,7 @@ function cardStudio(prof) {
   const canvas = h('canvas', { class: 'draw-surface', width: W, height: H, 'aria-label': prof.name + ' dream card preview' });
   const ctx = canvas.getContext('2d');
 
-  const nameIn = h('input', { type: 'text', value: child ? child.name : '', maxlength: '16', 'aria-label': 'Nickname on the card', placeholder: 'Nickname' });
+  const nameIn = h('input', { type: 'text', value: L.displayName(child), maxlength: '20', 'aria-label': 'Name on the card', placeholder: 'Name or nickname' });
   const dreamIn = h('input', { type: 'text', value: prof.dream, maxlength: '60', 'aria-label': 'Dream statement', placeholder: 'My dream…' });
   const toolIn = h('input', { type: 'text', value: defaultTool(prof.id), maxlength: '24', 'aria-label': 'Favourite tool', placeholder: 'Favourite tool' });
   [nameIn, dreamIn, toolIn].forEach((el) => el.addEventListener('input', draw));

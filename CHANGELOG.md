@@ -2,6 +2,33 @@
 
 All notable changes to Lamora are documented here.
 
+## [1.1.0] — 2026-07-13
+
+### Removed
+- **Synthesized speech (the "voice") removed entirely** — the robotic
+  text-to-speech voice sounded unsettling to children. All spoken
+  instructions are now shown as friendly written tips under each page
+  title instead; the header speaker button, the stories "Read to me"
+  button and the "Spoken instructions" parent toggle are gone. Gentle
+  Web-Audio chimes and tones are unchanged.
+
+### Added
+- **First names for children**: the profile editor now has an optional
+  *First name* field alongside the nickname, plus a "Greet the child by"
+  choice (nickname or first name). The home greeting, profile picker,
+  screen-time report, progress export and profession dream cards all use
+  the chosen name. Names stay on the device like all other data.
+
+### Changed
+- Activities that relied on hearing the voice now show their clue as text
+  (e.g. Letter Sounds asks: *Which letter says "mmm, like moon"?*).
+- Service-worker cache bumped so installed apps pick up the update.
+
+### Fixed
+- The Parent Zone can no longer be reached by typing `#/parent` into the
+  address bar — the route itself now requires the PIN, and re-locks the
+  moment the parent leaves.
+
 ## [1.0.0] — 2026-07-13
 
 ### Added

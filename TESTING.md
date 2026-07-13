@@ -4,7 +4,7 @@
 
 An automated Playwright/Chromium smoke test drives the real app over HTTP and asserts renders, interactions and zero console errors.
 
-**Result: 43 / 43 checks passed · console errors: none.**
+**Result: 49 / 49 checks passed · console errors: none.**
 
 What it covers:
 
@@ -20,6 +20,9 @@ What it covers:
 | World | Interactive map contains all 7 continents |
 | Stories | Story pages render |
 | Parent gate | Press-and-hold opens the grown-up multiplication gate; correct answer leads to PIN setup; PIN confirm opens the Parent Zone with settings |
+| Profiles v1.1 | Profile editor offers an optional first-name field; choosing "First name" makes the home greeting use it |
+| Voice removal v1.1 | No speaker button in headers; written tips shown instead; no speech engine present |
+| Parent gate v1.1 | Typing `#/parent` directly into the URL shows the PIN pad instead of the settings |
 | PWA | Service worker registers; manifest parses |
 
 Reproduce locally:
@@ -47,12 +50,12 @@ The smoke script is intentionally not shipped in the app payload (it would be ca
 
 ### Offline
 - [ ] Load once online, go offline, reload: app opens and every section works
-- [ ] Speech/audio still work offline (generated on device)
+- [ ] Sound effects still work offline (generated on device)
 - [ ] Update notification toast appears when a new version is deployed
 
 ### Learning content
 - [ ] Numeracy: each activity for each age band produces sensible questions and answers
-- [ ] Literacy: letter sounds speak, Word Builder accepts only the correct next letter
+- [ ] Literacy: letter-sound clues shown as text, Word Builder accepts only the correct next letter
 - [ ] Wrong answer flow: first miss = hint + retry; second = friendly reveal + Next
 - [ ] Reward unlock: finishing an activity grants a token; Play is gated without one; reward session ends after the parent-set time
 
@@ -71,7 +74,7 @@ The smoke script is intentionally not shipped in the app payload (it would be ca
 - [ ] Profile switching keeps each child's progress separate
 - [ ] Delete-all-data wipes storage and reloads to a fresh state
 - [ ] Reduced motion / high contrast / large text apply immediately
-- [ ] Sound, speech and music toggles all silence what they should
+- [ ] Sound and music toggles silence what they should
 
 ### Privacy verification
 - [ ] DevTools Network tab: after load, no requests except same-origin app files

@@ -51,12 +51,12 @@ The PIN is a child gate, not a security boundary — Lamora deliberately stores 
 
 - All content is curated, offline and reviewed: animals, nature, geography, friendly stories, chess.
 - Difficulty adapts to the child's age (5–10) or the parent's chosen level.
-- Younger children get less text, bigger targets and spoken instructions.
+- Younger children get less text, bigger targets and simple written tips.
 
 ## Accessibility & inclusion
 
 - Large text, high contrast and reduced-motion modes.
-- Spoken instructions and read-aloud stories for pre-readers.
+- Simple language, short sentences and friendly written tips on every page. (Synthesized speech was deliberately removed — robot voices can frighten young children.)
 - Keyboard, mouse and touch all work everywhere; interactive elements have screen-reader labels and clear focus states.
 - Sticker themes, avatars and professions are inclusive and stereotype-free — every child can be the astronaut, the chef, or the marine biologist.
 

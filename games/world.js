@@ -147,7 +147,6 @@ function mapGame() {
   function ask() {
     dots.querySelectorAll('.dot').forEach((d, i) => d.className = 'dot' + (i < idx ? ' done' : i === idx ? ' now' : ''));
     msg.textContent = `Tap: ${rounds[idx]}!`;
-    L.speak(`Can you find ${rounds[idx]}?`);
   }
   wrap.querySelectorAll('[data-cont]').forEach((path) => {
     path.setAttribute('tabindex', '0');
@@ -165,7 +164,6 @@ function mapGame() {
         slips++;
         L.sfx('wrong');
         msg.textContent = `That is ${path.dataset.cont}! Now find ${rounds[idx]}.`;
-        L.speak(`That one is ${path.dataset.cont}. Try to find ${rounds[idx]}!`);
       }
     };
     path.addEventListener('click', choose);
@@ -174,9 +172,9 @@ function mapGame() {
   ask();
 }
 
-/* explore-the-map (no quiz — tap to hear names) */
+/* explore-the-map (no quiz — tap to read about each continent) */
 function mapExplore() {
-  const body = L.page('🌍 World Map', { speak: 'Tap a continent to hear its name!', backTo: 'world' });
+  const body = L.page('🌍 World Map', { speak: 'Tap a continent to learn about it!', backTo: 'world' });
   const msg = h('div', { class: 'chess-msg', 'aria-live': 'polite' }, 'Tap a continent!');
   const wrap = h('div', { class: 'colour-svg-wrap', html: MAP_SVG });
   const facts = {
@@ -196,7 +194,6 @@ function mapExplore() {
     const tell = () => {
       msg.textContent = `${path.dataset.cont}: ${facts[path.dataset.cont]}`;
       L.sfx('pop');
-      L.speak(path.dataset.cont + '. ' + facts[path.dataset.cont]);
     };
     path.addEventListener('click', tell);
     path.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tell(); } });
