@@ -14,11 +14,14 @@ Lamora is a **Progressive Web App (PWA)**: it installs like a native app on iPad
 | Section | What children do |
 |---|---|
 | 📚 **Learn** | Numeracy (counting, adding, patterns, time, money…) and Literacy (letters, sounds, word building, rhymes, reading) with age-adaptive difficulty |
+| 📖 **Read** | A learn-to-read journey: blend short words, first sight words, everyday real-world objects, and reading whole sentences — every word has a picture |
+| 🇰🇪 **Swahili** | Simple Kiswahili with pictures: greetings, numbers, animals, colours, family, food and body words, with flashcards and quizzes |
+| 🤖 **Code** | Gentle first coding: guide a robot to the star by building a program of move commands, and put the steps of everyday tasks in order |
 | 🎮 **Play** | Short brain-booster reward games unlocked by learning (memory match, Simon, mazes, odd-one-out, visual search…) |
 | 🧠 **Memory Gym** | Dedicated memory training: picture/sequence/number/word/location recall with Easy → Hard → Adaptive levels |
 | ♟️ **Chess Club** | Learn the board and every piece, movement & capture practice, mate-in-one puzzles, play a gentle computer, or two-player local |
 | 🌿 **Nature & Planet** | Animal homes, animal sounds, recycling sort, build a healthy ocean, plant a garden, weather, space, food chains, caring for Earth |
-| 🗺️ **World Discovery** | Interactive continent map, flags, capitals, landmarks, world facts and world memory cards |
+| 🗺️ **World Discovery** | Interactive world map with **real continent shapes**, flags, capitals, landmarks, world facts and world memory cards |
 | 🎨 **Draw** | Pencil / crayon / marker / brush / eraser, shapes, sticker stamps, backgrounds, undo/redo, save locally, export PNG |
 | 🖍️ **Colour** | Tap-to-fill colouring pages (mermaid, dolphin, dragon, dinosaur, rocket, castle, sea, monster…), export as an image |
 | 🦄 **Sticker Book** | Earn stickers by learning, browse the collection, build & export sticker scenes |
@@ -26,18 +29,19 @@ Lamora is a **Progressive Web App (PWA)**: it installs like a native app on iPad
 | 📖 **Stories** | Short interactive stories about sharing, courage, curiosity, kindness and problem-solving, each with a memory quiz |
 | 🏆 **My Rewards** | Stars/gems/shells/dragon-egg rewards, streaks and simple progress bars — never comparisons or leaderboards |
 
-Plus: two demo child profiles (Maya, 5 and Kai, 8), six visual themes (Ocean Adventure, Rainbow Garden, Dragon Kingdom, Space Explorer, Nature Club, Dinosaur World), friendly written tips on every page, and a full **Parent Zone**.
+Plus: two demo child profiles (Luna, 6 and Lara, 8), optional per-child PINs that unlock each child's saved games and rewards, six visual themes (Ocean Adventure, Rainbow Garden, Dragon Kingdom, Space Explorer, Nature Club, Dinosaur World), friendly written tips on every page, and a full **Parent Zone**.
 
 ## 👨‍👩‍👧 Parent Zone
 
-Protected by a press-and-hold gesture plus a grown-up verification step and a 4-digit PIN. Parents can:
+Opened with a tap, then protected by a grown-up verification step and a 4-digit PIN. Parents can:
 
 - Set **daily screen-time limits** (10–90 min) with gentle 5-minute and 1-minute warnings and a calm break screen
 - Set session reminders and **reward-game length** (3–10 min)
 - Choose which sections children see, the difficulty, and the reward style
-- Manage profiles (nickname, optional first name, age 5–10, avatar — and choose which name Lamora greets the child by), reset rewards, review local progress
+- Manage profiles (nickname, optional first name, age 5–10, avatar — and choose which name Lamora greets the child by), give each child a unique PIN, reset rewards, review local progress
 - Toggle sounds, music, large text, high contrast and reduced motion
 - **Export a progress summary**, change the PIN, or **delete all local data**
+- Reach the makers at **hello@storitellah.com** to report bugs or share ideas
 
 See [PARENT-GUIDE.md](PARENT-GUIDE.md) for details.
 
@@ -72,7 +76,9 @@ styles.css            all styling, themes & accessibility modes
 script.js             core: state, router, profiles, rewards, timer, parent zone, quiz engine
 audio/sounds.js       Web-Audio sound engine (chimes & tones)
 lessons/              numeracy.js, literacy.js
-games/                brain.js (games + memory gym), chess.js, nature.js, world.js, draw.js
+reading/              reading.js (learn to read + everyday objects)
+swahili/              swahili.js (Kiswahili words with pictures)
+games/                brain.js (games + memory gym), chess.js, nature.js, world.js, draw.js, code.js
 colouring/            colouring.js (SVG pages)
 stickers/             stickers.js (sticker book & scenes)
 professions/          professions.js (dream-card studio)
@@ -93,4 +99,4 @@ service-worker.js     offline cache
 
 ---
 
-Made with 💛 for curious kids.
+Made with love by Luna and Lara’s dad 💛

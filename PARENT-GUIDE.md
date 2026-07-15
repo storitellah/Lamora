@@ -4,7 +4,7 @@ Welcome! This guide explains how Lamora works, how to set it up for your family,
 
 ## Quick start
 
-1. Open Lamora and tap your child's profile (two demo profiles, **Maya** and **Kai**, are included — you can rename or delete them).
+1. Open Lamora and tap your child's profile (two demo profiles, **Luna** and **Lara**, are included — you can rename or delete them).
 2. Your child taps big, friendly tiles: **Learn, Play, Memory, Draw, Colour, Explore, Chess, What Can I Be?, My Rewards, Sticker Book**.
 3. Finishing a learning activity earns **stars and one play token 🎟️**. A token unlocks one short reward game (you choose how long — 3 to 10 minutes).
 
@@ -12,7 +12,7 @@ No accounts, no sign-up, no internet needed after the first visit.
 
 ## Entering the Parent Zone
 
-On the profile screen or the home screen, **press and hold** the *Parents* button for 2 seconds. The first time, Lamora asks a grown-up multiplication question (children aged 5–10 can't easily pass it) and then lets you set a **4-digit PIN**. After that, the PIN protects the Parent Zone and the "add more time" button.
+On the profile screen or the home screen, **tap** the *Parents* button. The first time, Lamora asks a grown-up multiplication question (children aged 5–10 can't easily pass it) and then lets you set a **4-digit PIN**. After that, the PIN protects the Parent Zone and the "add more time" button.
 
 Forgot the PIN? Tap *Forgot PIN?* and answer a new grown-up question to set a fresh one.
 
@@ -37,6 +37,8 @@ Forgot the PIN? Tap *Forgot PIN?* and answer a new grown-up question to set a fr
 
 ### 👧 Profiles
 - Add as many children as you like: a nickname, an optional **first name**, age (5–10) and an avatar. You choose whether Lamora greets the child by their first name or their nickname; names never leave the device.
+- Give each child their **own unique PIN** (optional). When set, that child taps their picture and enters their PIN to open their saved games and rewards — a simple way to keep siblings' progress separate. Each PIN must be different.
+- Toggle which sections appear, including the new **Read**, **Swahili** and **Code** areas.
 - Each child has their own stars, stickers, streaks and progress. Lamora **never compares siblings** and has no leaderboards.
 - *Reset rewards* starts a child's collection fresh; *Delete* removes the profile and its data completely.
 
@@ -63,3 +65,7 @@ The profession card studio can include a photo **only when you choose one from t
 - Create one profile per child; the **Export progress summary** gives a per-skill activity count.
 - The **Memory Gym** difficulty picker (Easy/Medium/Hard/Just Right) is useful for differentiated practice.
 - **High contrast + large text** modes help readers with low vision; every activity works with a keyboard as well as touch.
+
+## Reporting bugs & ideas
+
+Found a bug or have a suggestion? Email **hello@storitellah.com** (there's a link in the Parent Zone under *Help & feedback*). Please don't include any personal details about your child in a report.

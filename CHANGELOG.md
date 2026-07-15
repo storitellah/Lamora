@@ -2,6 +2,44 @@
 
 All notable changes to Lamora are documented here.
 
+## [2.0.0] — 2026-07-15
+
+### Added
+- **📖 Learn to Read section** — a gentle reading journey: Blend It (sound
+  out CVC words and match the picture), First Words (sight words), Everyday
+  Things (real-world object vocabulary), and Read a Sentence.
+- **🇰🇪 Swahili section** — simple Kiswahili with pictures across seven
+  topics (greetings, numbers, animals, colours, family, food, body):
+  flashcards with pronunciation plus gentle two-way quizzes.
+- **🤖 Code section** — first coding for children: *Robot Path*, where kids
+  build a program of move commands to guide a robot to the star (5 levels,
+  each verified solvable, with a "Show me" helper), and *Step by Step*,
+  ordering the steps of everyday tasks.
+- **Real-life objects** throughout Reading and Swahili — the app now goes
+  well beyond mermaids and dragons into houses, cups, buses, spoons and more.
+- **Per-child PINs**: each child can have their own **unique** PIN. When set,
+  the child taps their picture and enters their PIN to open their saved games
+  and rewards, keeping siblings' progress separate. Uniqueness is enforced.
+- **Bug reports**: a *Help & feedback* card in the Parent Zone with the
+  **hello@storitellah.com** email.
+- **Footer**: "Made with love by Luna and Lara's dad 💛" on the main screens.
+
+### Changed
+- **Real continent shapes** in World Discovery: the doodled blobs are gone.
+  The map is now drawn from actual coastline coordinates (longitude/latitude)
+  projected onto a true 720×360 equirectangular canvas, so every continent
+  has its real silhouette and position, with island decorations (Greenland,
+  Japan, Madagascar, New Zealand, the British Isles).
+- **Demo profiles are now Luna (6) and Lara (8).**
+- **Parent Zone opens on a normal tap** instead of a 2-second press-and-hold,
+  which parents found unreliable. The grown-up maths gate and PIN still
+  protect it.
+- Service-worker cache bumped to `lamora-v3`.
+
+### Note
+- The synthesized voice remains fully removed (see 1.1.0). This release adds
+  no speech; all instructions are on-screen text.
+
 ## [1.1.0] — 2026-07-13
 
 ### Removed

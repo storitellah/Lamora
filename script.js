@@ -89,6 +89,7 @@ function newProfile(name, age, avatar, theme) {
     name, age,
     firstName: '',         // optional real first name (parents can add it)
     showFirst: false,      // greet with the first name instead of the nickname
+    pinHash: null,         // optional unique per-child PIN to load their saved games & rewards
     avatar: avatar || '🦄',
     colour: '#6c5ce7',
     theme: theme || 'ocean',
@@ -109,8 +110,8 @@ const DEFAULT_STATE = () => ({
   version: 1,
   activeProfileId: null,
   profiles: [
-    newProfile('Maya', 5, '🧜‍♀️', 'ocean'),
-    newProfile('Kai', 8, '🐉', 'dragon')
+    newProfile('Luna', 6, '🦄', 'rainbow'),
+    newProfile('Lara', 8, '🦋', 'nature')
   ],
   parent: {
     pinHash: null,
@@ -126,7 +127,8 @@ const DEFAULT_STATE = () => ({
     highContrast: false,
     largeText: false,
     categories: {
-      learn: true, play: true, memory: true, draw: true, colour: true,
+      learn: true, reading: true, swahili: true, code: true,
+      play: true, memory: true, draw: true, colour: true,
       explore: true, chess: true, professions: true, stories: true
     }
   },
@@ -616,48 +618,56 @@ function pinPadDialog(title, length, onSubmit, note, onForgot) {
   overlay(card);
 }
 
-/* Press-and-hold helper for the parent entrance. */
-function holdButton(label, ms, onHeld) {
-  const btn = h('button', { class: 'btn secondary', 'aria-label': label + '. Press and hold for 2 seconds.' }, label);
-  let timer = null, prog = 0, tick = null;
-  const start = (e) => {
-    e.preventDefault();
-    btn.textContent = label + ' …';
-    timer = setTimeout(() => { cancel(); onHeld(); }, ms);
-  };
-  const cancel = () => { clearTimeout(timer); clearInterval(tick); btn.textContent = label; };
-  btn.addEventListener('pointerdown', start);
-  btn.addEventListener('pointerup', cancel);
-  btn.addEventListener('pointerleave', cancel);
-  btn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onHeld(); } });
-  return btn;
+/* The Parent Zone button. It opens on a normal tap — reliable on every
+   device — and the real protection is the grown-up gate + PIN inside askPin. */
+function parentButton(label) {
+  return h('button', {
+    class: 'btn secondary', 'aria-label': label,
+    onclick: () => { L.sfx('tap'); askPin(() => L.go('parent')); }
+  }, label);
+}
+
+/* A small, warm footer shown on the main screens. */
+L.footer = () => h('p', { class: 'app-footer' }, 'Made with love by Luna and Lara’s dad 💛');
+
+function enterProfile(p) {
+  state.activeProfileId = p.id;
+  warned5 = warned1 = false;
+  save();
+  applyTheme();
+  L.sfx('pop');
+  L.go('home');
 }
 
 /* ---------------- profiles ---------------- */
 L.route('profiles', () => {
-  const body = L.page('Who is playing?', { back: false, speak: 'Who is playing today? Tap your picture!' });
+  const body = L.page('Who is playing?', { back: false, speak: 'Tap your picture to start!' });
   const wrap = h('div', { class: 'profile-pick' });
   state.profiles.forEach((p) => {
     wrap.appendChild(h('button', {
       class: 'profile-btn' + (p.id === state.activeProfileId ? ' active' : ''),
       onclick: () => {
-        state.activeProfileId = p.id;
-        warned5 = warned1 = false;
-        save();
-        applyTheme();
-        L.sfx('pop');
-        L.go('home');
+        if (p.pinHash) {
+          // this child has their own PIN — unlock their saved games & rewards
+          pinPadDialog(`Hi ${L.displayName(p)}! Enter your PIN`, 4, (entry) => {
+            if (pinHash(entry) === p.pinHash) { enterProfile(p); return true; }
+            return false;
+          }, 'Ask a grown-up if you forget your PIN.');
+        } else {
+          enterProfile(p);
+        }
       }
     },
       h('span', { class: 'avatar', 'aria-hidden': 'true' }, p.avatar),
       h('span', {}, L.displayName(p)),
-      h('small', { class: 'muted' }, `age ${p.age}`)
+      h('small', { class: 'muted' }, `age ${p.age}${p.pinHash ? ' · 🔒' : ''}`)
     ));
   });
   body.appendChild(wrap);
   body.appendChild(h('div', { class: 'center', style: { marginTop: '18px' } },
-    holdButton('👨‍👩‍👧 Parent Zone', 2000, () => askPin(() => L.go('parent')))
+    parentButton('👨‍👩‍👧 Parent Zone')
   ));
+  body.appendChild(L.footer());
 });
 
 function applyTheme() {
@@ -686,6 +696,9 @@ L.route('home', () => {
   const grid = h('div', { class: 'menu-grid' });
   const items = [
     cats.learn && ['📚', 'Learn', () => L.go('learn'), 'numbers & letters'],
+    cats.reading && ['📖', 'Read', () => L.go('reading'), 'learn to read'],
+    cats.swahili && ['🇰🇪', 'Swahili', () => L.go('swahili'), 'kiswahili words'],
+    cats.code && ['🤖', 'Code', () => L.go('code'), 'coding fun'],
     cats.play && ['🎮', 'Play', () => L.go('play'), 'reward games'],
     cats.memory && ['🧠', 'Memory', () => L.go('memorygym'), 'memory gym'],
     cats.draw && ['🎨', 'Draw', () => L.go('draw'), 'drawing studio'],
@@ -702,8 +715,9 @@ L.route('home', () => {
   app.appendChild(h('div', { class: 'row', style: { justifyContent: 'center', marginTop: '8px' } },
     h('button', { class: 'btn soft small', onclick: () => L.go('profiles') }, '🔄 Switch player'),
     h('button', { class: 'btn soft small', onclick: () => themePicker() }, '🎨 Theme'),
-    holdButton('👨‍👩‍👧 Parents', 2000, () => askPin(() => L.go('parent')))
+    parentButton('👨‍👩‍👧 Parents')
   ));
+  app.appendChild(L.footer());
 });
 
 function themePicker() {
@@ -787,7 +801,8 @@ L.route('rewards', () => {
   ));
 
   const skills = [
-    ['numeracy', '🔢 Numbers'], ['literacy', '🔤 Letters'], ['memory', '🧠 Memory'],
+    ['numeracy', '🔢 Numbers'], ['literacy', '🔤 Letters'], ['reading', '📖 Reading'],
+    ['swahili', '🇰🇪 Swahili'], ['coding', '🤖 Coding'], ['memory', '🧠 Memory'],
     ['chess', '♟️ Chess'], ['nature', '🌿 Nature'], ['world', '🗺️ World'], ['stories', '📖 Stories'],
     ['creativity', '🎨 Creativity']
   ];
@@ -859,7 +874,7 @@ L.route('parent', () => {
     toggleRow('Free play (no tokens needed)', () => P.freePlay, (v) => P.freePlay = v)
   );
   learn.appendChild(h('h2', { text: 'Sections shown to children', style: { marginTop: '14px' } }));
-  const catNames = { learn: '📚 Learn', play: '🎮 Play', memory: '🧠 Memory', draw: '🎨 Draw', colour: '🖍️ Colour', explore: '🌍 Explore', chess: '♟️ Chess', professions: '🧑‍🚀 What Can I Be?', stories: '📖 Stories' };
+  const catNames = { learn: '📚 Learn', reading: '📖 Read', swahili: '🇰🇪 Swahili', code: '🤖 Code', play: '🎮 Play', memory: '🧠 Memory', draw: '🎨 Draw', colour: '🖍️ Colour', explore: '🌍 Explore', chess: '♟️ Chess', professions: '🧑‍🚀 What Can I Be?', stories: '📖 Stories' };
   Object.keys(catNames).forEach((c) => learn.appendChild(toggleRow(catNames[c], () => P.categories[c], (v) => P.categories[c] = v)));
   body.appendChild(learn);
 
@@ -881,6 +896,7 @@ L.route('parent', () => {
       h('span', { class: 'lbl' }, `${pr.avatar} ${pr.name}${pr.firstName ? ' · ' + pr.firstName : ''} (${pr.age})`),
       h('span', { class: 'row' },
         h('button', { class: 'btn soft small', onclick: () => editProfile(pr) }, 'Edit'),
+        h('button', { class: 'btn soft small', onclick: () => setChildPin(pr) }, pr.pinHash ? '🔒 PIN set' : '🔓 Set PIN'),
         h('button', { class: 'btn soft small', onclick: async () => {
           if (await L.confirmDialog('Reset rewards?', `Set ${pr.name}'s stars, tokens and stickers back to zero?`, 'Reset')) {
             pr.stars = 0; pr.tokens = 0; pr.stickers = []; pr.progress = {}; pr.streaks = {}; save(); render();
@@ -906,7 +922,7 @@ L.route('parent', () => {
     h('p', { class: 'small-note', text: 'All progress, drawings and photos stay on this device. Export creates a simple text summary you can save or print.' }),
     h('div', { class: 'row' },
       h('button', { class: 'btn secondary', onclick: exportProgress }, '📄 Export progress summary'),
-      h('button', { class: 'btn secondary', onclick: () => setNewPin(() => {}) }, '🔑 Change PIN'),
+      h('button', { class: 'btn secondary', onclick: () => setNewPin(() => {}) }, '🔑 Change parent PIN'),
       h('button', { class: 'btn danger', onclick: async () => {
         if (await L.confirmDialog('Delete ALL data?', 'This erases every profile, drawing, photo and setting on this device. It cannot be undone.', 'Delete everything')) {
           localStorage.removeItem(STORE_KEY);
@@ -917,10 +933,63 @@ L.route('parent', () => {
   );
   body.appendChild(data);
 
+  // --- help / bug reports ---
+  const help = h('div', { class: 'card' }, h('h2', { text: '💬 Help & feedback' }));
+  help.append(
+    h('p', {}, 'Found a bug or have an idea? We would love to hear from you.'),
+    h('p', {},
+      'Email: ',
+      h('a', { href: 'mailto:hello@storitellah.com?subject=Lamora%20feedback', class: 'link-plain' }, 'hello@storitellah.com')
+    ),
+    h('p', { class: 'small-note' }, 'Please don’t include any personal details about your child in bug reports.')
+  );
+  body.appendChild(help);
+
   body.appendChild(h('div', { class: 'center', style: { marginTop: '10px' } },
     h('button', { class: 'btn', onclick: () => L.go('home') }, '✅ Done — back to Lamora')
   ));
+  body.appendChild(L.footer());
 });
+
+/* Set or clear a child's own PIN. PINs must be unique across all children so
+   each child unlocks their own saved games and rewards. */
+function setChildPin(pr) {
+  if (pr.pinHash) {
+    // already set — offer to change or remove
+    overlay(h('div', { class: 'overlay-card' },
+      h('h2', { text: `${L.displayName(pr)}'s PIN` }),
+      h('p', { text: 'This child unlocks their saved games and rewards with their own PIN.' }),
+      h('div', { class: 'row', style: { justifyContent: 'center' } },
+        h('button', { class: 'btn', onclick: () => { overlay(null); chooseChildPin(pr); } }, 'Change PIN'),
+        h('button', { class: 'btn danger', onclick: () => { pr.pinHash = null; save(); overlay(null); render(); toast('PIN removed'); } }, 'Remove PIN'),
+        h('button', { class: 'btn secondary', onclick: () => overlay(null) }, 'Cancel')
+      )
+    ));
+  } else {
+    chooseChildPin(pr);
+  }
+}
+
+function chooseChildPin(pr) {
+  pinPadDialog(`Choose a 4-digit PIN for ${L.displayName(pr)}`, 4, (first) => {
+    // uniqueness: no other child may share this PIN
+    const clash = state.profiles.some((x) => x.id !== pr.id && x.pinHash === pinHash(first));
+    if (clash) {
+      toast('That PIN is taken by another child — pick a different one.');
+      return false;
+    }
+    pinPadDialog('Type the same PIN again', 4, (second) => {
+      if (first === second) {
+        pr.pinHash = pinHash(first);
+        save(); render();
+        toast(`${L.displayName(pr)}'s PIN saved 🔒`);
+        return true;
+      }
+      return false;
+    });
+    return true;
+  }, 'Each child needs a different PIN.');
+}
 
 function editProfile(pr) {
   const isNew = !pr;

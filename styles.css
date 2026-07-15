@@ -126,6 +126,85 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible, input:focus-vis
   text-align: center;
 }
 
+.app-footer {
+  text-align: center;
+  margin: 26px 0 6px;
+  color: var(--ink-soft);
+  font-weight: 600;
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+.link-plain { color: var(--accent); font-weight: 700; }
+
+/* word-picture flashcards (Swahili, reading, everyday objects) */
+.flash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+  margin-top: 12px;
+}
+.flash-card {
+  border: none;
+  border-radius: var(--radius);
+  background: var(--paper);
+  box-shadow: var(--shadow);
+  padding: 16px 10px;
+  cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  min-height: 150px; justify-content: center;
+  transition: transform var(--speed);
+}
+.flash-card:active { transform: scale(0.96); }
+.flash-card .pic { font-size: 3.2rem; line-height: 1; }
+.flash-card .term { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--ink); }
+.flash-card .sub { color: var(--ink-soft); font-size: 1rem; }
+.flash-card .say { font-size: 0.9rem; color: var(--accent); font-weight: 700; }
+.flash-card.flash-lift { outline: 4px solid var(--pop); transform: translateY(-4px); }
+.read-word {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 9vw, 3.4rem);
+  letter-spacing: 6px;
+  text-align: center;
+}
+.read-word .lit { color: var(--accent); }
+.read-sentence { font-size: clamp(1.3rem, 5vw, 2rem); text-align: center; line-height: 1.6; font-family: var(--font-display); }
+
+/* coding grid (robot puzzles) */
+.code-board {
+  display: grid;
+  gap: 3px;
+  width: min(88vw, 420px);
+  margin: 12px auto;
+  background: rgba(0,0,0,0.08);
+  padding: 3px; border-radius: var(--radius-sm);
+  touch-action: manipulation;
+}
+.code-cell {
+  aspect-ratio: 1;
+  background: #fff;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(1.2rem, 6vw, 2rem);
+}
+.code-cell.wall { background: #5e548e; }
+.code-cell.goal { background: #fff7d6; }
+.code-tray {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  min-height: 60px;
+  background: var(--bg1);
+  border-radius: var(--radius-sm);
+  padding: 10px; margin: 10px 0;
+}
+.code-token {
+  min-width: 52px; min-height: 52px;
+  border: none; border-radius: 12px;
+  background: var(--accent); color: #fff;
+  font-size: 1.5rem; cursor: pointer;
+  box-shadow: var(--shadow);
+}
+.code-token.ghost { opacity: 0.5; }
+.code-palette { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
 /* ---------- home & menu grids ---------- */
 .hero {
   text-align: center;

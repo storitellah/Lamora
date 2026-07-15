@@ -49,7 +49,8 @@ The PIN is a child gate, not a security boundary — Lamora deliberately stores 
 
 ## Age-appropriate content
 
-- All content is curated, offline and reviewed: animals, nature, geography, friendly stories, chess.
+- All content is curated, offline and reviewed: numbers, letters, reading, simple Swahili, everyday real-world objects, coding puzzles, nature, geography, friendly stories and chess.
+- Content goes beyond fantasy: alongside mermaids and dragons, children learn real objects from daily life, real continents, and a real language (Kiswahili).
 - Difficulty adapts to the child's age (5–10) or the parent's chosen level.
 - Younger children get less text, bigger targets and simple written tips.
 

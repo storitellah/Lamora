@@ -119,19 +119,75 @@ function worldMemory() {
   });
 }
 
-/* ---------------- interactive continent map ---------------- */
-/* A friendly, simplified world map drawn as SVG blobs — not to scale, just for learning shapes & places. */
-const MAP_SVG = `
-<svg viewBox="0 0 500 300" role="img" aria-label="Simple world map">
-  <rect x="0" y="0" width="500" height="300" fill="#bde8ff" rx="12"/>
-  <path data-cont="North America" d="M40 40 L150 30 L160 60 L130 90 L110 130 L80 120 L50 90 Z" fill="#7ac74f" stroke="#4f772d" stroke-width="3"/>
-  <path data-cont="South America" d="M120 150 L160 145 L170 190 L150 250 L130 240 L115 190 Z" fill="#f4a259" stroke="#bc6c25" stroke-width="3"/>
-  <path data-cont="Europe" d="M230 40 L290 35 L300 65 L270 85 L235 80 Z" fill="#f9c74f" stroke="#bc9018" stroke-width="3"/>
-  <path data-cont="Africa" d="M230 100 L290 95 L305 150 L275 215 L245 200 L225 150 Z" fill="#f8961e" stroke="#b26a12" stroke-width="3"/>
-  <path data-cont="Asia" d="M310 30 L440 40 L450 100 L400 140 L340 120 L305 85 Z" fill="#90be6d" stroke="#5e8c3f" stroke-width="3"/>
-  <path data-cont="Oceania" d="M400 190 L455 185 L465 220 L430 240 L400 225 Z" fill="#f94144" stroke="#b02a2c" stroke-width="3"/>
-  <path data-cont="Antarctica" d="M150 275 L350 275 L330 292 L170 292 Z" fill="#ffffff" stroke="#9bb1c9" stroke-width="3"/>
-</svg>`;
+/* ---------------- interactive continent map ----------------
+   Real continent shapes, drawn from actual coastline coordinates
+   (longitude, latitude) projected onto an equirectangular grid, so the
+   continents have their true silhouettes and positions — not doodles. */
+const MAP_W = 720, MAP_H = 360;
+// project [lon, lat] → [x, y] on a 2:1 equirectangular canvas
+const projX = (lon) => (lon + 180) * (MAP_W / 360);
+const projY = (lat) => (90 - lat) * (MAP_H / 180);
+function poly(coords) {
+  return 'M' + coords.map(([lon, lat]) => projX(lon).toFixed(1) + ' ' + projY(lat).toFixed(1)).join(' L') + ' Z';
+}
+
+const CONTINENT_SHAPES = {
+  'North America': { fill: '#7ac74f', stroke: '#4f772d', coords: [
+    [-166,66],[-157,71],[-133,69],[-124,71],[-95,70],[-82,73],[-64,60],[-56,52],[-66,45],[-70,42],
+    [-74,40],[-81,31],[-80,25],[-83,29],[-90,29],[-97,26],[-97,21],[-90,20],[-88,21],[-84,10],
+    [-83,9],[-92,16],[-96,16],[-105,20],[-110,23],[-114,28],[-117,33],[-122,37],[-124,42],[-124,48],
+    [-130,54],[-135,58],[-140,60],[-150,59],[-158,56],[-164,60]
+  ] },
+  'South America': { fill: '#f4a259', stroke: '#bc6c25', coords: [
+    [-77,8],[-71,11],[-62,10],[-52,5],[-50,0],[-44,-2],[-35,-5],[-38,-13],[-40,-20],[-48,-25],
+    [-54,-34],[-58,-39],[-63,-42],[-66,-45],[-69,-52],[-74,-53],[-73,-45],[-73,-38],[-71,-30],[-70,-18],
+    [-76,-14],[-81,-5],[-80,0],[-78,5]
+  ] },
+  'Europe': { fill: '#f9c74f', stroke: '#b8901c', coords: [
+    [-9,43],[-9,38],[-6,36],[0,38],[5,43],[8,44],[13,42],[18,40],[16,42],[19,42],[24,40],[27,41],
+    [28,45],[30,50],[30,60],[28,66],[24,70],[16,68],[12,64],[5,61],[8,58],[10,55],[7,53],[3,51],
+    [0,49],[-4,48],[-2,44]
+  ] },
+  'Africa': { fill: '#f8961e', stroke: '#b26a12', coords: [
+    [-6,36],[10,37],[11,34],[20,32],[25,32],[35,31],[43,12],[51,12],[42,-1],[40,-11],[35,-19],
+    [33,-26],[27,-34],[20,-35],[15,-28],[13,-17],[9,-1],[8,4],[3,6],[-4,5],[-8,4],[-13,8],[-16,12],
+    [-17,15],[-16,21],[-13,25],[-10,30],[-9,33]
+  ] },
+  'Asia': { fill: '#90be6d', stroke: '#5e8c3f', coords: [
+    [50,68],[60,70],[73,73],[90,75],[105,77],[125,73],[140,73],[160,70],[170,68],[180,65],[170,60],
+    [162,58],[155,52],[142,48],[135,45],[128,42],[122,40],[122,31],[110,21],[108,14],[104,9],[100,8],
+    [98,10],[94,16],[90,22],[88,21],[82,17],[80,13],[77,8],[73,17],[68,24],[62,25],[58,24],[57,20],
+    [52,17],[45,13],[43,17],[40,22],[36,29],[36,36],[36,41],[41,42],[48,45],[52,45],[55,50],[58,55],[60,62]
+  ] },
+  'Oceania': { fill: '#f94144', stroke: '#b02a2c', coords: [
+    [114,-22],[114,-26],[116,-32],[120,-34],[129,-32],[135,-35],[138,-35],[141,-38],[147,-38],[150,-37],
+    [153,-31],[153,-27],[149,-22],[146,-19],[145,-15],[142,-11],[137,-12],[132,-11],[126,-14],[122,-18]
+  ] },
+  'Antarctica': { fill: '#f2f6fb', stroke: '#9bb1c9', coords: [
+    [-180,-70],[-150,-73],[-120,-71],[-90,-74],[-60,-71],[-30,-69],[0,-70],[30,-68],[60,-66],[90,-66],
+    [120,-67],[150,-70],[180,-71],[180,-88],[-180,-88]
+  ] }
+};
+
+// small non-interactive island decorations for realism
+const ISLANDS = [
+  { name: 'Greenland', fill: '#cfe8d0', coords: [[-45,60],[-30,60],[-20,70],[-25,78],[-40,80],[-55,76],[-50,68]] },
+  { name: 'Madagascar', fill: '#f6b06a', coords: [[44,-12],[50,-15],[47,-25],[44,-22]] },
+  { name: 'Japan', fill: '#9fce7f', coords: [[131,31],[141,36],[142,43],[137,37],[132,34]] },
+  { name: 'New Zealand', fill: '#f96d6f', coords: [[166,-46],[172,-42],[178,-38],[174,-40],[168,-44]] },
+  { name: 'British Isles', fill: '#ffd75e', coords: [[-6,50],[-2,53],[-3,58],[-6,55],[-8,52]] }
+];
+
+const MAP_SVG = (() => {
+  let s = `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" role="img" aria-label="World map with real continent shapes">`;
+  s += `<rect x="0" y="0" width="${MAP_W}" height="${MAP_H}" fill="#bde8ff" rx="14"/>`;
+  ISLANDS.forEach((i) => { s += `<path d="${poly(i.coords)}" fill="${i.fill}" stroke="#7fa3b0" stroke-width="1.5" opacity="0.9"/>`; });
+  Object.entries(CONTINENT_SHAPES).forEach(([name, c]) => {
+    s += `<path data-cont="${name}" d="${poly(c.coords)}" fill="${c.fill}" stroke="${c.stroke}" stroke-width="2" stroke-linejoin="round"/>`;
+  });
+  s += `</svg>`;
+  return s;
+})();
 
 function mapGame() {
   const body = L.page('🗺️ Find the Continent', { speak: 'Look at the map! Tap the continent I ask for.', backTo: 'world' });

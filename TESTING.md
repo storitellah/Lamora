@@ -4,7 +4,7 @@
 
 An automated Playwright/Chromium smoke test drives the real app over HTTP and asserts renders, interactions and zero console errors.
 
-**Result: 49 / 49 checks passed · console errors: none.**
+**Result: 71 / 71 checks passed · console errors: none.**
 
 What it covers:
 
@@ -23,6 +23,12 @@ What it covers:
 | Profiles v1.1 | Profile editor offers an optional first-name field; choosing "First name" makes the home greeting use it |
 | Voice removal v1.1 | No speaker button in headers; written tips shown instead; no speech engine present |
 | Parent gate v1.1 | Typing `#/parent` directly into the URL shows the PIN pad instead of the settings |
+| Profiles v2.0 | Demo profiles are Luna & Lara; setting a child a unique PIN gates their profile at the picker |
+| Reading v2.0 | Learn-to-read routes render; Everyday Things includes real-life objects (house, chair, spoon…) |
+| Swahili v2.0 | Flashcards render; completing a topic quiz records a Swahili activity |
+| Code v2.0 | Every Robot Path level is solvable (Show me → Play reaches the star); Step by Step orders a task |
+| World map v2.0 | Map uses a real 720×360 equirectangular projection with 7 real continent shapes |
+| Parent zone v2.0 | Opens on a tap; shows the hello@storitellah.com bug-report email; footer present |
 | PWA | Service worker registers; manifest parses |
 
 Reproduce locally:

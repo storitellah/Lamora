@@ -12,7 +12,7 @@ Lamora keeps the following in your browser's local storage, purely so the app wo
 
 - Child profiles you create: first name or nickname, age, avatar, favourite theme
 - Progress: stars, stickers, streaks, activities completed
-- Parent settings: time limits, enabled sections, sound and accessibility choices, and a scrambled (hashed) copy of the parent PIN
+- Parent settings: time limits, enabled sections, sound and accessibility choices, and a scrambled (hashed) copy of the parent PIN and any per-child PINs
 - Saved drawings, colouring pages and sticker scenes
 
 This data never leaves the device. It is not synced, backed up, uploaded, or shared with anyone — including the developers.
