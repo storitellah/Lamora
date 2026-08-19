@@ -1,85 +1,74 @@
 # ✅ Lamora — Testing Checklist & Report
 
-## Automated smoke test (2026-07-13)
+## Automated smoke test (2026-08-19, v2.0.0)
 
-An automated Chromium (Playwright) run against a local static server exercised the main flows. **All 17 checks passed with zero console errors:**
+An automated Chromium (Playwright) run drove the **production build** (`dist/`) served over a local HTTP server. **All 15 checks passed with zero console errors.**
 
 | # | Check | Result |
 | --- | --- | --- |
-| 1 | Profile select renders (demo profiles present) | ✅ PASS |
-| 2 | Picking a profile opens the home screen (11 tiles) | ✅ PASS |
-| 3 | Learn → Counting: full 5-question quiz flow, hints on wrong answers, celebration + stars | ✅ PASS |
-| 4 | Home button navigation | ✅ PASS |
-| 5 | Memory Gym → Matching Pairs renders the right deck size for age 6 (8 cards) | ✅ PASS |
-| 6 | Chess vs computer: select pawn → move hints shown → e2–e4 played → computer replies | ✅ PASS |
-| 7 | Drawing studio: canvas renders, pointer stroke draws | ✅ PASS |
-| 8 | Colouring: page opens, tap-to-fill region works | ✅ PASS |
-| 9 | Explore → Flags quiz renders | ✅ PASS |
-| 10 | Stories: story page + read-aloud button render | ✅ PASS |
-| 11 | Professions: card canvas renders and updates | ✅ PASS |
-| 12 | Sticker book scene renders | ✅ PASS |
-| 13 | Rewards screen stats render | ✅ PASS |
-| 14 | Parent gate: PIN creation (enter twice) then Parent Zone opens | ✅ PASS |
-| 15 | Delete-all-data control present in Parent Zone | ✅ PASS |
-| 16 | Service worker registers | ✅ PASS |
-| 17 | Progress persists to localStorage | ✅ PASS |
+| 1 | Profile select shows Luna, Lara & Arica + correct footer attribution | ✅ PASS |
+| 2 | Pick Lara (age 8) → home shows all 7 pathway tiles | ✅ PASS |
+| 3 | Reading → Phonics: full 5-question quiz, hints on miss, celebration + stars awarded | ✅ PASS |
+| 4 | Letter-tracing canvas accepts strokes and completes on sufficient coverage | ✅ PASS |
+| 5 | Maths: tier → operation → **visual counters render** → quiz completes | ✅ PASS |
+| 6 | Higher maths tier correctly **locked** for an age-8 profile | ✅ PASS |
+| 7 | "Did You Know?" flashcards render, next-card works, category quiz runs | ✅ PASS |
+| 8 | Games hub reflects earned play tokens; **Word Search** grid renders and is playable | ✅ PASS |
+| 9 | Letter Scramble (anagram) renders draggable letter bank | ✅ PASS |
+| 10 | Sliding Picture Puzzle renders 3×3 with goal preview | ✅ PASS |
+| 11 | Chess: puzzle board renders; vs-computer move highlights + computer replies | ✅ PASS |
+| 12 | Dream Cards: live canvas preview updates as the name field changes | ✅ PASS |
+| 13 | Rewards screen renders progress stats | ✅ PASS |
+| 14 | Parent gate: create-PIN flow → dashboard with working **background-music toggle** | ✅ PASS |
+| 15 | Service worker registers + state persists to localStorage | ✅ PASS |
 
 Additional automated checks:
-
-- `node --check` passes on all 14 JavaScript files ✅
-- `manifest.json` is valid JSON with 192/512/maskable icons ✅
-- Layout verified via screenshots at 1024×768 (tablet/desktop) and 390×844 (phone) — home, chess board and colouring pages all fit without horizontal scrolling ✅
-- Zero network requests to third-party origins (the app references only same-origin files) ✅
+- `tsc --noEmit` type-checks cleanly; `vite build` succeeds (~120 KB gzipped total).
+- PWA precache generated: 16 entries, ~412 KiB, with `navigateFallback` for offline navigation.
+- Manual screenshot review at **1180×820 (desktop)** and **390×844 (iPhone)**: home grid, Dream Card studio, maths counters, trivia cards and the top bar all fit without horizontal scrolling.
+- No requests to any third-party origin (the app references only same-origin assets + the system font stack).
 
 ## Manual test checklist (for release on real devices)
 
 ### Installation
 - [ ] iPad Safari: Share → Add to Home Screen; opens standalone
-- [ ] iPhone Safari: layout correct with safe-area insets
+- [ ] iPhone Safari: safe-area insets respected
 - [ ] Android Chrome: install prompt; opens standalone
 - [ ] Android tablet: layout correct
-- [ ] Windows Chrome/Edge: address-bar install
-- [ ] macOS Chrome/Safari: install / dock
+- [ ] Windows / Mac Chrome or Edge: address-bar install
 
-### Input
-- [x] Touch interactions (pointer events used throughout; verified via emulated pointer)
-- [x] Mouse interactions (verified in smoke test)
-- [x] Keyboard: focus states, Enter/Space on controls, arrow keys in maze, Enter on colouring regions
-- [ ] Physical keyboard on tablet
+### Input & touch
+- [x] Touch pointer events throughout (verified via emulated + real mouse)
+- [x] Drag interactions: Word Search selection, Letter Scramble, trivia card swipe
+- [x] Mouse interactions
+- [x] Keyboard: focus rings, Enter/Space on controls, click-click fallback for Word Search
+- [ ] Physical keyboard + external trackpad on tablet
 
 ### Offline
-- [x] Service worker precaches all app files on install
+- [x] Service worker precaches the whole build on install
 - [x] Offline navigation falls back to cached `index.html`
-- [ ] Airplane-mode reload on device after first visit
+- [ ] Airplane-mode reload on a device after first visit
 
 ### Features
-- [x] Numeracy activities (all 14 topics generate valid questions)
-- [x] Literacy activities (all 9 topics)
-- [x] Reward unlock loop (stars → play token → session timer)
-- [x] Memory games (6 exercises)
-- [x] Chess: lessons, capture practice, verified mate-in-one puzzles, vs-computer game legality (checks, checkmate, stalemate, promotion)
-- [x] Drawing: tools, undo/redo, save to gallery, PNG export
-- [x] Colouring: fill, undo/redo, save, PNG export
-- [x] Sticker book: unlock ladder, drag, double-tap remove, PNG export
-- [x] World: flags, capitals, continents, landmarks
-- [x] Profession cards: fields, local photo, PNG export, remove photo
-- [x] Timer: per-second tracking, 5-min/1-min warnings, break screen, PIN to extend
-- [x] Parent PIN: create, confirm, wrong-PIN retry, change PIN
-- [x] Progress saving and profile switching
-- [x] Delete-all-data (clears localStorage + caches, reloads)
-- [x] Reduced motion (setting + OS preference), high contrast, large text
-- [x] Audio controls (mute persists; speech cancels on mute/navigation)
+- [x] Phonics, sight words, read-along stories + quizzes
+- [x] Letter tracing (coverage detection, forgiving threshold)
+- [x] Maths tiers 1–10 … 100+ across + − × ÷ with visual counters; progressive unlock
+- [x] Trivia flashcards + category quizzes across all five categories
+- [x] Reward loop: stars → play token → timed session
+- [x] Word Match, Word Search, Letter Scramble, Sliding Puzzle, Logic Tiles, Matching Pairs
+- [x] Chess: verified mate-in-one puzzles, vs-computer legality (check/checkmate/stalemate/promotion), two-player, hints
+- [x] Dream Cards: fields, camera + upload photo, PNG export, PDF/print, unbranded output, remove-photo
+- [x] Parent PIN create/confirm/retry/change; background music; screen-time + warnings + break screen
+- [x] Progress saving, profile switching, reduced motion, delete-all-data
 
 ### Safety
-- [x] No external tracking (no third-party requests exist in code)
-- [x] No console errors in smoke run
-- [x] No broken screens in smoke run
-- [x] No public data exposure (no network I/O beyond same-origin app files)
-- [x] No external links in child mode
-- [x] Photos never uploaded (FileReader → canvas only)
+- [x] No external tracking (no third-party requests exist in the code)
+- [x] No console errors in the smoke run
+- [x] No broken screens in the smoke run
+- [x] Photos never uploaded (FileReader → canvas only), never analysed
+- [x] Exported Dream Cards carry no app branding or watermark
 
 ## Known limitations
-
-- Chess uses kid-friendly simplified rules: no castling and no en passant (promotion is always to a queen). Check, checkmate and stalemate are fully implemented.
-- Read-aloud depends on the device's built-in speech voices; on devices without voices the app remains fully usable with visual text.
-- Emoji artwork renders slightly differently per platform (by design — zero image downloads keeps the app tiny and offline-friendly).
+- Chess uses simplified junior rules: no castling and no en passant (pawns always promote to a queen). Check, checkmate and stalemate are fully implemented.
+- Read-aloud depends on the device's built-in speech voices; the app is fully usable without them.
+- Emoji artwork renders slightly differently per platform (by design — it keeps the app tiny and fully offline).

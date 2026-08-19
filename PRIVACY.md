@@ -7,9 +7,8 @@
 Lamora stores the following **only in your browser's local storage on your device**:
 
 - Child profiles: first name or nickname, age, avatar, favourite theme
-- Learning progress: activities completed, stars, streaks, stickers, chess lessons
+- Learning progress: activities completed, stars and earned play sessions
 - Screen-time counts per day
-- Saved drawings and colouring pages
 - App settings and the parent PIN
 
 None of this ever leaves the device. Lamora has no server, no accounts, no cloud sync and makes **no network requests** after the app's own files are downloaded (and once installed, it runs offline).
@@ -31,19 +30,20 @@ None of this ever leaves the device. Lamora has no server, no accounts, no cloud
 - ❌ No marketing notifications
 - ❌ No selling, sharing or transmitting of data — there is no data pipeline at all
 
-## Photos ("What Can I Be?" cards)
+## Photos (Dream Cards)
 
-If a parent chooses a photo for a profession card:
+If a parent adds a photo to a Dream Card — by device **camera** or by **choosing a file**:
 
-- The photo is read locally with the browser's FileReader and drawn on a local canvas.
+- The photo is read locally with the browser's FileReader and drawn onto a local canvas.
 - It is **never uploaded** — the app makes no network requests with it.
 - It is **never analysed** — no face recognition, no identification, no inference of any kind. It is used purely as a picture placed inside a card template.
-- It is held only in memory while the card editor is open and is discarded when you leave the page, unless you explicitly export the finished card as a file.
-- A *Remove photo* button deletes it immediately.
+- It is held only in memory while the card editor is open and is discarded when you leave the page, unless you explicitly export the finished card as a PNG or PDF.
+- A *Remove* button deletes it immediately.
+- Exported cards carry **no app branding or watermark** — they are timeless family keepsakes.
 
 ## Speech and sound
 
-Read-aloud uses the speech voices built into your device's operating system (Web Speech API) and sound effects are synthesised on the device (Web Audio API). No audio is recorded, and no audio data is sent anywhere.
+Read-aloud uses the speech voices built into your device's operating system (Web Speech API); sound effects and the optional background music are synthesised on the device (Web Audio API). No audio files are downloaded, no audio is recorded, and no audio data is sent anywhere. The microphone is never accessed.
 
 ## Your controls
 
@@ -51,8 +51,7 @@ In the Parent Zone you can, at any time:
 
 - Export a plain-text progress summary (saved as a local file you control)
 - Delete any profile and its data
-- Delete saved drawings
-- **Delete all data** — one action wipes every profile, drawing, photo, setting and cache from the device
+- **Delete all data** — one action wipes every profile, setting and cache from the device
 
 Uninstalling the app or clearing the browser's site data also removes everything.
 

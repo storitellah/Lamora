@@ -1,71 +1,20 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Lamora — a safe, playful learning and memory app for children aged 5 to 10. Works offline. No ads, no tracking.">
-  <meta name="theme-color" content="#6c5ce7">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Lamora">
-  <title>Lamora — Learn, Play &amp; Grow</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="icon" href="assets/icon-192.png" type="image/png" sizes="192x192">
-  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <noscript><p class="noscript-msg">Lamora needs JavaScript to run. Please enable JavaScript and reload.</p></noscript>
-
-  <!-- Skip link for keyboard users -->
-  <a class="skip-link" href="#screen-root">Skip to content</a>
-
-  <!-- Top bar (hidden on profile-select) -->
-  <header id="topbar" class="topbar hidden">
-    <button id="btn-home" class="icon-btn" aria-label="Go to home screen">🏠</button>
-    <div class="topbar-center">
-      <span id="topbar-avatar" class="topbar-avatar" aria-hidden="true"></span>
-      <span id="topbar-name" class="topbar-name"></span>
-    </div>
-    <div class="topbar-right">
-      <span id="star-chip" class="chip" role="status" aria-label="Stars earned">⭐ <span id="star-count">0</span></span>
-      <span id="time-chip" class="chip time-chip hidden" role="timer" aria-label="Time left today"></span>
-      <button id="btn-mute" class="icon-btn" aria-label="Mute or unmute sounds" aria-pressed="false">🔊</button>
-      <button id="btn-parent" class="icon-btn" aria-label="Parent zone. Press and hold for three seconds.">🔒</button>
-    </div>
-  </header>
-
-  <!-- All screens are rendered inside this root -->
-  <main id="screen-root" class="screen-root" tabindex="-1"></main>
-
-  <!-- Gentle feedback toast -->
-  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
-
-  <!-- Update available banner -->
-  <div id="update-banner" class="update-banner hidden" role="status">
-    <span>✨ A new version of Lamora is ready!</span>
-    <button id="btn-update" class="btn btn-small">Update</button>
-  </div>
-
-  <!-- Confetti / celebration layer -->
-  <canvas id="fx-canvas" class="fx-canvas" aria-hidden="true"></canvas>
-
-  <!-- Modules: core first, then features -->
-  <script src="audio/audio.js"></script>
-  <script src="lessons/numeracy.js"></script>
-  <script src="lessons/literacy.js"></script>
-  <script src="lessons/nature.js"></script>
-  <script src="lessons/world.js"></script>
-  <script src="games/brain.js"></script>
-  <script src="games/memory.js"></script>
-  <script src="games/chess.js"></script>
-  <script src="games/drawing.js"></script>
-  <script src="colouring/colouring.js"></script>
-  <script src="stickers/stickers.js"></script>
-  <script src="stories/stories.js"></script>
-  <script src="professions/professions.js"></script>
-  <script src="script.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+    <meta name="description" content="Lamora — a safe, playful, offline-first learning app for children aged 5 to 10. No ads, no tracking, no accounts." />
+    <meta name="theme-color" content="#5b5bd6" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Lamora" />
+    <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <title>Lamora — Learn, Play &amp; Grow</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

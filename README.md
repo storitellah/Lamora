@@ -1,85 +1,91 @@
-# 🦉 Lamora — Learn, Play & Grow
+<div align="center">
 
-**Lamora** is a secure, playful, installable learning and memory app for children aged **5 to 10**. It helps children practise numeracy, literacy, memory, logic, creativity, geography, nature knowledge and chess — and rewards learning with short, parent-controlled play sessions and creative activities.
+<img src="public/icons/icon-192.png" width="96" alt="Lamora icon" />
 
-Built with plain **HTML, CSS and JavaScript** — no frameworks, no build step, no server. It installs as a **Progressive Web App** and works **fully offline**.
+# Lamora
 
-## ✨ What's inside
+**A calm, joyful learning world for children aged 5–10.**
 
-| Section | What children do |
+No ads · No accounts · No tracking · Works completely offline
+
+</div>
+
+---
+
+## For parents & educators, in 30 seconds
+
+Lamora is a learning app your child can use **on their own** — and that you can trust completely:
+
+- 🧒 **Made for little hands.** Big buttons, spoken instructions, gentle feedback. A five-year-old can navigate it without help.
+- 🔒 **Truly private.** Everything — profiles, stars, progress, photos — stays on your device. There is no server, no account, no analytics, nothing to leak. Ever.
+- ✈️ **Works anywhere.** Install it once and it runs fully offline: perfect for flights, car rides and waiting rooms.
+- ⏳ **You set the limits.** Daily screen-time caps, short reward-game sessions and a PIN-protected parent dashboard.
+- 💛 **Kind by design.** Wrong answers get a hint and another try — never a buzzer, never shame. Learning earns play, transparently, with no manipulative tricks and nothing to buy.
+
+> *Made for Luna, Lara, Arica and all their friends.*
+
+## What children do in Lamora
+
+| Pathway | What's inside |
 | --- | --- |
-| 📚 Learn | Numeracy (counting, adding, patterns, time, money, word problems…) and Literacy (letters, sounds, rhymes, sight words, spelling, little stories…) |
-| 🎮 Play | Brain-booster reward games: Odd One Out, Simon, mazes, quick counting, shadow match, hidden objects, sorting |
-| 🧠 Memory | Memory Gym: matching pairs, picture recall, sequence recall, colour memory, word memory, location memory |
-| 🎨 Draw | Drawing studio with pencil/crayon/marker/brush, colours, shapes, stickers, undo/redo, save & PNG export |
-| 🖍️ Colour | Tap-to-fill colouring pages (fish, rocket, dragon, castle, flower, dino, mermaid, race car) |
-| 🌍 Explore | Nature & planet (habitats, recycling, weather, space, planet care, food chains, animal sounds) and World (flags, capitals, continents, landmarks) |
-| ♟️ Chess | Board & piece lessons, capture practice, check/checkmate basics, mate-in-one puzzles, play vs computer or a friend, hints |
-| 📖 Stories | Short interactive read-aloud stories with choices and a memory quiz |
-| 🧑‍🚀 What Can I Be? | Profession dream cards with an optional local-only photo, exported as PNG |
-| 🏆 Rewards | Stars/gems/shells/dragon eggs (parent's choice), sticker unlocks, progress visuals |
-| ✨ Sticker Book | Earn stickers, build drag-and-drop sticker scenes, export as PNG |
+| 📖 **Reading & Writing** | Phonics with letter sounds, **letter tracing** on a drawing canvas, sight words by level, read-along stories with quizzes |
+| 🔢 **Maths Journey** | Progressive tiers (1–10 → 10–20 → 20–30 → 30–40 → 40–100 → 100+) across **+ − × ÷**, with tappable visual counters so young children can *see* every sum |
+| 🌍 **Did You Know?** | Swipeable curiosity cards: Planets & Space, World Wonders, Animals & Wildlife, Global Cities, Inspiring People — each with a mini-quiz |
+| 🎮 **Play** | Reward games unlocked by learning: Word Match, Word Search (drag to circle!), Letter Scramble, sliding Picture Puzzles, Logic Tiles, Matching Pairs |
+| ♟️ **Chess** | Checkmate-in-one puzzles, a friendly beginner computer opponent, two-player mode — every legal move lights up, and a Hint button helps |
+| ✨ **Dream Cards** | Beautiful, collectible "when I grow up" keepsake cards — add a photo (kept on-device), export as high-res PNG or print to PDF. **No branding on the card, ever** — it's your family's keepsake |
+| 🏆 **My Rewards** | A simple, honest progress view: stars, saved play sessions, and a visible ladder to the next unlock |
 
-## 🛡️ Safety & privacy in one paragraph
+**How the learning loop works:** finishing any lesson earns ⭐ stars → every few stars (you choose how many) become one 🎮 play session → the session ends automatically after the time you set. Learning always comes first, and the deal is visible to the child.
 
-No ads. No purchases. No chat. No accounts. No tracking. No analytics. No external requests after installation. All data — profiles, progress, drawings, photos — stays in the browser's local storage **on the device**. See [PRIVACY.md](PRIVACY.md) and [CHILD-SAFETY.md](CHILD-SAFETY.md).
+## The Parent Dashboard
 
-## 🚀 Running Lamora
+Hold the 🔒 button for 3 seconds and enter your PIN (you create it on first use) to:
 
-Lamora is static files. Serve the folder over HTTP(S) and open it:
+- Toggle **sounds, speech and background music**, set volume
+- Set the **daily screen-time limit** (gentle 5-minute and 1-minute warnings, then a calm break screen suggesting an off-screen activity)
+- Set **reward-game session length** and how many stars a session costs
+- Manage up to six **child profiles** (name, age 5–10, avatar) — difficulty adapts to age automatically
+- Turn on **reduced motion** (also follows your device's setting)
+- **Export a progress summary**, reset rewards, change the PIN, or **delete all data** in one tap
+
+## Getting started
+
+Lamora is a Progressive Web App — one page, no installation store needed:
 
 ```bash
-# any static server works, e.g.:
-python3 -m http.server 8080
-# then visit http://localhost:8080
+npm install
+npm run dev       # local development
+npm run build     # production build in dist/
+npm run preview   # serve the production build
 ```
 
-For full PWA installation (Add to Home Screen, offline mode) serve over **HTTPS** or `localhost` — service workers require a secure context.
+Deploy the `dist/` folder to any static host (Cloudflare Pages, Netlify, GitHub Pages…). Then on your device:
 
-### Installing on devices
+- **iPad / iPhone (Safari):** Share → *Add to Home Screen*
+- **Android (Chrome):** menu → *Install app*
+- **Windows / Mac (Chrome or Edge):** the install icon in the address bar
 
-- **iPad / iPhone (Safari)**: Share → *Add to Home Screen*.
-- **Android (Chrome)**: menu → *Install app* (or the install banner).
-- **Windows / Mac / Chromebook (Chrome or Edge)**: install icon in the address bar.
+After the first visit, Lamora works entirely offline — updates apply quietly when you're back online.
 
-After the first visit, Lamora works completely offline.
+## Privacy, in plain words
 
-## 👨‍👩‍👧 For parents
+Lamora makes **zero network requests** after loading: no fonts from CDNs, no analytics, no APIs. Sounds are synthesised on the device, speech uses your device's built-in voices, and photos for Dream Cards are drawn straight onto a local canvas — never uploaded, never analysed, gone when you leave unless *you* export the card. Full details: [PRIVACY.md](PRIVACY.md) · [CHILD-SAFETY.md](CHILD-SAFETY.md) · [PARENT-GUIDE.md](PARENT-GUIDE.md).
 
-Press and **hold the 🔒 button for 3 seconds** (or use it from the profile screen) to reach the Parent Zone, protected by a 4-digit PIN that you create on first use. There you can set daily screen-time limits, reward-game session lengths, enable/disable activity categories, manage profiles and ages (5–10), review progress, export a progress summary, reset rewards, change accessibility settings and delete all data. See [PARENT-GUIDE.md](PARENT-GUIDE.md).
+## Under the hood
 
-## 🗂️ Repository structure
+React 18 + TypeScript, Tailwind CSS 4, Framer Motion (fluid, spring-based micro-interactions), Lucide icons, Vite, and `vite-plugin-pwa` for offline precaching. System font stack (SF Pro on Apple devices) — no font downloads. State lives in `localStorage` behind a single typed reducer. ~120 KB gzipped, all-in.
 
 ```
-index.html            App shell
-styles.css            Design system (themes, accessibility modes)
-script.js             Core: profiles, router, quiz engine, rewards, timer, parent zone, PWA
-audio/audio.js        Synthesised sounds (Web Audio) + speech (Web Speech), all offline
-lessons/              numeracy.js, literacy.js, nature.js, world.js
-games/                brain.js (reward games), memory.js (Memory Gym), chess.js, drawing.js
-colouring/            colouring.js (SVG tap-to-fill pages)
-stickers/             stickers.js (sticker book & scenes)
-stories/              stories.js (interactive stories)
-professions/          professions.js ("What Can I Be?" card studio)
-assets/               App icons + SVG favicon
-manifest.json         PWA manifest
-service-worker.js     Offline-first cache
-PARENT-GUIDE.md       Guide for grown-ups
-PRIVACY.md            Privacy notice
-CHILD-SAFETY.md       Child-safety commitments
-TESTING.md            Testing checklist & report
-CHANGELOG.md          Version history
-PROMPT.md             The original product brief
+src/
+  lib/        store (state + persistence) · audio engine · chess engine
+  components/ UI kit (glass surfaces, buttons, quiz engine, confetti)
+  screens/    Reading · Math · Trivia · Games · Chess · DreamCards · Parent
+  data/       all curriculum content, in one reviewable file
 ```
 
-## 🧰 Technology
+Accessibility: every control is ≥44×44 pt with a visible focus ring, screen-reader labels throughout, full keyboard support, reduced-motion support, and read-aloud on demand.
 
-HTML + CSS + vanilla JavaScript, Canvas API (drawing, card export, confetti), Web Audio API (gentle synth sounds), Web Speech API (offline read-aloud via OS voices), SVG (colouring pages), localStorage (all data), PWA manifest + service worker (offline). No dependencies, no build step, no network calls.
+## License
 
-## ♿ Accessibility
-
-Large-text mode, high-contrast mode, reduced motion (also honours the OS `prefers-reduced-motion`), screen-reader labels on interactive elements, keyboard support (including the maze and colouring regions), visible focus states, spoken instructions and tap-to-hear throughout.
-
-## 📄 License
-
-Released under the MIT License.
+MIT — use it, remix it, share it with a classroom.

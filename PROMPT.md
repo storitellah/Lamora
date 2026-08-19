@@ -41,3 +41,39 @@ Build a secure, playful, installable learning and memory app called **Lamora** f
 - **Performance**: lightweight, fast startup, low memory, smooth touch, no long loading screens, lazy-load large assets, avoid heavy frameworks.
 - **Technology**: HTML, CSS, JavaScript, Canvas API, Web Audio API, IndexedDB or localStorage, PWA manifest, service worker.
 - **Deliverables**: complete GitHub-ready repository with demo content, favicon and app icons, README, parent guide, privacy notice, child-safety document and testing report.
+
+---
+
+# v2.0 revamp brief (2026-08-19)
+
+The app was later rebuilt to Apple-grade polish on a modern stack, to this brief:
+
+## 1. Visual design & branding
+- Clean, minimalist, modern Apple HIG: SF Pro system typography, subtle glassmorphism/materials, fluid micro-interactions, springy bounces and haptics.
+- Modern, minimal, child-friendly vector logo/favicon (clean geometric shapes).
+- Flawless touch optimisation across iOS Safari, Android Chrome, tablets and desktop. ≥44 pt targets, smooth drag-and-drop, no accidental gesture conflicts.
+
+## 2. Learning & educational features
+- **Reading & Writing:** interactive phonics, a letter-tracing/writing canvas, sight words, read-along stories.
+- **Progressive Mathematics:** multi-tier levels (1–10, 10–20, 20–30, 30–40, up to 100+); +, −, ×, ÷; interactive visual counters (manipulatives) for younger children.
+- **"Did You Know?" trivia:** curated flashcards covering Planets & Space, World Wonders & Geography, Animals & Wildlife, Global Cities, and Inspiring Historical Figures.
+
+## 3. Reward games & interactive play
+- Completed lessons unlock games: word match, word search (drag/circle to select), anagram/spelling puzzles; tile/drag puzzles for early learners and logic puzzles for older kids; a kid-friendly mini-chess engine and chess puzzle challenges with visual assist moves.
+
+## 4. Unbranded "Dream Cards" (timeless keepsakes)
+- Redesign to ultra-premium, modern, collectible cards; remove all Lamora watermarks/branding.
+- Photo via device camera or upload, featured on the card.
+- Easy high-resolution PNG/PDF export for printing or saving.
+
+## 5. Parent dashboard & settings
+- Lively, high-quality, child-friendly background music and audio effects with an easy mute/toggle inside the PIN-protected section.
+- Footer: "Made for Luna, Lara, Arica and all their friends."
+
+## 6. README overhaul
+- Clean, attractive, welcoming for parents and educators; highlight ease of use, safety, offline capability, learning pathways and privacy.
+
+## Output requirements
+- Complete, modular React/TypeScript + Tailwind CSS + Lucide + Framer Motion code and documentation.
+- Full accessibility, semantic HTML, and zero external runtime dependencies that could break offline usage where possible.
+- Inline comments explaining complex logic and styling decisions.

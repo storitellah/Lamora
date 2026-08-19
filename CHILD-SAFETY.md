@@ -19,13 +19,13 @@ Lamora is built for children aged 5–10. These are the safety rules the app is 
 - **No social media** integration or share buttons in child mode.
 - **No public profiles** — profiles are local nicknames on one device.
 - **No leaderboards** and no ranking of siblings against each other.
-- **No user-generated content leaves the device** — drawings and sticker scenes save locally; export is a local file download a parent controls.
+- **No user-generated content leaves the device** — Dream Cards and progress stay local; export is a local file download a parent controls.
 
 ## Data safety
 
 - No accounts, no login, no email — children never type personal information other than an optional nickname.
 - All data stays on the device (see [PRIVACY.md](PRIVACY.md)).
-- Photos for profession cards are processed locally, never uploaded, never analysed, deletable instantly.
+- Photos for Dream Cards are processed locally, never uploaded, never analysed, deletable instantly. The camera is only ever opened by a deliberate parent/child action (the *Take photo* button) — never in the background.
 - No analytics or tracking of children's behaviour.
 - No notifications, so the app never calls children back to the screen.
 
@@ -47,7 +47,7 @@ Lamora is built for children aged 5–10. These are the safety rules the app is 
 
 - Large text, high contrast, reduced motion, keyboard support and screen-reader labels.
 - Spoken instructions and tap-to-hear for pre-readers.
-- Diverse, neutral characters and professions; any child can be anything in the "What Can I Be?" studio.
+- Diverse, neutral characters and professions; any child can be anything in the Dream Cards studio.
 
 ## Reporting a concern
 

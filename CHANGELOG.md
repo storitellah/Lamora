@@ -2,6 +2,25 @@
 
 All notable changes to Lamora are documented here.
 
+## [2.0.0] — 2026-08-19
+
+A full ground-up rebuild with an Apple-grade, minimalist design and a modern component stack.
+
+### Changed
+- **New tech foundation:** React 18 + TypeScript, Tailwind CSS 4, Framer Motion (spring-based micro-interactions), Lucide icons, Vite, `vite-plugin-pwa`. Still zero runtime network requests and fully offline.
+- **New visual identity:** clean glassmorphism surfaces, SF Pro system typography, a fresh minimal "rising sun over pages" logo/favicon, fluid transitions and haptic taps.
+- **Demo profiles** are now Luna (6), Lara (8) and Arica (5); footer reads *"Made for Luna, Lara, Arica and all their friends."*
+
+### Added
+- **Reading & Writing:** phonics, **letter-tracing writing canvas** (coverage-based, forgiving), levelled sight words, read-along stories with quizzes.
+- **Progressive Maths:** number tiers 1–10 → 10–20 → 20–30 → 30–40 → 40–100 → 100+ across **+ − × ÷**, with tappable **visual counters (manipulatives)**; higher tiers unlock by age or practice.
+- **"Did You Know?"** swipeable curiosity flashcards: Planets & Space, World Wonders, Animals & Wildlife, Global Cities, Inspiring People — each with a mini-quiz.
+- **Reward games:** Word Match, **Word Search (drag-to-circle)**, Letter Scramble (anagram), sliding Picture Puzzle, Logic Tiles, Matching Pairs — gated by earned play tokens with a live session timer.
+- **Chess:** verified mate-in-one puzzles, beginner computer opponent, two-player mode, move highlighting and a Hint button.
+- **Dream Cards:** redesigned as premium, **completely unbranded** keepsake cards; **camera capture or photo upload** (processed on-device only), high-resolution **PNG and PDF/print** export.
+- **Parent Dashboard:** now includes a **background-music toggle** (generative, on-device) alongside sound/volume, screen-time, reward tuning, profiles, accessibility and data controls.
+- **Accessibility:** reduced-motion (setting + OS), ARIA labels, keyboard support, ≥44 pt targets, read-aloud throughout.
+
 ## [1.0.0] — 2026-07-13
 
 ### Added
