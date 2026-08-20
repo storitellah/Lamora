@@ -2,6 +2,14 @@
 
 All notable changes to Lamora are documented here.
 
+## [Unreleased]
+
+### Changed
+- **More human read-aloud voice.** The speech engine now picks the most natural voice installed on the device — preferring Apple Siri/enhanced, Microsoft Natural/neural and Google voices over robotic fallbacks — and speaks with warmer, unhurried prosody.
+
+### Added
+- **Female / male reading-voice choice** in the Parent Dashboard (Sound & music), with a **Test** button. Defaults to a female voice. Gender is matched against the device's installed voices; still fully on-device and offline.
+
 ## [2.0.0] — 2026-08-19
 
 A full ground-up rebuild with an Apple-grade, minimalist design and a modern component stack.

@@ -25,6 +25,7 @@ export interface Settings {
   pin: string | null;
   muted: boolean;
   volume: number;
+  voiceGender: "female" | "male"; // read-aloud voice; female by default
   musicOn: boolean;
   starsPerToken: number;     // learning needed per unlocked game session
   playMinutes: number;       // length of one reward game session
@@ -74,6 +75,7 @@ function defaults(): AppState {
       pin: null,
       muted: false,
       volume: 0.7,
+      voiceGender: "female",
       musicOn: false,
       starsPerToken: 5,
       playMinutes: 5,
@@ -196,11 +198,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   // Push audio + motion prefs to the imperative engines / DOM.
   useEffect(() => {
-    setAudioPrefs(state.settings.muted, state.settings.volume);
+    setAudioPrefs(state.settings.muted, state.settings.volume, state.settings.voiceGender);
     if (state.settings.musicOn && !state.settings.muted) startMusic();
     else stopMusic();
     document.documentElement.classList.toggle("reduce-motion", state.settings.reducedMotion);
-  }, [state.settings.muted, state.settings.volume, state.settings.musicOn, state.settings.reducedMotion]);
+  }, [state.settings.muted, state.settings.volume, state.settings.voiceGender, state.settings.musicOn, state.settings.reducedMotion]);
 
   const profile = state.profiles.find(p => p.id === state.activeId) ?? null;
   const age = profile?.age ?? 6;

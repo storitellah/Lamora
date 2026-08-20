@@ -9,7 +9,7 @@ import {
   Download, KeyRound, Trash2, Delete, Check, Plus
 } from "lucide-react";
 import { Shell, Btn, toast } from "../components/UI";
-import { sfx, haptic } from "../lib/audio";
+import { sfx, haptic, previewVoice } from "../lib/audio";
 import { useStore, todayKey, Profile } from "../lib/store";
 
 /* ---------------- PIN gate ---------------- */
@@ -147,6 +147,27 @@ export function ParentDashboard({ onExit }: { onExit: () => void }) {
             <Select value={String(s.volume)} onChange={v => set({ volume: parseFloat(v) })} label="Volume"
               options={[["0.3", "Quiet"], ["0.7", "Medium"], ["1", "Loud"]]} />
           </Row>
+          <Row label="Reading voice">
+            <div className="flex items-center gap-2">
+              <Select
+                value={s.voiceGender}
+                onChange={v => {
+                  set({ voiceGender: v as "female" | "male" });
+                  // Let it apply, then play a sample in the new voice.
+                  setTimeout(previewVoice, 60);
+                }}
+                label="Reading voice"
+                options={[["female", "👩 Female"], ["male", "👨 Male"]]}
+              />
+              <Btn kind="soft" className="!min-h-11 !px-4" ariaLabel="Hear the reading voice" onClick={previewVoice}>
+                ▶︎ Test
+              </Btn>
+            </div>
+          </Row>
+          <p className="pt-1 text-sm text-ink-2">
+            Voices come from this device. The most natural one for your choice is used automatically;
+            some devices may only offer one.
+          </p>
         </Section>
 
         <Section icon={<Timer className="text-coral" aria-hidden />} title="Screen time">

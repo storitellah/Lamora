@@ -16,9 +16,10 @@ let musicGain: GainNode | null = null;
 let muted = false;
 let volume = 0.7;
 
-export function setAudioPrefs(nextMuted: boolean, nextVolume: number) {
+export function setAudioPrefs(nextMuted: boolean, nextVolume: number, nextVoiceGender?: "female" | "male") {
   muted = nextMuted;
   volume = nextVolume;
+  if (nextVoiceGender) setVoiceGender(nextVoiceGender);
   if (musicGain) musicGain.gain.value = muted ? 0 : volume * 0.16;
   if (muted) stopSpeaking();
 }
@@ -113,18 +114,125 @@ export function stopMusic() {
   musicGain = null;
 }
 
-/* ---------------- Speech (read-aloud) ---------------- */
+/* ---------------- Speech (read-aloud) ----------------
+ *
+ * The Web Speech API exposes whatever voices the device's OS ships, which
+ * work offline. Quality varies hugely — from robotic eSpeak to Apple's
+ * "Siri"/enhanced and Microsoft's "Natural"/neural voices that sound close
+ * to a real person. We can't bundle our own neural TTS (that would break
+ * offline-first and privacy), so "more human" here means: pick the most
+ * natural installed voice, honour the parent's female/male choice, and use
+ * warm, unhurried prosody instead of the default flat robot cadence.
+ */
 
-export function speak(text: string, rate = 0.92) {
-  if (muted || !("speechSynthesis" in window) || !text) return;
+export type VoiceGender = "female" | "male";
+let voiceGender: VoiceGender = "female"; // default requested by parents
+
+// Best voice we've resolved for each gender (recomputed when voices load).
+const chosen: Record<VoiceGender, SpeechSynthesisVoice | null> = { female: null, male: null };
+let voicesResolved = false;
+
+// Name tokens that reveal a voice's gender across Apple, Google, Microsoft,
+// Android and eSpeak. Checked case-insensitively; female is tested first so
+// "female" never trips the "male" substring.
+const FEMALE_TOKENS = [
+  "female", "woman", "samantha", "victoria", "vicki", "karen", "moira", "tessa",
+  "fiona", "serena", "allison", "ava", "susan", "zira", "aria", "jenny", "michelle",
+  "sonia", "libby", "catherine", "kate", "zoe", "amelie", "anna", "nicky", "flo",
+  "google us english", "google uk english female", "eddie (female)"
+];
+const MALE_TOKENS = [
+  "male", "\\bman\\b", "daniel", "aaron", "arthur", "fred", "alex", "tom", "oliver",
+  "gordon", "david", "mark", "guy", "ryan", "george", "james", "reed", "rishi",
+  "eddy", "rocko", "google uk english male", "grandpa"
+];
+
+function classifyGender(name: string): VoiceGender | "unknown" {
+  const n = name.toLowerCase();
+  if (/\bfemale\b/.test(n) || FEMALE_TOKENS.some(t => n.includes(t))) return "female";
+  if (/\bmale\b/.test(n) || MALE_TOKENS.some(t => t.startsWith("\\") ? new RegExp(t).test(n) : n.includes(t))) return "male";
+  return "unknown";
+}
+
+// Higher = more natural-sounding. These keywords mark the good voices.
+function qualityScore(v: SpeechSynthesisVoice): number {
+  const n = v.name.toLowerCase();
+  let s = 0;
+  if (/natural|neural/.test(n)) s += 8;
+  if (/enhanced|premium/.test(n)) s += 6;
+  if (/siri/.test(n)) s += 5;
+  if (/google/.test(n)) s += 4;
+  if (/microsoft/.test(n)) s += 2;
+  if (v.lang?.toLowerCase().startsWith("en")) s += 3;
+  if (v.lang === "en-US" || v.lang === "en-GB") s += 1;
+  if (v.localService) s += 1; // prefer on-device so it still works offline
+  return s;
+}
+
+/** Resolve the best available voice for each gender from the OS list. */
+function resolveVoices() {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices.length) return; // not populated yet — 'voiceschanged' will retry
+  const enFirst = voices.filter(v => v.lang?.toLowerCase().startsWith("en"));
+  const pool = enFirst.length ? enFirst : voices;
+
+  (["female", "male"] as VoiceGender[]).forEach(g => {
+    const matches = pool.filter(v => classifyGender(v.name) === g);
+    const ranked = (matches.length ? matches : pool)
+      .slice()
+      .sort((a, b) => qualityScore(b) - qualityScore(a));
+    chosen[g] = ranked[0] ?? null;
+  });
+  voicesResolved = true;
+}
+
+if (typeof window !== "undefined" && "speechSynthesis" in window) {
+  resolveVoices();
+  // Voice lists load asynchronously on most browsers.
+  window.speechSynthesis.addEventListener?.("voiceschanged", resolveVoices);
+}
+
+/** Warmer, less robotic prosody — tuned slightly per gender. */
+function prosody(g: VoiceGender) {
+  return g === "male"
+    ? { rate: 0.95, pitch: 0.98 }   // calm, grounded
+    : { rate: 0.96, pitch: 1.06 };  // bright and friendly
+}
+
+export function speak(text: string, rate?: number) {
+  if (muted || typeof window === "undefined" || !("speechSynthesis" in window) || !text) return;
   try {
+    if (!voicesResolved) resolveVoices();
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.rate = rate;
-    u.pitch = 1.08;
+    const p = prosody(voiceGender);
+    u.rate = rate ?? p.rate;
+    u.pitch = p.pitch;
     u.volume = volume;
+    const v = chosen[voiceGender] ?? chosen[voiceGender === "female" ? "male" : "female"];
+    if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = "en"; }
     window.speechSynthesis.speak(u);
   } catch { /* speech is a progressive enhancement */ }
+}
+
+export function setVoiceGender(g: VoiceGender) {
+  voiceGender = g;
+  if (!voicesResolved) resolveVoices();
+}
+
+/** Speak a short sample so a parent can hear the selected voice. */
+export function previewVoice() {
+  speak("Hi! I'm your Lamora reading buddy. Let's learn and play together!");
+}
+
+/** Which genders actually have a distinct installed voice (for the UI). */
+export function availableVoiceGenders(): Record<VoiceGender, boolean> {
+  if (!voicesResolved) resolveVoices();
+  return {
+    female: !!chosen.female && classifyGender(chosen.female.name) === "female",
+    male: !!chosen.male && classifyGender(chosen.male.name) === "male"
+  };
 }
 
 export function stopSpeaking() {

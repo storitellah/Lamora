@@ -22,6 +22,7 @@ Welcome! Lamora is designed so a five-year-old can use it without constant help,
 - **All sounds & speech** master toggle.
 - **Background music** — a gentle, generative on-device melody (never a looping track, costs no data). Off by default.
 - **Volume** — Quiet / Medium / Loud. Applies to effects, music and read-aloud.
+- **Reading voice** — choose a **female** (default) or **male** narrator, with a **Test** button to hear a sample. Lamora automatically selects the most natural-sounding voice installed on your device for that choice and reads with warm, unhurried prosody. Voices come from your device's operating system (so they work offline); adding your platform's "enhanced"/"natural" voice packs — Settings → Accessibility → Spoken Content on iOS/macOS, or the Google/Microsoft high-quality voices on Android/Windows — makes the narration noticeably more lifelike. Some devices only ship one voice, in which case that one is used for both choices.
 
 ### ⏳ Screen time
 - **Daily limit:** 15, 20, 30, 45, 60, 90 or 120 minutes. Children get a **5-minute** and **1-minute** warning, then a **calm break screen** suggesting an off-screen activity ("stretch like a cat", "drink some water"…).
