@@ -1,71 +1,67 @@
-# 👨‍👩‍👧 Lamora Parent Guide
+# 👨‍👩‍👧 Lamora — Parent & Caregiver Guide
 
-Welcome! This guide explains how Lamora works, how to set it up for your family, and how the controls keep screen time healthy and learning first.
+Welcome! Lamora is designed so a five-year-old can use it without constant help, while **you** stay in control of time, content and data. This guide covers everything in the Parent Dashboard.
 
-## Quick start
+## Getting started
 
-1. Open Lamora and tap your child's profile (two demo profiles, **Luna** and **Lara**, are included — you can rename or delete them).
-2. Your child taps big, friendly tiles: **Learn, Play, Memory, Draw, Colour, Explore, Chess, What Can I Be?, My Rewards, Sticker Book**.
-3. Finishing a learning activity earns **stars and one play token 🎟️**. A token unlocks one short reward game (you choose how long — 3 to 10 minutes).
+1. Open Lamora (or install it — see the [README](README.md)). Three demo profiles — *Luna (6)*, *Lara (8)* and *Arica (5)* — are ready so children can start straight away.
+2. Tap a profile to begin. Everything adapts to that profile's age (5–10 maps to three difficulty levels).
+3. To make it yours, open the **Parent Dashboard** and rename profiles, set ages and pick avatars.
 
-No accounts, no sign-up, no internet needed after the first visit.
+## Opening the Parent Dashboard
 
-## Entering the Parent Zone
+- **Press and hold the 🔒 button in the top bar for 3 seconds** (the child-safe gesture), or use the *Parent zone* button on the profile screen.
+- The first time, you'll **create a 4-digit PIN** (entered twice to confirm). After that, the PIN is required each time.
+- The screen-time clock pauses while you're in the dashboard.
 
-On the profile screen or the home screen, **tap** the *Parents* button. The first time, Lamora asks a grown-up multiplication question (children aged 5–10 can't easily pass it) and then lets you set a **4-digit PIN**. After that, the PIN protects the Parent Zone and the "add more time" button.
-
-Forgot the PIN? Tap *Forgot PIN?* and answer a new grown-up question to set a fresh one.
+> Forgot the PIN? Use *Delete all data* (which resets the app) or clear the browser's site data. Both also remove progress.
 
 ## What you can control
 
+### 🎵 Sound & music
+- **All sounds & speech** master toggle.
+- **Background music** — a gentle, generative on-device melody (never a looping track, costs no data). Off by default.
+- **Volume** — Quiet / Medium / Loud. Applies to effects, music and read-aloud.
+
 ### ⏳ Screen time
-- **Daily limit**: 10, 15, 20, 30, 45, 60, 90 minutes, or no limit for today.
-- Children get a friendly **5-minute** and **1-minute** warning, then a **calm break screen** with an off-screen idea (stretch like a cat, find something blue, drink water, take five slow breaths…).
-- Extending time always requires your PIN.
-- **Session reminder**: after a chosen stretch of continuous play, Lamora gently suggests a wiggle break.
-- **Reward game length**: how long one play token lasts.
+- **Daily limit:** 15, 20, 30, 45, 60, 90 or 120 minutes. Children get a **5-minute** and **1-minute** warning, then a **calm break screen** suggesting an off-screen activity ("stretch like a cat", "drink some water"…).
+- **Reward-game session length:** 3–10 minutes. A floating timer shows time left during play.
+- **Reset today** clears the current day's counter (for example, if a sibling used some time).
+- Extending time requires the parent PIN.
 
-### 📚 Learning
-- **Difficulty**: match the child's age automatically, or pin it to Easy (5–6), Medium (7–8) or Harder (9–10).
-- **Reward style**: stars ⭐, gems 💎, shells 🐚, dragon eggs 🥚, rainbow points 🌈 or planet badges 🪐.
-- **Free play**: turn off the token system entirely if you prefer.
-- **Sections**: hide any section (e.g. hide Play on school nights, or hide Chess for younger children).
+### 🏆 Rewards (the learning-to-play loop)
+1. Your child completes a lesson and earns ⭐ stars.
+2. Every *N* stars (you set 3–10) becomes **one** play session.
+3. The session ends automatically after the time you set.
 
-### 🔊 Sound & accessibility
-- Sounds and background music can each be switched off. (Lamora intentionally has no synthesized speech — robot voices frighten some children; instructions are written on screen instead.)
-- **Large text**, **high contrast** and **reduced motion** modes for comfort and accessibility.
+You can adjust the stars-per-session, and reset any child's rewards and progress. There are **no purchases, loot boxes or manipulative mechanics** — the ladder to the next unlock is always visible to the child.
 
-### 👧 Profiles
-- Add as many children as you like: a nickname, an optional **first name**, age (5–10) and an avatar. You choose whether Lamora greets the child by their first name or their nickname; names never leave the device.
-- Give each child their **own unique PIN** (optional). When set, that child taps their picture and enters their PIN to open their saved games and rewards — a simple way to keep siblings' progress separate. Each PIN must be different.
-- Toggle which sections appear, including the new **Read**, **Swahili** and **Code** areas.
-- Each child has their own stars, stickers, streaks and progress. Lamora **never compares siblings** and has no leaderboards.
-- *Reset rewards* starts a child's collection fresh; *Delete* removes the profile and its data completely.
+### 🧒 Child profiles
+Up to six local profiles, each with a name/nickname, age (5–10) and avatar, and its own stars, progress and screen-time count. Progress is never compared between siblings, and there are no leaderboards.
 
-### 🔒 Data
-- **Export progress summary** downloads a simple text file you can save or print — handy for teachers.
-- **Delete all data** wipes every profile, drawing, photo and setting from the device. There is nothing to delete anywhere else, because nothing ever leaves the device.
+### ♿ Accessibility
+- **Reduced motion** (also follows your device's system setting automatically).
+- Every button is large (≥44 pt), labelled for screen readers, keyboard-operable, and most content can be read aloud on demand.
 
-## How the reward loop works (and why it's gentle)
+### 🛡️ Data & privacy
+- **Export progress** — downloads a small text summary you can keep or share with a teacher.
+- **Change PIN**.
+- **Delete all data** — removes every profile, setting and cached file from the device (double-confirmed).
 
-Learn → earn → play → return:
+## About Dream Card photos
 
-1. Your child completes a numeracy, literacy, memory, chess, nature, world or story activity.
-2. They earn stars (based on effort, minimum 1 — never zero) and **one play token**.
-3. A token opens one reward game for the time you set; when it ends, Lamora suggests learning again or taking a break.
+In **Dream Cards**, a child (with your help) can add a photo — by **camera** or by **choosing a file**. The photo is read directly into the page and drawn onto the card on the device. It is **never uploaded**, **never analysed**, and there is no face recognition of any kind. It exists only in memory while the card is open, is discarded when you leave the screen, and there's a *Remove* button. It's saved only if *you* export the finished card (PNG or PDF). The exported card carries **no app branding or watermark** — it's a timeless keepsake.
 
-There are **no purchases, no loot boxes, no timers pressuring children, and no punishments**. Wrong answers get a hint, a second try, and a friendly explanation.
+## Tips for great sessions
 
-## Photos in "What Can I Be?"
+- Sit together for the first session and let your child show *you* how it works.
+- Short daily practice beats long weekly marathons — the default 45-minute cap is a fine starting point; lower it for younger children.
+- The break-screen suggestions are lovely little rituals — join in!
+- Chess: start with the **Chess Puzzles** (mate-in-one) before **Play the Computer**; every legal move lights up to help.
 
-The profession card studio can include a photo **only when you choose one from the device**. The photo is drawn onto the card on this device, is never uploaded or analysed, and is not stored unless you export the finished card yourself. *Remove photo* deletes it instantly.
+## Troubleshooting
 
-## Tips for teachers and caregivers
-
-- Create one profile per child; the **Export progress summary** gives a per-skill activity count.
-- The **Memory Gym** difficulty picker (Easy/Medium/Hard/Just Right) is useful for differentiated practice.
-- **High contrast + large text** modes help readers with low vision; every activity works with a keyboard as well as touch.
-
-## Reporting bugs & ideas
-
-Found a bug or have a suggestion? Email **hello@storitellah.com** (there's a link in the Parent Zone under *Help & feedback*). Please don't include any personal details about your child in a report.
+- **No sound?** Check the 🔊 button in the top bar, the volume setting in the dashboard, and your device's silent switch. On iOS, the first tap in the app enables audio.
+- **No speech?** Read-aloud uses your device's built-in voices; everything works without them too.
+- **Update banner appeared?** A new version is available online — it applies quietly on the next visit.
+- **Storage full?** Use *Delete all data*, or remove a profile you no longer need.

@@ -1,63 +1,64 @@
-# 🔒 Lamora Privacy Notice
+# 🛡️ Lamora — Privacy Notice
 
-Lamora is designed so that there is almost nothing to write a privacy notice about.
+**Short version: Lamora collects nothing. Everything stays on your device.**
 
-## The short version
+## What data Lamora stores — and where
 
-**Everything stays on your device. Nothing is collected. Nothing is sent anywhere.**
+Lamora stores the following **only in your browser's local storage on your device**:
 
-## What Lamora stores (on your device only)
+- Child profiles: first name or nickname, age, avatar, favourite theme
+- Learning progress: activities completed, stars and earned play sessions
+- Screen-time counts per day
+- App settings and the parent PIN
 
-Lamora keeps the following in your browser's local storage, purely so the app works:
-
-- Child profiles you create: first name or nickname, age, avatar, favourite theme
-- Progress: stars, stickers, streaks, activities completed
-- Parent settings: time limits, enabled sections, sound and accessibility choices, and a scrambled (hashed) copy of the parent PIN and any per-child PINs
-- Saved drawings, colouring pages and sticker scenes
-
-This data never leaves the device. It is not synced, backed up, uploaded, or shared with anyone — including the developers.
+None of this ever leaves the device. Lamora has no server, no accounts, no cloud sync and makes **no network requests** after the app's own files are downloaded (and once installed, it runs offline).
 
 ## What Lamora does NOT do
 
-- ❌ No analytics or telemetry of any kind
-- ❌ No third-party trackers, SDKs, fonts or CDNs — every file ships with the app
-- ❌ No advertising and no ad identifiers
-- ❌ No accounts, logins, emails or passwords
-- ❌ No cookies for tracking (the app makes no network requests after installation)
-- ❌ No location, microphone or contact access
-- ❌ No camera access without an explicit action (choosing a photo for a dream card)
-- ❌ No face recognition, photo analysis, or behavioural profiling
-- ❌ No social features, sharing, chat or public profiles
+- ❌ No advertising, ad networks or sponsored content
+- ❌ No analytics, telemetry or crash reporting
+- ❌ No third-party trackers, pixels, fonts or CDNs
+- ❌ No cookies sent to any server
+- ❌ No accounts or logins — children never enter an email or password
+- ❌ No chat, social features or public profiles
+- ❌ No location access
+- ❌ No microphone access
+- ❌ No camera access (photo upload is a manual file choice by a parent)
+- ❌ No cloud upload of any kind
+- ❌ No facial recognition or biometric processing
+- ❌ No behavioural profiling or targeted content
 - ❌ No marketing notifications
+- ❌ No selling, sharing or transmitting of data — there is no data pipeline at all
 
-## Photos
+## Photos (Dream Cards)
 
-The "What Can I Be?" studio can place a photo on a printable dream card. The photo:
+If a parent adds a photo to a Dream Card — by device **camera** or by **choosing a file**:
 
-- is chosen explicitly by a parent or child from the device,
-- is processed **entirely on the device** with the HTML canvas,
-- is **never uploaded** (the app has no server to upload to),
-- is **never analysed, recognised or identified** in any way,
-- is **not saved** unless you export the finished card to your own files,
-- can be removed instantly with the *Remove photo* button.
+- The photo is read locally with the browser's FileReader and drawn onto a local canvas.
+- It is **never uploaded** — the app makes no network requests with it.
+- It is **never analysed** — no face recognition, no identification, no inference of any kind. It is used purely as a picture placed inside a card template.
+- It is held only in memory while the card editor is open and is discarded when you leave the page, unless you explicitly export the finished card as a PNG or PDF.
+- A *Remove* button deletes it immediately.
+- Exported cards carry **no app branding or watermark** — they are timeless family keepsakes.
+
+## Speech and sound
+
+Read-aloud uses the speech voices built into your device's operating system (Web Speech API); sound effects and the optional background music are synthesised on the device (Web Audio API). No audio files are downloaded, no audio is recorded, and no audio data is sent anywhere. The microphone is never accessed.
 
 ## Your controls
 
-From the Parent Zone you can, at any time:
+In the Parent Zone you can, at any time:
 
-- Export a plain-text progress summary
-- Delete any single profile and its data
-- Delete uploaded photos (they are only ever held in the open card editor)
-- **Delete all data** — a one-tap full reset
+- Export a plain-text progress summary (saved as a local file you control)
+- Delete any profile and its data
+- **Delete all data** — one action wipes every profile, setting and cache from the device
 
-Because all data lives in your browser's storage for this site, clearing the site's data in your browser settings also removes everything.
+Uninstalling the app or clearing the browser's site data also removes everything.
 
-## Network use
+## Children's privacy laws
 
-Lamora contacts the network only to download its own app files from wherever you host it (first visit and updates). After installation the service worker serves everything from the local cache and the app is fully functional offline. It makes **no other network requests** — you can verify this in your browser's developer tools.
+Because Lamora collects no personal data, transmits nothing and has no third parties involved, it is designed to be safely usable under COPPA, GDPR-K and similar children's privacy frameworks. There is simply no data collection to consent to.
 
 ## Changes
 
-If a future version ever changes any of the above, this document and the app's CHANGELOG will say so plainly.
-
-*Last updated: 2026-07-13*
+If a future version ever changed any of the above, this document and the in-app Parent Zone would say so plainly before the change applies.

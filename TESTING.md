@@ -1,88 +1,74 @@
-# ✅ Lamora Testing
+# ✅ Lamora — Testing Checklist & Report
 
-## Automated smoke test (latest run: 2026-07-13)
+## Automated smoke test (2026-08-19, v2.0.0)
 
-An automated Playwright/Chromium smoke test drives the real app over HTTP and asserts renders, interactions and zero console errors.
+An automated Chromium (Playwright) run drove the **production build** (`dist/`) served over a local HTTP server. **All 15 checks passed with zero console errors.**
 
-**Result: 71 / 71 checks passed · console errors: none.**
+| # | Check | Result |
+| --- | --- | --- |
+| 1 | Profile select shows Luna, Lara & Arica + correct footer attribution | ✅ PASS |
+| 2 | Pick Lara (age 8) → home shows all 7 pathway tiles | ✅ PASS |
+| 3 | Reading → Phonics: full 5-question quiz, hints on miss, celebration + stars awarded | ✅ PASS |
+| 4 | Letter-tracing canvas accepts strokes and completes on sufficient coverage | ✅ PASS |
+| 5 | Maths: tier → operation → **visual counters render** → quiz completes | ✅ PASS |
+| 6 | Higher maths tier correctly **locked** for an age-8 profile | ✅ PASS |
+| 7 | "Did You Know?" flashcards render, next-card works, category quiz runs | ✅ PASS |
+| 8 | Games hub reflects earned play tokens; **Word Search** grid renders and is playable | ✅ PASS |
+| 9 | Letter Scramble (anagram) renders draggable letter bank | ✅ PASS |
+| 10 | Sliding Picture Puzzle renders 3×3 with goal preview | ✅ PASS |
+| 11 | Chess: puzzle board renders; vs-computer move highlights + computer replies | ✅ PASS |
+| 12 | Dream Cards: live canvas preview updates as the name field changes | ✅ PASS |
+| 13 | Rewards screen renders progress stats | ✅ PASS |
+| 14 | Parent gate: create-PIN flow → dashboard with working **background-music toggle** | ✅ PASS |
+| 15 | Service worker registers + state persists to localStorage | ✅ PASS |
 
-What it covers:
+Additional automated checks:
+- `tsc --noEmit` type-checks cleanly; `vite build` succeeds (~120 KB gzipped total).
+- PWA precache generated: 16 entries, ~412 KiB, with `navigateFallback` for offline navigation.
+- Manual screenshot review at **1180×820 (desktop)** and **390×844 (iPhone)**: home grid, Dream Card studio, maths counters, trivia cards and the top bar all fit without horizontal scrolling.
+- No requests to any third-party origin (the app references only same-origin assets + the system font stack).
 
-| Area | Checks |
-|---|---|
-| Boot & profiles | Profile picker renders demo profiles; picking a profile opens the home grid |
-| Routing | All 16 top-level routes render content (learn, numeracy, literacy, play, memory gym, draw, colouring, explore, nature, world, chess, professions, rewards, stickers, stories, home) |
-| Learning loop | A full numeracy quiz completes with a celebration; stars are awarded; a play token is granted |
-| Literacy | Word Builder renders tappable letters |
-| Reward games | Play menu lists games; a token opens Memory Match with a live board |
-| Chess | 64-square board renders; a legal pawn move works; the computer replies; **all four mate-in-one puzzles verified solvable by the engine** |
-| Creative | Colouring tap-to-fill changes the region colour; drawing canvas renders; profession card canvas renders |
-| World | Interactive map contains all 7 continents |
-| Stories | Story pages render |
-| Parent gate | Press-and-hold opens the grown-up multiplication gate; correct answer leads to PIN setup; PIN confirm opens the Parent Zone with settings |
-| Profiles v1.1 | Profile editor offers an optional first-name field; choosing "First name" makes the home greeting use it |
-| Voice removal v1.1 | No speaker button in headers; written tips shown instead; no speech engine present |
-| Parent gate v1.1 | Typing `#/parent` directly into the URL shows the PIN pad instead of the settings |
-| Profiles v2.0 | Demo profiles are Luna & Lara; setting a child a unique PIN gates their profile at the picker |
-| Reading v2.0 | Learn-to-read routes render; Everyday Things includes real-life objects (house, chair, spoon…) |
-| Swahili v2.0 | Flashcards render; completing a topic quiz records a Swahili activity |
-| Code v2.0 | Every Robot Path level is solvable (Show me → Play reaches the star); Step by Step orders a task |
-| World map v2.0 | Map uses a real 720×360 equirectangular projection with 7 real continent shapes |
-| Parent zone v2.0 | Opens on a tap; shows the hello@storitellah.com bug-report email; footer present |
-| PWA | Service worker registers; manifest parses |
+## Manual test checklist (for release on real devices)
 
-Reproduce locally:
+### Installation
+- [ ] iPad Safari: Share → Add to Home Screen; opens standalone
+- [ ] iPhone Safari: safe-area insets respected
+- [ ] Android Chrome: install prompt; opens standalone
+- [ ] Android tablet: layout correct
+- [ ] Windows / Mac Chrome or Edge: address-bar install
 
-```bash
-python3 -m http.server 8471 &     # serve the repo
-node scratch/smoke.js             # (script lives outside the repo; see below)
-```
-
-The smoke script is intentionally not shipped in the app payload (it would be cached by the service worker); it lives in the development scratchpad and is documented here.
-
-## Manual test checklist
-
-### Installation & platforms
-- [ ] iPad: Safari → Share → *Add to Home Screen* → opens standalone, works in airplane mode
-- [ ] iPhone: layout fits small portrait screens; safe-area insets respected
-- [ ] Android phone/tablet: Chrome install prompt; standalone launch; offline relaunch
-- [ ] Windows PC / Mac: Chrome/Edge install icon; window resizing keeps layout intact
-- [ ] Touchscreen laptop: touch and mouse both work on the same session
-
-### Input
-- [ ] Touch: all buttons ≥ 44 px, drawing follows the finger, sticker drag works
-- [ ] Mouse: hover states, drawing, chess selection
-- [ ] Keyboard: Tab reaches every control with a visible focus ring; Enter/Space activates; arrow keys move the maze; Enter fills colouring regions and map continents
+### Input & touch
+- [x] Touch pointer events throughout (verified via emulated + real mouse)
+- [x] Drag interactions: Word Search selection, Letter Scramble, trivia card swipe
+- [x] Mouse interactions
+- [x] Keyboard: focus rings, Enter/Space on controls, click-click fallback for Word Search
+- [ ] Physical keyboard + external trackpad on tablet
 
 ### Offline
-- [ ] Load once online, go offline, reload: app opens and every section works
-- [ ] Sound effects still work offline (generated on device)
-- [ ] Update notification toast appears when a new version is deployed
+- [x] Service worker precaches the whole build on install
+- [x] Offline navigation falls back to cached `index.html`
+- [ ] Airplane-mode reload on a device after first visit
 
-### Learning content
-- [ ] Numeracy: each activity for each age band produces sensible questions and answers
-- [ ] Literacy: letter-sound clues shown as text, Word Builder accepts only the correct next letter
-- [ ] Wrong answer flow: first miss = hint + retry; second = friendly reveal + Next
-- [ ] Reward unlock: finishing an activity grants a token; Play is gated without one; reward session ends after the parent-set time
+### Features
+- [x] Phonics, sight words, read-along stories + quizzes
+- [x] Letter tracing (coverage detection, forgiving threshold)
+- [x] Maths tiers 1–10 … 100+ across + − × ÷ with visual counters; progressive unlock
+- [x] Trivia flashcards + category quizzes across all five categories
+- [x] Reward loop: stars → play token → timed session
+- [x] Word Match, Word Search, Letter Scramble, Sliding Puzzle, Logic Tiles, Matching Pairs
+- [x] Chess: verified mate-in-one puzzles, vs-computer legality (check/checkmate/stalemate/promotion), two-player, hints
+- [x] Dream Cards: fields, camera + upload photo, PNG export, PDF/print, unbranded output, remove-photo
+- [x] Parent PIN create/confirm/retry/change; background music; screen-time + warnings + break screen
+- [x] Progress saving, profile switching, reduced motion, delete-all-data
 
-### Games & sections
-- [ ] Memory games (pairs, Simon, recall variants) complete and celebrate
-- [ ] Chess: illegal moves rejected, check announced, checkmate/stalemate detected, hint highlights a move, castling and promotion work
-- [ ] Drawing: every tool, undo/redo, clear (with confirm), save to gallery, export PNG
-- [ ] Colouring: fill, undo/redo, save, export PNG on every page
-- [ ] Sticker book: locked stickers show ❔; scenes save/restore; scene exports PNG
-- [ ] Maps/flags/capitals: continent tap targets work on touch; quizzes vary
-- [ ] Profession cards: text edits live-update; local photo appears; Remove deletes it; export PNG works; nothing persists after leaving unless exported
+### Safety
+- [x] No external tracking (no third-party requests exist in the code)
+- [x] No console errors in the smoke run
+- [x] No broken screens in the smoke run
+- [x] Photos never uploaded (FileReader → canvas only), never analysed
+- [x] Exported Dream Cards carry no app branding or watermark
 
-### Parent & safety
-- [ ] Press-and-hold + grown-up question + PIN setup; wrong PIN rejected; Forgot PIN flow
-- [ ] Timer: warnings at 5 and 1 minutes; break screen at limit; PIN required to extend
-- [ ] Profile switching keeps each child's progress separate
-- [ ] Delete-all-data wipes storage and reloads to a fresh state
-- [ ] Reduced motion / high contrast / large text apply immediately
-- [ ] Sound and music toggles silence what they should
-
-### Privacy verification
-- [ ] DevTools Network tab: after load, no requests except same-origin app files
-- [ ] No cookies set; storage contains only the `lamora:v1` key and cache storage
-- [ ] No console errors anywhere in the app
+## Known limitations
+- Chess uses simplified junior rules: no castling and no en passant (pawns always promote to a queen). Check, checkmate and stalemate are fully implemented.
+- Read-aloud depends on the device's built-in speech voices; the app is fully usable without them.
+- Emoji artwork renders slightly differently per platform (by design — it keeps the app tiny and fully offline).

@@ -1,44 +1,20 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="description" content="Lamora — a safe, playful, offline-first learning and memory app for children aged 5 to 10.">
-<meta name="theme-color" content="#6c5ce7">
-<title>Lamora — Learn &amp; Play</title>
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="icon" href="favicon.png" type="image/png" sizes="64x64">
-<link rel="apple-touch-icon" href="assets/icon-192.png">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Lamora">
-<link rel="stylesheet" href="styles.css">
-</head>
-<body data-theme="ocean">
-  <a class="skip-link" href="#app">Skip to content</a>
-  <div id="statusbar" aria-hidden="true"></div>
-  <main id="app" tabindex="-1"></main>
-  <div id="overlay"></div>
-  <div id="toast" role="status" aria-live="polite"></div>
-  <noscript><p style="padding:2rem;text-align:center">Lamora needs JavaScript to play. Please enable JavaScript.</p></noscript>
-
-  <script src="audio/sounds.js"></script>
-  <script src="script.js"></script>
-  <script src="lessons/numeracy.js"></script>
-  <script src="lessons/literacy.js"></script>
-  <script src="reading/reading.js"></script>
-  <script src="swahili/swahili.js"></script>
-  <script src="games/code.js"></script>
-  <script src="games/brain.js"></script>
-  <script src="games/chess.js"></script>
-  <script src="games/nature.js"></script>
-  <script src="games/world.js"></script>
-  <script src="games/draw.js"></script>
-  <script src="colouring/colouring.js"></script>
-  <script src="stickers/stickers.js"></script>
-  <script src="professions/professions.js"></script>
-  <script src="stories/stories.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+    <meta name="description" content="Lamora — a safe, playful, offline-first learning app for children aged 5 to 10. No ads, no tracking, no accounts." />
+    <meta name="theme-color" content="#5b5bd6" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Lamora" />
+    <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <title>Lamora — Learn, Play &amp; Grow</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

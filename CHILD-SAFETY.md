@@ -1,66 +1,54 @@
-# 🛡️ Lamora Child Safety
+# 🧸 Lamora — Child Safety Commitments
 
-Lamora is built for children aged 5–10, so safety is a design requirement, not a feature. This document lists the concrete decisions that keep the app safe.
+Lamora is built for children aged 5–10. These are the safety rules the app is designed around, and how each one is met.
 
-## No strangers, no contact, no exposure
+## Content safety
 
-- **No chat or messaging** of any kind.
-- **No social features**: no friends, no sharing feeds, no comments.
-- **No public profiles or leaderboards** — a child's name, age and progress exist only on the family's device.
-- **No external links in child mode.** Children cannot navigate out of the app. Documentation links exist only in this repository, not in the child UI.
-- **No user-generated content from other people** — every word, picture and sound a child sees ships with the app.
+| Commitment | How Lamora meets it |
+| --- | --- |
+| No advertising | There is no ad code, ad network or sponsored content anywhere in the app. |
+| No purchases | No in-app purchases, no loot boxes, no paid unlocks, no store links. Everything is included. |
+| No external links in child mode | The child-facing screens contain no links that leave the app. |
+| Age-appropriate content | All activities, stories and artwork are written for ages 5–10: friendly, non-violent, inclusive. |
+| No scary failure states | Wrong answers get a gentle hint and another try, then a kind reveal. No buzzers, no red X screens, no losing streaks, no shaming. |
+| No manipulative rewards | Rewards are a simple, transparent ladder (visible progress bar). No gambling mechanics, no countdown "offers", no fear of missing out. |
 
-## No commercial pressure
+## Social safety
 
-- **No advertising** of any kind.
-- **No in-app purchases, loot boxes, currencies that cost money, or paid unlocks.**
-- **No marketing notifications** — the app sends no notifications at all.
-- The reward system is deliberately gentle: rewards come **only from learning effort**, tokens simply time-box play, stars are never taken away, and nothing nags a child to come back.
+- **No chat** of any kind.
+- **No social media** integration or share buttons in child mode.
+- **No public profiles** — profiles are local nicknames on one device.
+- **No leaderboards** and no ranking of siblings against each other.
+- **No user-generated content leaves the device** — Dream Cards and progress stay local; export is a local file download a parent controls.
 
-## No surveillance
+## Data safety
 
-- No analytics, tracking, profiling or targeted content (see [PRIVACY.md](PRIVACY.md)).
-- No location, microphone or contact access.
-- Photos for dream cards are local-only, never analysed, and never used for face recognition or to infer anything about a child.
+- No accounts, no login, no email — children never type personal information other than an optional nickname.
+- All data stays on the device (see [PRIVACY.md](PRIVACY.md)).
+- Photos for Dream Cards are processed locally, never uploaded, never analysed, deletable instantly. The camera is only ever opened by a deliberate parent/child action (the *Take photo* button) — never in the background.
+- No analytics or tracking of children's behaviour.
+- No notifications, so the app never calls children back to the screen.
 
-## Emotional safety
+## Wellbeing safeguards
 
-- **Wrong answers are never punished or shamed.** The first miss gives a hint and another try; the second gently reveals the answer with a simple explanation.
-- Language is always encouraging ("Almost! Watch one more time — you can do it!").
-- **No countdown pressure** in learning activities and no timers in chess by default.
-- Siblings are never ranked against each other.
-- The screen-time break screen is calm and positive, and suggests a fun physical activity rather than showing a "time's up" lockout.
+- **Parent-controlled daily screen-time limits** with gentle 5-minute and 1-minute warnings.
+- **Calm break screen** that suggests a physical, off-screen activity (stretch, drink water, look outside…).
+- **Short sessions by design** — activities are 5 questions long; reward games end automatically after a parent-set time.
+- Extending time always requires the **parent PIN**.
+- Encouraging, patient tone everywhere; the app never punishes and never rushes a child (no timers on learning by default, chess has no clock).
 
-## Healthy screen time
+## Access control
 
-- Parents set a **daily limit** and a **session reminder**; children get friendly 5-minute and 1-minute warnings.
-- Reward-game sessions end automatically after a parent-chosen length.
-- Extending time always requires the parent PIN.
+- The Parent Zone is protected by a 4-digit PIN plus a press-and-hold gesture, so young children cannot wander into settings.
+- Sensitive information (settings, usage minutes, data controls) never appears on child-facing screens.
+- Destructive actions (delete profile, delete all data) are double-confirmed and only reachable inside the Parent Zone.
 
-## Grown-up gate
+## Accessibility and inclusion
 
-The Parent Zone sits behind three layers appropriate to this age group:
-
-1. a **press-and-hold** gesture (2 seconds),
-2. a **grown-up verification question** (multiplication beyond the app's age range) on first use or PIN reset,
-3. a **4-digit parent PIN** thereafter.
-
-The PIN is a child gate, not a security boundary — Lamora deliberately stores nothing sensitive that would need one.
-
-## Age-appropriate content
-
-- All content is curated, offline and reviewed: numbers, letters, reading, simple Swahili, everyday real-world objects, coding puzzles, nature, geography, friendly stories and chess.
-- Content goes beyond fantasy: alongside mermaids and dragons, children learn real objects from daily life, real continents, and a real language (Kiswahili).
-- Difficulty adapts to the child's age (5–10) or the parent's chosen level.
-- Younger children get less text, bigger targets and simple written tips.
-
-## Accessibility & inclusion
-
-- Large text, high contrast and reduced-motion modes.
-- Simple language, short sentences and friendly written tips on every page. (Synthesized speech was deliberately removed — robot voices can frighten young children.)
-- Keyboard, mouse and touch all work everywhere; interactive elements have screen-reader labels and clear focus states.
-- Sticker themes, avatars and professions are inclusive and stereotype-free — every child can be the astronaut, the chef, or the marine biologist.
+- Large text, high contrast, reduced motion, keyboard support and screen-reader labels.
+- Spoken instructions and tap-to-hear for pre-readers.
+- Diverse, neutral characters and professions; any child can be anything in the Dream Cards studio.
 
 ## Reporting a concern
 
-If you find anything in Lamora that seems unsafe or inappropriate for children, please open an issue in this repository so it can be fixed quickly.
+If you find any content or behaviour in Lamora that you believe is unsafe for children, please open an issue in the repository so it can be fixed as a priority.
