@@ -6,6 +6,7 @@
  */
 import React, { createContext, useContext, useEffect, useMemo, useReducer } from "react";
 import { setAudioPrefs, startMusic, stopMusic } from "./audio";
+import { StageId, stageForAge } from "../data/curriculum";
 
 /* ---------------- Types ---------------- */
 
@@ -13,7 +14,9 @@ export interface Profile {
   id: string;
   name: string;
   avatar: string;            // emoji avatar
-  age: number;               // 5–10, drives difficulty
+  age: number;               // 4–10, drives difficulty
+  /** Cambridge-aligned school stage. Undefined = derive from age. */
+  stage?: StageId;
   stars: number;             // spendable balance (converts to play tokens)
   totalStars: number;        // lifetime, drives milestones
   tokens: number;            // unlocked play sessions
@@ -44,7 +47,7 @@ export interface AppState {
 export type Screen =
   | { name: "profiles" }
   | { name: "home" }
-  | { name: "reading" } | { name: "math" } | { name: "trivia" }
+  | { name: "reading" } | { name: "math" } | { name: "trivia" } | { name: "workbooks" }
   | { name: "games" } | { name: "chess" } | { name: "dreamcards" }
   | { name: "rewards" }
   | { name: "parent-gate" } | { name: "parent" }
@@ -181,8 +184,10 @@ interface Store {
   state: AppState;
   dispatch: React.Dispatch<Action>;
   profile: Profile | null;
-  /** 1 = ages 5–6, 2 = 7–8, 3 = 9–10 */
+  /** 1 = ages 4–6, 2 = 7–8, 3 = 9–10 */
   level: 1 | 2 | 3;
+  /** Cambridge-aligned stage: the profile's override, else derived from age. */
+  stage: StageId;
   remainingSeconds: number;
 }
 
@@ -207,12 +212,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const profile = state.profiles.find(p => p.id === state.activeId) ?? null;
   const age = profile?.age ?? 6;
   const level: 1 | 2 | 3 = age <= 6 ? 1 : age <= 8 ? 2 : 3;
+  const stage: StageId = profile?.stage ?? stageForAge(age);
   const used = profile?.usage[todayKey()] ?? 0;
   const remainingSeconds = Math.max(0, state.settings.dailyLimitMin * 60 - used);
 
   const value = useMemo(
-    () => ({ state, dispatch, profile, level, remainingSeconds }),
-    [state, profile, level, remainingSeconds]
+    () => ({ state, dispatch, profile, level, stage, remainingSeconds }),
+    [state, profile, level, stage, remainingSeconds]
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

@@ -4,11 +4,28 @@ All notable changes to Lamora are documented here.
 
 ## [Unreleased]
 
-### Changed
-- **More human read-aloud voice.** The speech engine now picks the most natural voice installed on the device — preferring Apple Siri/enhanced, Microsoft Natural/neural and Google voices over robotic fallbacks — and speaks with warmer, unhurried prosody.
-
 ### Added
-- **Female / male reading-voice choice** in the Parent Dashboard (Sound & music), with a **Test** button. Defaults to a female voice. Gender is matched against the device's installed voices; still fully on-device and offline.
+- **Workbooks pathway** — a stage-aware workbook hub for ages 4–8, aligned to the Cambridge frameworks:
+  Pre-Primary 1 → *Cambridge Early Years EY2*, Pre-Primary 2 → *EY3*, Grade 1/2/3 → *Cambridge Primary Stages 1/2/3*.
+  Each stage lists its subjects, strands and learning objectives in a "What does this stage cover?" panel for parents and teachers.
+  - **Patterns** — 10 pre-writing stroke sheets (standing/sleeping/slanting lines, zig-zags, waves, bumps, loops, circles, spirals, arches)
+  - **Handwriting** — capital letters, small letters, numerals and short words, traced on a ruled sheet
+  - **Join the Dots** — tap numbered dots in order to form all 26 letters and 0–9, with multi-stroke "lift your pencil" breaks
+  - **First Letters** — look at a picture then *tap* or *write* its first letter
+  - **Fun with Letters** — match BIG letters to small letters
+  - **Letter Maze** — navigate a generated maze to the picture starting with the target letter
+  - **Complete the Word** — fill the missing letters from a picture clue
+  - **Colour the Picture** — 10 tap-to-fill line-art pages with palette, undo, clear and PNG export
+  - **Odd & Even** — sort into baskets, pair-up visual proof, and a number hunt
+- **Age 4 profiles** and a per-child **school stage** selector in the Parent Dashboard (follows age automatically, or pin it).
+
+### Fixed
+- Tracing canvases no longer clear themselves. The screen-time engine ticks the store every second, which re-created the
+  tracing guide object and wiped a child's work roughly once per second; the guide is now keyed by content, so strokes persist.
+
+### Changed
+- **More human read-aloud voice.** The speech engine picks the most natural voice installed on the device — preferring Apple Siri/enhanced, Microsoft Natural/neural and Google voices over robotic fallbacks — and speaks with warmer, unhurried prosody.
+- **Female / male reading-voice choice** in the Parent Dashboard, with a **Test** button. Defaults to female.
 
 ## [2.0.0] — 2026-08-19
 

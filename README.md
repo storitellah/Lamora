@@ -4,7 +4,7 @@
 
 # Lamora
 
-**A calm, joyful learning world for children aged 5–10.**
+**A calm, joyful learning world for children aged 4–10.**
 
 No ads · No accounts · No tracking · Works completely offline
 
@@ -28,6 +28,7 @@ Lamora is a learning app your child can use **on their own** — and that you ca
 
 | Pathway | What's inside |
 | --- | --- |
+| ✏️ **Workbooks** | Stage-by-stage workbook sheets aligned to the **Cambridge** frameworks (Pre-Primary 1 & 2, Grade 1–3): pre-writing **patterns**, **handwriting**, **join the dots**, **first letters**, **fun with letters**, **letter maze**, **complete the word**, **colouring pages**, and **odd & even numbers** |
 | 📖 **Reading & Writing** | Phonics with letter sounds, **letter tracing** on a drawing canvas, sight words by level, read-along stories with quizzes |
 | 🔢 **Maths Journey** | Progressive tiers (1–10 → 10–20 → 20–30 → 30–40 → 40–100 → 100+) across **+ − × ÷**, with tappable visual counters so young children can *see* every sum |
 | 🌍 **Did You Know?** | Swipeable curiosity cards: Planets & Space, World Wonders, Animals & Wildlife, Global Cities, Inspiring People — each with a mini-quiz |
@@ -35,6 +36,20 @@ Lamora is a learning app your child can use **on their own** — and that you ca
 | ♟️ **Chess** | Checkmate-in-one puzzles, a friendly beginner computer opponent, two-player mode — every legal move lights up, and a Hint button helps |
 | ✨ **Dream Cards** | Beautiful, collectible "when I grow up" keepsake cards — add a photo (kept on-device), export as high-res PNG or print to PDF. **No branding on the card, ever** — it's your family's keepsake |
 | 🏆 **My Rewards** | A simple, honest progress view: stars, saved play sessions, and a visible ladder to the next unlock |
+
+### 🎓 Following a real curriculum
+
+The **Workbooks** pathway is organised into five stages that map onto the Cambridge frameworks, so school and home stay in step:
+
+| In Lamora | Cambridge level | Typical ages |
+| --- | --- | --- |
+| Pre-Primary 1 | Cambridge Early Years — EY2 | 4–5 |
+| Pre-Primary 2 | Cambridge Early Years — EY3 | 5–6 |
+| Grade 1 | Cambridge Primary — Stage 1 | 6–7 |
+| Grade 2 | Cambridge Primary — Stage 2 | 7–8 |
+| Grade 3 | Cambridge Primary — Stage 3 | 8–9 |
+
+Each stage lists the subjects, strands and learning objectives it covers — tap **"What does this stage cover?"** inside Workbooks. A child's stage follows their age automatically, and a grown-up can pin a different one in the Parent Dashboard. Any stage can be opened at any time, so siblings can share a device and a teacher can revise or reach ahead.
 
 **How the learning loop works:** finishing any lesson earns ⭐ stars → every few stars (you choose how many) become one 🎮 play session → the session ends automatically after the time you set. Learning always comes first, and the deal is visible to the child.
 

@@ -1,32 +1,47 @@
 # ✅ Lamora — Testing Checklist & Report
 
-## Automated smoke test (2026-08-19, v2.0.0)
+## Automated smoke tests (2026-09-20, Workbooks release)
 
-An automated Chromium (Playwright) run drove the **production build** (`dist/`) served over a local HTTP server. **All 15 checks passed with zero console errors.**
+Two Playwright suites drove the **production build** (`dist/`) over a local server. **26 of 26 checks passed with zero console errors.**
 
+### Workbooks suite — 16/16 ✅
 | # | Check | Result |
 | --- | --- | --- |
-| 1 | Profile select shows Luna, Lara & Arica + correct footer attribution | ✅ PASS |
-| 2 | Pick Lara (age 8) → home shows all 7 pathway tiles | ✅ PASS |
-| 3 | Reading → Phonics: full 5-question quiz, hints on miss, celebration + stars awarded | ✅ PASS |
-| 4 | Letter-tracing canvas accepts strokes and completes on sufficient coverage | ✅ PASS |
-| 5 | Maths: tier → operation → **visual counters render** → quiz completes | ✅ PASS |
-| 6 | Higher maths tier correctly **locked** for an age-8 profile | ✅ PASS |
-| 7 | "Did You Know?" flashcards render, next-card works, category quiz runs | ✅ PASS |
-| 8 | Games hub reflects earned play tokens; **Word Search** grid renders and is playable | ✅ PASS |
-| 9 | Letter Scramble (anagram) renders draggable letter bank | ✅ PASS |
-| 10 | Sliding Picture Puzzle renders 3×3 with goal preview | ✅ PASS |
-| 11 | Chess: puzzle board renders; vs-computer move highlights + computer replies | ✅ PASS |
-| 12 | Dream Cards: live canvas preview updates as the name field changes | ✅ PASS |
-| 13 | Rewards screen renders progress stats | ✅ PASS |
-| 14 | Parent gate: create-PIN flow → dashboard with working **background-music toggle** | ✅ PASS |
-| 15 | Service worker registers + state persists to localStorage | ✅ PASS |
+| 1 | Profile select renders | ✅ |
+| 2 | Home shows the Workbooks tile | ✅ |
+| 3 | Workbooks hub: 5 stage tabs, correct stage auto-selected for age, Cambridge mapping shown | ✅ |
+| 4 | Switching stage changes the available sheets | ✅ |
+| 5 | Patterns: tracing registers and awards a star | ✅ |
+| 6 | Handwriting: mode picker (capitals/small/numbers/words) + letter tracing | ✅ |
+| 7 | Join the Dots: dots render; tapping in order completes the letter | ✅ |
+| 8 | Join the Dots: numbers mode | ✅ |
+| 9 | First Letters: tapping the correct first letter is accepted | ✅ |
+| 10 | Fun with Letters: capital/small pair cards render at the right count per level | ✅ |
+| 11 | Letter Maze: maze renders, arrow pad moves the player | ✅ |
+| 12 | Complete the Word: blanks fill from the letter bank | ✅ |
+| 13 | Colour the Picture: region fills with the chosen colour; export present | ✅ |
+| 14 | Odd & Even: sort, pair-up proof and number hunt all work | ✅ |
+| 15 | Parent Dashboard: age 4 available; stage selector lists Auto + 5 stages; selection persists | ✅ |
+| 16 | A pinned stage drives the child's workbook view | ✅ |
 
-Additional automated checks:
-- `tsc --noEmit` type-checks cleanly; `vite build` succeeds (~120 KB gzipped total).
-- PWA precache generated: 16 entries, ~412 KiB, with `navigateFallback` for offline navigation.
-- Manual screenshot review at **1180×820 (desktop)** and **390×844 (iPhone)**: home grid, Dream Card studio, maths counters, trivia cards and the top bar all fit without horizontal scrolling.
-- No requests to any third-party origin (the app references only same-origin assets + the system font stack).
+### Core regression suite — 10/10 ✅
+Home pathways (all 8 tiles), Reading → Phonics, Reading → Letter Tracing, Maths tier → Adding with visual counters, Trivia flashcards, Games hub, Chess puzzles board, Dream Cards canvas (unbranded + privacy note), Rewards, service worker registration and footer attribution.
+
+### Bug found and fixed during testing
+**Tracing canvases wiped themselves roughly once per second.** The screen-time engine dispatches a `tickUsage` action every second, re-rendering every store consumer. The workbook screens passed `guide={{...}}` as an inline object, so `TraceSheet`'s reset callback changed identity on every tick and cleared the child's work mid-letter. Fixed by keying the reset on the guide's *content* and reading the live guide through a ref. A dedicated regression check now draws a stroke, sits idle across four one-second ticks, then draws two more:
+
+```
+after stroke 1: 8566 ink pixels
+after 4s idle : 8566  (preserved ✔)
+after 3 strokes: 18577 (accumulating ✔)
+```
+
+Other automated checks:
+- `tsc --noEmit` clean; `vite build` succeeds (~138 KB gzipped JS).
+- PWA precache: 16 entries, ~483 KiB, with offline navigation fallback.
+- Canvas drawing verified identical under desktop mouse and touch-emulated mobile (6,458 ink pixels each).
+- Screenshots reviewed at **430×930 (phone)** and **1100×900 (tablet/desktop)** for every new sheet.
+- No requests to any third-party origin.
 
 ## Manual test checklist (for release on real devices)
 
@@ -50,6 +65,8 @@ Additional automated checks:
 - [ ] Airplane-mode reload on a device after first visit
 
 ### Features
+- [x] Workbooks: patterns, handwriting, join-the-dots, first letters, fun with letters, letter maze, complete the word, colouring, odd & even
+- [x] Cambridge stage mapping (PP1→EY2, PP2→EY3, G1/2/3→Primary Stages 1/2/3) and per-child stage override
 - [x] Phonics, sight words, read-along stories + quizzes
 - [x] Letter tracing (coverage detection, forgiving threshold)
 - [x] Maths tiers 1–10 … 100+ across + − × ÷ with visual counters; progressive unlock

@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   BookOpen, Calculator, Globe2, Gamepad2, Crown, Sparkles, Trophy,
-  Home, Lock, Volume2, VolumeX, Hourglass, Moon
+  Home, Lock, Volume2, VolumeX, Hourglass, Moon, NotebookPen
 } from "lucide-react";
 import { useStore, Screen, todayKey } from "./lib/store";
 import { Btn, Tile, Shell, ToastHost, toast } from "./components/UI";
@@ -17,6 +17,7 @@ import Trivia from "./screens/Trivia";
 import Games from "./screens/Games";
 import ChessScreen from "./screens/ChessScreen";
 import DreamCards from "./screens/DreamCards";
+import Workbooks from "./screens/Workbooks";
 import { ParentGate, ParentDashboard } from "./screens/Parent";
 
 export default function App() {
@@ -165,6 +166,7 @@ function ScreenView({ screen, go }: { screen: Screen; go: (s: Screen) => void })
     case "games": return <Games onExit={home} />;
     case "chess": return <ChessScreen onExit={home} />;
     case "dreamcards": return <DreamCards onExit={home} />;
+    case "workbooks": return <Workbooks onExit={home} />;
     case "rewards": return <Rewards go={go} />;
     case "parent-gate": return <ParentGate onPass={() => go({ name: "parent" })} onBack={home} />;
     case "parent": return <ParentDashboard onExit={home} />;
@@ -228,6 +230,7 @@ function HomeScreen({ go }: { go: (s: Screen) => void }) {
   const { profile } = useStore();
   const tiles: { icon: React.ReactNode; label: string; sub: string; screen: Screen; tint: string }[] = [
     { icon: <BookOpen className="text-tint" />, label: "Reading & Writing", sub: "Letters, words & stories", screen: { name: "reading" }, tint: "from-tint/15 to-tint/5" },
+    { icon: <NotebookPen className="text-coral" />, label: "Workbooks", sub: "Write, trace & colour", screen: { name: "workbooks" }, tint: "from-coral/15 to-sun/10" },
     { icon: <Calculator className="text-mint" />, label: "Maths Journey", sub: "Count, add & multiply", screen: { name: "math" }, tint: "from-mint/15 to-mint/5" },
     { icon: <Globe2 className="text-sky" />, label: "Did You Know?", sub: "World curiosities", screen: { name: "trivia" }, tint: "from-sky/15 to-sky/5" },
     { icon: <Gamepad2 className="text-coral" />, label: "Play", sub: "Reward games", screen: { name: "games" }, tint: "from-coral/15 to-coral/5" },

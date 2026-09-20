@@ -11,6 +11,7 @@ import {
 import { Shell, Btn, toast } from "../components/UI";
 import { sfx, haptic, previewVoice } from "../lib/audio";
 import { useStore, todayKey, Profile } from "../lib/store";
+import { STAGES, stageForAge } from "../data/curriculum";
 
 /* ---------------- PIN gate ---------------- */
 
@@ -287,7 +288,20 @@ function ProfileRow({ p }: { p: Profile }) {
         onChange={e => dispatch({ type: "profile", id: p.id, patch: { age: parseInt(e.target.value, 10) } })}
         className="glass min-h-11 rounded-2xl px-3 py-2 font-semibold"
       >
-        {[5, 6, 7, 8, 9, 10].map(a => <option key={a} value={a}>Age {a}</option>)}
+        {[4, 5, 6, 7, 8, 9, 10].map(a => <option key={a} value={a}>Age {a}</option>)}
+      </select>
+      {/* Cambridge-aligned stage: follows age unless a grown-up pins it. */}
+      <select
+        value={p.stage ?? ""}
+        aria-label={`School stage for ${p.name}`}
+        onChange={e => dispatch({
+          type: "profile", id: p.id,
+          patch: { stage: e.target.value ? (e.target.value as Profile["stage"]) : undefined }
+        })}
+        className="glass min-h-11 rounded-2xl px-3 py-2 font-semibold"
+      >
+        <option value="">Auto ({STAGES.find(s2 => s2.id === stageForAge(p.age))?.short})</option>
+        {STAGES.map(s2 => <option key={s2.id} value={s2.id}>{s2.emoji} {s2.name}</option>)}
       </select>
       <Btn kind="danger" className="!min-h-10 !px-4 !py-2 text-sm" onClick={() => {
         if (state.profiles.length <= 1) { toast("Keep at least one profile"); return; }

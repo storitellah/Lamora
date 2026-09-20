@@ -1,11 +1,11 @@
 # 👨‍👩‍👧 Lamora — Parent & Caregiver Guide
 
-Welcome! Lamora is designed so a five-year-old can use it without constant help, while **you** stay in control of time, content and data. This guide covers everything in the Parent Dashboard.
+Welcome! Lamora is designed so a four- or five-year-old can use it without constant help, while **you** stay in control of time, content and data. This guide covers everything in the Parent Dashboard.
 
 ## Getting started
 
 1. Open Lamora (or install it — see the [README](README.md)). Three demo profiles — *Luna (6)*, *Lara (8)* and *Arica (5)* — are ready so children can start straight away.
-2. Tap a profile to begin. Everything adapts to that profile's age (5–10 maps to three difficulty levels).
+2. Tap a profile to begin. Everything adapts to that profile's age (4–10) and school stage.
 3. To make it yours, open the **Parent Dashboard** and rename profiles, set ages and pick avatars.
 
 ## Opening the Parent Dashboard
@@ -38,7 +38,11 @@ Welcome! Lamora is designed so a five-year-old can use it without constant help,
 You can adjust the stars-per-session, and reset any child's rewards and progress. There are **no purchases, loot boxes or manipulative mechanics** — the ladder to the next unlock is always visible to the child.
 
 ### 🧒 Child profiles
-Up to six local profiles, each with a name/nickname, age (5–10) and avatar, and its own stars, progress and screen-time count. Progress is never compared between siblings, and there are no leaderboards.
+Up to six local profiles, each with a name/nickname, age (**4–10**), avatar and **school stage**, and its own stars, progress and screen-time count.
+
+The **school stage** controls which workbook sheets a child sees and is aligned to the Cambridge frameworks:
+Pre-Primary 1 (*Early Years EY2*), Pre-Primary 2 (*EY3*), Grade 1/2/3 (*Cambridge Primary Stages 1/2/3*).
+Leave it on **Auto** to follow the child's age, or pin a stage if your school places them differently. Progress is never compared between siblings, and there are no leaderboards.
 
 ### ♿ Accessibility
 - **Reduced motion** (also follows your device's system setting automatically).
