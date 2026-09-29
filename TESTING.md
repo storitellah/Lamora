@@ -2,7 +2,7 @@
 
 ## Automated smoke tests (2026-09-20, Workbooks release)
 
-Two Playwright suites drove the **production build** (`dist/`) over a local server. **26 of 26 checks passed with zero console errors.**
+Two Playwright suites drove the **production build** (`dist/`) over a local server. **39 of 39 checks passed with zero console errors** (13 puzzles/reading + 16 workbooks + 10 core).
 
 ### Workbooks suite — 16/16 ✅
 | # | Check | Result |
@@ -23,6 +23,28 @@ Two Playwright suites drove the **production build** (`dist/`) over a local serv
 | 14 | Odd & Even: sort, pair-up proof and number hunt all work | ✅ |
 | 15 | Parent Dashboard: age 4 available; stage selector lists Auto + 5 stages; selection persists | ✅ |
 | 16 | A pinned stage drives the child's workbook view | ✅ |
+
+
+### Puzzles & Reading Gym suite — 13/13 ✅ (2026-09-29)
+| # | Check | Result |
+| --- | --- | --- |
+| 1 | Home shows the Puzzles tile | ✅ |
+| 2 | Puzzles hub lists all seven puzzles | ✅ |
+| 3 | Shape Sums: equation renders; correct shape accepted; progress advances | ✅ |
+| 4 | Shape Sums: easy/medium/hard bands switch | ✅ |
+| 5 | What Comes Next renders a sequence | ✅ |
+| 6 | Odd One Out renders choices | ✅ |
+| 7 | Balance Scales renders the rule and the question | ✅ |
+| 8 | Number Pyramid renders bricks with a blank to fill | ✅ |
+| 9 | Shape Sudoku: 16 cells; hint fills a correct cell | ✅ |
+| 10 | Maze Adventure: 16 levels listed, 15 locked at the start | ✅ |
+| 11 | **Maze level 1 solved by BFS over the rendered walls**, unlocking level 2 and saving best steps | ✅ |
+| 12 | Reading Gym: six steps, five locked at the start | ✅ |
+| 13 | Reading Gym step 1 completes and unlocks step 2 | ✅ |
+
+Check 11 is the important one: the test reads the *actual rendered wall borders*, runs a breadth-first search for a route, then walks it with arrow keys. That proves each generated maze is genuinely solvable rather than merely drawn.
+
+Shape Sums is additionally verified at the data level: the 60 equations are *derived* from the segment algebra (union for `+`, difference for `−`) and only kept when both operands and the answer are all named, recognisable shapes — so no puzzle can be unsolvable or nonsensical.
 
 ### Core regression suite — 10/10 ✅
 Home pathways (all 8 tiles), Reading → Phonics, Reading → Letter Tracing, Maths tier → Adding with visual counters, Trivia flashcards, Games hub, Chess puzzles board, Dream Cards canvas (unbranded + privacy note), Rewards, service worker registration and footer attribution.

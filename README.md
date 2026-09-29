@@ -28,7 +28,9 @@ Lamora is a learning app your child can use **on their own** — and that you ca
 
 | Pathway | What's inside |
 | --- | --- |
+| 🧩 **Puzzles** | Seven brain-teasers with easy/medium/hard levels: **Shape Sums** (picture arithmetic — add and subtract the *lines* that make a shape), **Maze Adventure** (16 levels, stars, keys & doors), What Comes Next, Odd One Out, Balance Scales, Number Pyramid and Shape Sudoku |
 | ✏️ **Workbooks** | Stage-by-stage workbook sheets aligned to the **Cambridge** frameworks (Pre-Primary 1 & 2, Grade 1–3): pre-writing **patterns**, **handwriting**, **join the dots**, **first letters**, **fun with letters**, **letter maze**, **complete the word**, **colouring pages**, and **odd & even numbers** |
+| 💪 **Reading Gym** | A six-step reading ladder that unlocks in order: letter sounds → sound-it-out blending → word families → sight-word speed → sentences → a short story with comprehension |
 | 📖 **Reading & Writing** | Phonics with letter sounds, **letter tracing** on a drawing canvas, sight words by level, read-along stories with quizzes |
 | 🔢 **Maths Journey** | Progressive tiers (1–10 → 10–20 → 20–30 → 30–40 → 40–100 → 100+) across **+ − × ÷**, with tappable visual counters so young children can *see* every sum |
 | 🌍 **Did You Know?** | Swipeable curiosity cards: Planets & Space, World Wonders, Animals & Wildlife, Global Cities, Inspiring People — each with a mini-quiz |

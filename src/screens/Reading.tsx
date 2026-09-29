@@ -4,12 +4,13 @@
  */
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Volume2, Eraser, Check, ChevronRight, ChevronLeft, BookOpen, Pencil, Ear, Eye } from "lucide-react";
+import { Volume2, Eraser, Check, ChevronRight, ChevronLeft, BookOpen, Pencil, Ear, Eye, Dumbbell } from "lucide-react";
 import { Shell, Tile, Btn, toast, Confetti } from "../components/UI";
 import { Quiz, QuizQuestion } from "../components/Quiz";
 import { sfx, speak, haptic } from "../lib/audio";
 import { useStore } from "../lib/store";
 import { PHONICS, SIGHT_WORDS, STORIES, PICTURE_WORDS, Story } from "../data/content";
+import ReadingGym from "./ReadingGym";
 
 type Mode =
   | { name: "menu" }
@@ -17,6 +18,7 @@ type Mode =
   | { name: "trace" }
   | { name: "sight" }
   | { name: "stories" }
+  | { name: "gym" }
   | { name: "story"; story: Story };
 
 export default function Reading({ onExit }: { onExit: () => void }) {
@@ -24,6 +26,7 @@ export default function Reading({ onExit }: { onExit: () => void }) {
   const back = () => setMode({ name: "menu" });
 
   switch (mode.name) {
+    case "gym": return <ReadingGym onExit={back} />;
     case "phonics": return <PhonicsQuiz onBack={back} />;
     case "trace": return <Tracing onBack={back} />;
     case "sight": return <SightWords onBack={back} />;
@@ -43,6 +46,7 @@ export default function Reading({ onExit }: { onExit: () => void }) {
       return (
         <Shell title="Reading & Writing" subtitle="Letters, sounds, words and stories" onBack={onExit}>
           <div className="grid grid-cols-2 gap-4">
+            <Tile icon={<Dumbbell className="text-coral" />} label="Reading Gym" sub="Train step by step" onClick={() => setMode({ name: "gym" })} />
             <Tile icon={<Ear className="text-tint" />} label="Phonics" sub="Letter sounds" onClick={() => setMode({ name: "phonics" })} />
             <Tile icon={<Pencil className="text-coral" />} label="Letter Tracing" sub="Practise writing" onClick={() => setMode({ name: "trace" })} />
             <Tile icon={<Eye className="text-mint" />} label="Sight Words" sub="Words to know" onClick={() => setMode({ name: "sight" })} />

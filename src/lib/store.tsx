@@ -22,6 +22,12 @@ export interface Profile {
   tokens: number;            // unlocked play sessions
   done: Record<string, number>; // activity-id -> completions
   usage: Record<string, number>; // 'YYYY-MM-DD' -> seconds on screen
+  /** Highest maze level unlocked (1-based). */
+  mazeLevel?: number;
+  /** Best step count per maze level, for a personal-best to beat. */
+  mazeBest?: Record<number, number>;
+  /** Highest Reading Gym drill unlocked (1-based). */
+  readingLevel?: number;
 }
 
 export interface Settings {
@@ -47,7 +53,7 @@ export interface AppState {
 export type Screen =
   | { name: "profiles" }
   | { name: "home" }
-  | { name: "reading" } | { name: "math" } | { name: "trivia" } | { name: "workbooks" }
+  | { name: "reading" } | { name: "math" } | { name: "trivia" } | { name: "workbooks" } | { name: "puzzles" }
   | { name: "games" } | { name: "chess" } | { name: "dreamcards" }
   | { name: "rewards" }
   | { name: "parent-gate" } | { name: "parent" }
@@ -113,6 +119,8 @@ type Action =
   | { type: "addProfile" }
   | { type: "removeProfile"; id: string }
   | { type: "resetRewards"; id: string }
+  | { type: "mazeCleared"; levelIndex: number; steps: number }
+  | { type: "readingCleared"; levelIndex: number }
   | { type: "wipe" };
 
 export function todayKey() {
@@ -138,6 +146,21 @@ function reducer(state: AppState, a: Action): AppState {
         while (p.stars >= per) { p.stars -= per; p.tokens += 1; }
         return p;
       });
+    case "mazeCleared":
+      return withActive(p => ({
+        ...p,
+        // Unlock the next level, and keep the best (lowest) step count.
+        mazeLevel: Math.max(p.mazeLevel ?? 1, a.levelIndex + 2),
+        mazeBest: {
+          ...(p.mazeBest ?? {}),
+          [a.levelIndex]: Math.min(p.mazeBest?.[a.levelIndex] ?? Infinity, a.steps)
+        }
+      }));
+    case "readingCleared":
+      return withActive(p => ({
+        ...p,
+        readingLevel: Math.max(p.readingLevel ?? 1, a.levelIndex + 2)
+      }));
     case "spendToken":
       return withActive(p => ({ ...p, tokens: Math.max(0, p.tokens - 1) }));
     case "tickUsage":
@@ -168,7 +191,9 @@ function reducer(state: AppState, a: Action): AppState {
       return {
         ...state,
         profiles: state.profiles.map(p =>
-          p.id === a.id ? { ...p, stars: 0, totalStars: 0, tokens: 0, done: {} } : p
+          p.id === a.id
+            ? { ...p, stars: 0, totalStars: 0, tokens: 0, done: {}, mazeLevel: 1, mazeBest: {}, readingLevel: 1 }
+            : p
         )
       };
     case "wipe":
