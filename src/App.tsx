@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   BookOpen, Calculator, Globe2, Gamepad2, Crown, Sparkles, Trophy,
-  Home, Lock, Volume2, VolumeX, Hourglass, Moon, NotebookPen, Puzzle
+  Home, Lock, Volume2, VolumeX, Hourglass, Moon, NotebookPen, Puzzle, Palette
 } from "lucide-react";
 import { useStore, Screen, todayKey } from "./lib/store";
 import { Btn, Tile, Shell, ToastHost, toast } from "./components/UI";
@@ -19,6 +19,7 @@ import ChessScreen from "./screens/ChessScreen";
 import DreamCards from "./screens/DreamCards";
 import Workbooks from "./screens/Workbooks";
 import Puzzles from "./screens/Puzzles";
+import ColourLab from "./screens/ColourLab";
 import { ParentGate, ParentDashboard } from "./screens/Parent";
 
 export default function App() {
@@ -169,6 +170,7 @@ function ScreenView({ screen, go }: { screen: Screen; go: (s: Screen) => void })
     case "dreamcards": return <DreamCards onExit={home} />;
     case "workbooks": return <Workbooks onExit={home} />;
     case "puzzles": return <Puzzles onExit={home} />;
+    case "colourlab": return <ColourLab onExit={home} />;
     case "rewards": return <Rewards go={go} />;
     case "parent-gate": return <ParentGate onPass={() => go({ name: "parent" })} onBack={home} />;
     case "parent": return <ParentDashboard onExit={home} />;
@@ -235,6 +237,7 @@ function HomeScreen({ go }: { go: (s: Screen) => void }) {
     { icon: <NotebookPen className="text-coral" />, label: "Workbooks", sub: "Write, trace & colour", screen: { name: "workbooks" }, tint: "from-coral/15 to-sun/10" },
     { icon: <Calculator className="text-mint" />, label: "Maths Journey", sub: "Count, add & multiply", screen: { name: "math" }, tint: "from-mint/15 to-mint/5" },
     { icon: <Puzzle className="text-tint" />, label: "Puzzles", sub: "Shapes, mazes & logic", screen: { name: "puzzles" }, tint: "from-tint/15 to-coral/10" },
+    { icon: <Palette className="text-coral" />, label: "Colour Lab", sub: "Mix & learn colours", screen: { name: "colourlab" }, tint: "from-coral/15 to-sun/10" },
     { icon: <Globe2 className="text-sky" />, label: "Did You Know?", sub: "World curiosities", screen: { name: "trivia" }, tint: "from-sky/15 to-sky/5" },
     { icon: <Gamepad2 className="text-coral" />, label: "Play", sub: "Reward games", screen: { name: "games" }, tint: "from-coral/15 to-coral/5" },
     { icon: <Crown className="text-sun" />, label: "Chess", sub: "Puzzles & play", screen: { name: "chess" }, tint: "from-sun/15 to-sun/5" },

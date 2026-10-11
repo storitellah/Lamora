@@ -5,6 +5,13 @@ All notable changes to Lamora are documented here.
 ## [Unreleased]
 
 ### Added
+- **Colour Lab** — six rooms where children learn how colours are actually made. The mixing underneath is a real model, not an approximation: paint uses **subtractive RYB** mixing (Gosset–Chen cube, trilinear interpolation) and light uses **additive RGB**, so blue + yellow really makes green rather than the muddy grey a naive RGB average would give.
+  - **Mixing Pots** — pour red, yellow, blue, white and black a drop at a time, hear the colour name, and fill a shelf of six discoveries (orange, green, purple, brown, pink, grey)
+  - **Colour Wheel** — a 12-part wheel with three modes: every colour and its recipe, warm vs cool, and opposites (complementary pairs)
+  - **Mix to Match** — "make this colour!" challenges in three bands, with a live closeness meter. Targets are generated from real recipes, so every target is reachable.
+  - **Light vs Paint** — the same three colours side by side under torches and in paint pots: red + green light is yellow, red + yellow + blue paint is brown
+  - **Tints & Shades** — tint (+white), tone (+grey) and shade (+black) ladders across six base colours
+  - **Colour Science** — ten fact cards with a quiz: why rainbows appear, cones in the eye, chlorophyll, why the sky is blue, why light and paint behave differently, CMY printing, complementary colours, warm and cool
 - **Puzzles section** — seven generated brain-teasers, each with 🟢 easy / 🟡 medium / 🔴 hard bands:
   - **Shape Sums** — picture arithmetic. Shapes are modelled as *sets of line segments*, so `+` genuinely merges strokes and `−` removes them (two standing lines + two sleeping lines = a square; circle + small circle = circle-in-circle). All 60 equations are derived from that model and verified, never hand-written.
   - **What Comes Next?** — repeating, growing and number sequences

@@ -89,6 +89,7 @@ Other automated checks:
 ### Features
 - [x] Workbooks: patterns, handwriting, join-the-dots, first letters, fun with letters, letter maze, complete the word, colouring, odd & even
 - [x] Cambridge stage mapping (PP1→EY2, PP2→EY3, G1/2/3→Primary Stages 1/2/3) and per-child stage override
+- [x] Colour Lab: mixing pots (blue+yellow→green, red+yellow→orange, red+blue→purple, red+white→pink, verified against the *rendered pixels*, not just the labels), discovery shelf + star, 12-slice wheel with recipes and opposites, light-vs-paint divergence (red+green light = yellow while the same paints = orange), Mix to Match accepting a correct recipe, monotonic tint/tone/shade ladders, science cards + quiz
 - [x] Phonics, sight words, read-along stories + quizzes
 - [x] Letter tracing (coverage detection, forgiving threshold)
 - [x] Maths tiers 1–10 … 100+ across + − × ÷ with visual counters; progressive unlock
