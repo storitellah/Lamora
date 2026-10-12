@@ -13,6 +13,7 @@
  *   • { kind: "path"  } — SVG path data on a 0–100 grid (pre-writing patterns)
  */
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { acceptsPointer } from "../lib/input";
 import { motion } from "framer-motion";
 
 export type Guide =
@@ -56,6 +57,7 @@ export default function TraceSheet({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const samples = useRef<[number, number][]>([]);
   const drawing = useRef(false);
+  const activePointer = useRef<number | null>(null);
   const last = useRef<[number, number] | null>(null);
   const done = useRef(false);
   const [coverage, setCoverage] = useState(0);
@@ -189,14 +191,23 @@ export default function TraceSheet({
           aria-label={label}
           className="draw-surface block w-full rounded-3xl"
           onPointerDown={e => {
+            // One finger (or pencil) at a time; a resting palm is ignored once a pencil is used.
+            if (activePointer.current !== null || !acceptsPointer(e)) return;
+            activePointer.current = e.pointerId;
             (e.target as HTMLCanvasElement).setPointerCapture(e.pointerId);
             drawing.current = true;
             last.current = pos(e);
             stroke(e);
           }}
-          onPointerMove={stroke}
-          onPointerUp={() => { drawing.current = false; last.current = null; measure(); }}
-          onPointerCancel={() => { drawing.current = false; last.current = null; }}
+          onPointerMove={e => { if (e.pointerId === activePointer.current) stroke(e); }}
+          onPointerUp={e => {
+            if (e.pointerId !== activePointer.current) return;
+            activePointer.current = null; drawing.current = false; last.current = null; measure();
+          }}
+          onPointerCancel={e => {
+            if (e.pointerId !== activePointer.current) return;
+            activePointer.current = null; drawing.current = false; last.current = null;
+          }}
         />
       </div>
       {/* Effort bar — grows as they trace, never scolds. */}

@@ -5,6 +5,25 @@ All notable changes to Lamora are documented here.
 ## [Unreleased]
 
 ### Added
+- **Art Studio** — a drawing and painting studio built for tablets and Apple Pencil:
+  - Pressure-sensitive strokes from a stylus or Apple Pencil, with every high-frequency sample used (coalesced pointer events) and adjustable line smoothing.
+  - **Palm rejection** turns on automatically the first time a pencil touches the screen; fingers then pan and pinch-zoom instead of drawing.
+  - Brushes: pen, pencil, crayon, marker, spray, rainbow; plus eraser, fill bucket, shapes (line, square, circle, triangle, star, heart; outline or filled), 30 stickers, eyedropper and a **move** tool that picks up any stroke, shape or sticker.
+  - **Layers** (show/hide, lock, reorder, opacity, up to six) with a one-tap *paint under the lines* switch; mirror drawing (two-way and four-way); undo/redo; keyboard shortcuts on Mac and Windows.
+  - Colour any colouring-book picture: its outlines sit on a locked layer above the paint.
+  - Save as a **high-resolution JPG** (2400×1800 or a ~12 MP poster), keep pictures in **My Gallery**, and never lose work — the studio autosaves on the device.
+- **Installable Android app (APK)**, built automatically by GitHub Actions and published on the Releases page; an iOS (Xcode) project for a native iPad build. See `docs/INSTALL.md`.
+- **Forgot the PIN?** — a grown-up maths challenge resets the parent PIN without losing children's progress.
+
+### Fixed
+- **Parent zone lock** only "sometimes" opened on tablets: a slightly moving finger started a scroll and cancelled the hold, sliding off the button reset it, and the long-press menu stole the gesture. The lock now captures the finger, ignores scroll and long-press menus, needs 2 seconds instead of 3, and shows a ring filling up.
+- **Join the Dots** — on 12 letters and numbers (B, D, E, F, O, Q, R, Y, 0, 3, 6, 8) two dots sat on the same spot: their numbers overlapped, and the hidden dot swallowed the tap so the child got stuck. Shared spots are now one dot labelled e.g. "1 · 3", and labels are placed clear of other dots and lines.
+- **Read-aloud on phones and tablets** — speech now unlocks on the first touch on iPad/iPhone (so automatic prompts are heard), waits for the speech engine after a screen change instead of being dropped, splits long text so Chrome doesn't cut it off, falls back to an on-device voice when offline, and uses the device's native text-to-speech inside the installed app.
+- **Maths counters** — multiplication now shows every group (it showed at most four), and counted counters no longer stay faded on the next question.
+- **Saving files** — Dream Card PNG/PDF, colouring pages and the progress summary now save correctly on iPad/iPhone (share sheet → Save Image) and inside the installed app; Dream Card PDF is a real PDF file instead of a print pop-up that home-screen apps block.
+- **Touch targets** — every control now meets the 44-point minimum.
+- Tracing sheets ignore a second finger and a resting palm once a pencil has been used.
+
 - **Colour Lab** — six rooms where children learn how colours are actually made. The mixing underneath is a real model, not an approximation: paint uses **subtractive RYB** mixing (Gosset–Chen cube, trilinear interpolation) and light uses **additive RGB**, so blue + yellow really makes green rather than the muddy grey a naive RGB average would give.
   - **Mixing Pots** — pour red, yellow, blue, white and black a drop at a time, hear the colour name, and fill a shelf of six discoveries (orange, green, purple, brown, pink, grey)
   - **Colour Wheel** — a 12-part wheel with three modes: every colour and its recipe, warm vs cool, and opposites (complementary pairs)

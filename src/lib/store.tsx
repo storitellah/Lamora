@@ -53,7 +53,7 @@ export interface AppState {
 export type Screen =
   | { name: "profiles" }
   | { name: "home" }
-  | { name: "reading" } | { name: "math" } | { name: "trivia" } | { name: "workbooks" } | { name: "puzzles" } | { name: "colourlab" }
+  | { name: "reading" } | { name: "math" } | { name: "trivia" } | { name: "workbooks" } | { name: "puzzles" } | { name: "colourlab" } | { name: "art" }
   | { name: "games" } | { name: "chess" } | { name: "dreamcards" }
   | { name: "rewards" }
   | { name: "parent-gate" } | { name: "parent" }

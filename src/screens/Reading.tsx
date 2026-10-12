@@ -3,6 +3,7 @@
  * canvas), sight words and read-along stories.
  */
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { acceptsPointer } from "../lib/input";
 import { motion } from "framer-motion";
 import { Volume2, Eraser, Check, ChevronRight, ChevronLeft, BookOpen, Pencil, Ear, Eye, Dumbbell } from "lucide-react";
 import { Shell, Tile, Btn, toast, Confetti } from "../components/UI";
@@ -100,6 +101,7 @@ function Tracing({ onBack }: { onBack: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const guidePts = useRef<[number, number][]>([]);
   const drawing = useRef(false);
+  const activePointer = useRef<number | null>(null);
   const last = useRef<[number, number] | null>(null);
   const [idx, setIdx] = useState(0);
   const [coverage, setCoverage] = useState(0);
@@ -205,14 +207,23 @@ function Tracing({ onBack }: { onBack: () => void }) {
           aria-label={`Tracing area for the letter ${item.letter}. Draw over the dotted letter with your finger.`}
           className="draw-surface block w-full rounded-3xl"
           onPointerDown={e => {
+            // One finger (or pencil) at a time; a resting palm is ignored once a pencil is used.
+            if (activePointer.current !== null || !acceptsPointer(e)) return;
+            activePointer.current = e.pointerId;
             (e.target as HTMLCanvasElement).setPointerCapture(e.pointerId);
             drawing.current = true;
             last.current = pos(e);
             stroke(e);
           }}
-          onPointerMove={stroke}
-          onPointerUp={() => { drawing.current = false; last.current = null; measure(); }}
-          onPointerCancel={() => { drawing.current = false; last.current = null; }}
+          onPointerMove={e => { if (e.pointerId === activePointer.current) stroke(e); }}
+          onPointerUp={e => {
+            if (e.pointerId !== activePointer.current) return;
+            activePointer.current = null; drawing.current = false; last.current = null; measure();
+          }}
+          onPointerCancel={e => {
+            if (e.pointerId !== activePointer.current) return;
+            activePointer.current = null; drawing.current = false; last.current = null;
+          }}
         />
       </div>
       {/* Live progress bar keeps effort visible without pass/fail pressure */}

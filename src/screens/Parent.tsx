@@ -3,7 +3,7 @@
  * not reach live here: audio & music, screen time, reward tuning,
  * profiles, accessibility and data management.
  */
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Music, Volume2, Timer, Star, Users, Accessibility, ShieldCheck,
   Download, KeyRound, Trash2, Delete, Check, Plus
@@ -12,6 +12,8 @@ import { Shell, Btn, toast } from "../components/UI";
 import { sfx, haptic, previewVoice } from "../lib/audio";
 import { useStore, todayKey, Profile } from "../lib/store";
 import { STAGES, stageForAge } from "../data/curriculum";
+import { saveBlob, saveMessage } from "../lib/saveFile";
+import { wipeArt } from "../lib/gallery";
 
 /* ---------------- PIN gate ---------------- */
 
@@ -48,13 +50,45 @@ export function ParentGate({ onPass, onBack }: { onPass: () => void; onBack: () 
     }
   }
 
+  // A ref mirrors `entered` so very fast taps (or a physical keyboard) never
+  // read a stale value from an older render and drop a digit.
+  const enteredRef = useRef("");
+  const busy = useRef(false);
+  const [forgot, setForgot] = useState(false);
+
   function key(k: string) {
+    if (busy.current) return;
     sfx.tap(); haptic();
-    if (k === "⌫") { setEntered(e => e.slice(0, -1)); return; }
-    const next = (entered + k).slice(0, 4);
+    if (k === "⌫") { enteredRef.current = enteredRef.current.slice(0, -1); setEntered(enteredRef.current); return; }
+    const next = (enteredRef.current + k).slice(0, 4);
+    enteredRef.current = next;
     setEntered(next);
-    if (next.length === 4) setTimeout(() => submit(next), 160);
+    if (next.length === 4) {
+      busy.current = true;
+      setTimeout(() => {
+        busy.current = false;
+        enteredRef.current = "";
+        submit(next);
+      }, 160);
+    }
   }
+
+  // Desktop / tablets with keyboards: digits, Backspace.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (forgot) return;
+      if (/^[0-9]$/.test(e.key)) key(e.key);
+      else if (e.key === "Backspace") key("⌫");
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
+
+  if (forgot) return <ForgotPin onBack={() => setForgot(false)} onDone={() => {
+    // The old PIN is gone: go straight on to choosing a new one.
+    setForgot(false); setFirstPin(null); enteredRef.current = ""; setEntered("");
+    setMsg("Choose a new 4-digit PIN for the parent zone.");
+  }} />;
 
   return (
     <Shell title={creating ? "Create a parent PIN" : "Parent PIN"} subtitle={msg} onBack={onBack}>
@@ -74,6 +108,50 @@ export function ParentGate({ onPass, onBack }: { onPass: () => void; onBack: () 
             </button>
           )
         )}
+      </div>
+      {!creating && (
+        <div className="mt-6 text-center">
+          <button onClick={() => setForgot(true)} className="min-h-11 px-4 text-sm font-semibold text-tint underline-offset-4 hover:underline">
+            Forgot the PIN?
+          </button>
+        </div>
+      )}
+    </Shell>
+  );
+}
+
+/**
+ * Forgotten-PIN recovery. There is no account and no email (by design), so
+ * recovery is a grown-up challenge: a two-digit × two-digit multiplication
+ * typed in full. It clears the old PIN and lets the parent set a new one.
+ * Nothing else is touched — children's progress is kept.
+ */
+function ForgotPin({ onDone, onBack }: { onDone: () => void; onBack: () => void }) {
+  const { dispatch } = useStore();
+  const [[a, b]] = useState(() => [23 + Math.floor(Math.random() * 60), 13 + Math.floor(Math.random() * 70)]);
+  const [ans, setAns] = useState("");
+  const [err, setErr] = useState(false);
+  function check() {
+    if (Number(ans) === a * b) {
+      dispatch({ type: "settings", patch: { pin: null } });
+      toast("Old PIN cleared");
+      onDone();
+    } else { sfx.wrong(); setErr(true); setAns(""); }
+  }
+  return (
+    <Shell title="Reset the parent PIN" subtitle="Grown-ups: solve this to clear the old PIN." onBack={onBack}>
+      <div className="glass mx-auto max-w-sm rounded-[1.75rem] p-6 text-center">
+        <p className="text-3xl font-extrabold">{a} × {b} = ?</p>
+        <input
+          inputMode="numeric" pattern="[0-9]*" autoComplete="off" value={ans}
+          onChange={e => { setAns(e.target.value.replace(/\D/g, "")); setErr(false); }}
+          onKeyDown={e => { if (e.key === "Enter") check(); }}
+          aria-label="Answer"
+          className="mt-4 w-full rounded-2xl border border-ink/10 bg-white px-4 py-3 text-center text-2xl font-bold"
+        />
+        {err && <p className="mt-2 text-sm font-semibold text-coral">Not quite — try again.</p>}
+        <Btn className="mt-4 w-full" onClick={check}><Check size={18} aria-hidden /> Reset PIN</Btn>
+        <p className="mt-3 text-xs text-ink-2">Children's progress and settings are kept.</p>
       </div>
     </Shell>
   );
@@ -106,9 +184,9 @@ function Toggle({ on, onChange, label }: { on: boolean; onChange: (v: boolean) =
       aria-checked={on}
       aria-label={label}
       onClick={() => { sfx.tap(); onChange(!on); }}
-      className={`relative h-9 w-16 rounded-full transition-colors ${on ? "bg-mint" : "bg-ink/20"}`}
+      className={`relative h-11 w-[4.5rem] rounded-full transition-colors ${on ? "bg-mint" : "bg-ink/20"}`}
     >
-      <span className={`absolute top-1 h-7 w-7 rounded-full bg-white shadow transition-all ${on ? "left-8" : "left-1"}`} />
+      <span className={`absolute top-1 h-9 w-9 rounded-full bg-white shadow transition-all ${on ? "left-[2.25rem]" : "left-1"}`} />
     </button>
   );
 }
@@ -182,7 +260,7 @@ export function ParentDashboard({ onExit }: { onExit: () => void }) {
           </Row>
           {profile && (
             <Row label={`Used today (${profile.name}): ${Math.round((profile.usage[todayKey()] ?? 0) / 60)} min`}>
-              <Btn kind="soft" className="!min-h-10 !px-4 !py-2 text-sm" onClick={() => {
+              <Btn kind="soft" className="!min-h-11 !px-4 !py-2 text-sm" onClick={() => {
                 dispatch({ type: "resetToday" });
                 toast("Today's timer reset");
               }}>Reset today</Btn>
@@ -197,7 +275,7 @@ export function ParentDashboard({ onExit }: { onExit: () => void }) {
           </Row>
           {state.profiles.map(p => (
             <Row key={p.id} label={`${p.avatar} ${p.name} — ${p.totalStars} ⭐, ${p.tokens} 🎮`}>
-              <Btn kind="danger" className="!min-h-10 !px-4 !py-2 text-sm" onClick={() => {
+              <Btn kind="danger" className="!min-h-11 !px-4 !py-2 text-sm" onClick={() => {
                 if (confirm(`Reset all rewards and progress for ${p.name}?`))
                   dispatch({ type: "resetRewards", id: p.id });
               }}>Reset</Btn>
@@ -226,8 +304,8 @@ export function ParentDashboard({ onExit }: { onExit: () => void }) {
 
         <Section icon={<ShieldCheck className="text-tint" aria-hidden />} title="Data & privacy">
           <p className="mb-3 text-sm text-ink-2">
-            Profiles, stars and settings live only in this browser. There are no
-            accounts, no analytics and no uploads — photos included.
+            Profiles, stars, settings and artwork live only on this device. There are no
+            accounts, no analytics and no uploads — photos and drawings included.
           </p>
           <div className="flex flex-wrap gap-3">
             <Btn kind="soft" onClick={() => exportSummary(state.profiles)}>
@@ -241,10 +319,11 @@ export function ParentDashboard({ onExit }: { onExit: () => void }) {
             }}>
               <KeyRound size={18} aria-hidden /> Change PIN
             </Btn>
-            <Btn kind="danger" onClick={() => {
-              if (confirm("Delete ALL Lamora data on this device? Every profile and setting will be removed.") &&
+            <Btn kind="danger" onClick={async () => {
+              if (confirm("Delete ALL Lamora data on this device? Every profile, setting and saved drawing will be removed.") &&
                   confirm("Are you completely sure? This cannot be undone.")) {
                 dispatch({ type: "wipe" });
+                await wipeArt();
                 localStorage.clear();
                 location.reload();
               }
@@ -303,7 +382,7 @@ function ProfileRow({ p }: { p: Profile }) {
         <option value="">Auto ({STAGES.find(s2 => s2.id === stageForAge(p.age))?.short})</option>
         {STAGES.map(s2 => <option key={s2.id} value={s2.id}>{s2.emoji} {s2.name}</option>)}
       </select>
-      <Btn kind="danger" className="!min-h-10 !px-4 !py-2 text-sm" onClick={() => {
+      <Btn kind="danger" className="!min-h-11 !px-4 !py-2 text-sm" onClick={() => {
         if (state.profiles.length <= 1) { toast("Keep at least one profile"); return; }
         if (confirm(`Delete ${p.name}'s profile and all their local data?`))
           dispatch({ type: "removeProfile", id: p.id });
@@ -324,9 +403,7 @@ function exportSummary(profiles: Profile[]) {
     txt += `  Screen time recorded: ${Math.round(mins)} minutes\n\n`;
   }
   const blob = new Blob([txt], { type: "text/plain" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "progress-summary.txt";
-  a.click();
-  toast("Summary downloaded 📄");
+  void saveBlob(blob, "progress-summary.txt", "Progress summary").then(r => {
+    const m = saveMessage(r, "Summary"); if (m) toast(m);
+  });
 }

@@ -30,6 +30,7 @@ Lamora is a learning app your child can use **on their own** — and that you ca
 | --- | --- |
 | 🧩 **Puzzles** | Seven brain-teasers with easy/medium/hard levels: **Shape Sums** (picture arithmetic — add and subtract the *lines* that make a shape), **Maze Adventure** (16 levels, stars, keys & doors), What Comes Next, Odd One Out, Balance Scales, Number Pyramid and Shape Sudoku |
 | ✏️ **Workbooks** | Stage-by-stage workbook sheets aligned to the **Cambridge** frameworks (Pre-Primary 1 & 2, Grade 1–3): pre-writing **patterns**, **handwriting**, **join the dots**, **first letters**, **fun with letters**, **letter maze**, **complete the word**, **colouring pages**, and **odd & even numbers** |
+| 🖌️ **Art Studio** | Draw and paint with a finger, stylus or **Apple Pencil** (pressure-sensitive, with automatic palm rejection). Pen, pencil, crayon, marker, spray and rainbow brushes; fill bucket, shapes, stickers, eyedropper and move tool; **layers** with a one-tap "paint under the lines"; mirror drawing; pinch-zoom; unlimited undo. Colour any of the colouring-book pictures, keep work in **My Gallery**, and save **high-resolution JPGs** (2400×1800, or a 12-megapixel poster) |
 | 🎨 **Colour Lab** | Six rooms for learning how colour really works: **Mixing Pots** (pour red, yellow, blue, white and black and name what you made), **Colour Wheel** (recipes, warm vs cool, opposites), **Mix to Match** challenges, **Light vs Paint** (why torches and paint pots mix in *opposite* ways), **Tints & Shades**, and **Colour Science** fact cards with a quiz |
 | 💪 **Reading Gym** | A six-step reading ladder that unlocks in order: letter sounds → sound-it-out blending → word families → sight-word speed → sentences → a short story with comprehension |
 | 📖 **Reading & Writing** | Phonics with letter sounds, **letter tracing** on a drawing canvas, sight words by level, read-along stories with quizzes |
@@ -69,7 +70,9 @@ Hold the 🔒 button for 3 seconds and enter your PIN (you create it on first us
 
 ## Getting started
 
-Lamora is a Progressive Web App — one page, no installation store needed:
+**Installing on a tablet or computer?** See **[docs/INSTALL.md](docs/INSTALL.md)** — Android APK, iPad / iPhone, Mac and Windows.
+
+Lamora is a Progressive Web App that also ships as a native Android app (APK) and an iOS project, built with Capacitor from the same code:
 
 ```bash
 npm install
@@ -81,14 +84,14 @@ npm run preview   # serve the production build
 Deploy the `dist/` folder to any static host (Cloudflare Pages, Netlify, GitHub Pages…). Then on your device:
 
 - **iPad / iPhone (Safari):** Share → *Add to Home Screen*
-- **Android (Chrome):** menu → *Install app*
+- **Android:** install the APK from the [Releases page](https://github.com/storitellah/Lamora/releases/tag/android-latest), or Chrome → menu → *Install app*
 - **Windows / Mac (Chrome or Edge):** the install icon in the address bar
 
 After the first visit, Lamora works entirely offline — updates apply quietly when you're back online.
 
 ## Privacy, in plain words
 
-Lamora makes **zero network requests** after loading: no fonts from CDNs, no analytics, no APIs. Sounds are synthesised on the device, speech uses your device's built-in voices, and photos for Dream Cards are drawn straight onto a local canvas — never uploaded, never analysed, gone when you leave unless *you* export the card. Full details: [PRIVACY.md](PRIVACY.md) · [CHILD-SAFETY.md](CHILD-SAFETY.md) · [PARENT-GUIDE.md](PARENT-GUIDE.md).
+Lamora makes **zero network requests** after loading: no fonts from CDNs, no analytics, no APIs. Sounds are synthesised on the device, speech uses your device's built-in voices, and photos for Dream Cards are drawn straight onto a local canvas — never uploaded, never analysed, gone when you leave unless *you* export the card. Drawings from the Art Studio are kept in the browser's on-device storage (or inside the installed app) and leave the device only when you choose **Save**. The Android app has cloud backup switched off, so children's data isn't copied to Google Drive either. Full details: [PRIVACY.md](PRIVACY.md) · [CHILD-SAFETY.md](CHILD-SAFETY.md) · [PARENT-GUIDE.md](PARENT-GUIDE.md).
 
 ## Under the hood
 
@@ -96,7 +99,9 @@ React 18 + TypeScript, Tailwind CSS 4, Framer Motion (fluid, spring-based micro-
 
 ```
 src/
-  lib/        store (state + persistence) · audio engine · chess engine
+  lib/        store (state + persistence) · audio + speech engine · chess engine
+              art engine (vector strokes, flood fill, export) · gallery (IndexedDB)
+              saveFile (download / share sheet / native) · tiny PDF writer
   components/ UI kit (glass surfaces, buttons, quiz engine, confetti)
   screens/    Reading · Math · Trivia · Games · Chess · DreamCards · Parent
   data/       all curriculum content, in one reviewable file

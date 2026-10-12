@@ -102,6 +102,19 @@ body {
   -webkit-user-select: none;
 }
 
+/* Long-pressing a control must never select its label or open the iOS /
+   Android callout menu — children hold buttons down all the time. */
+button, [role="button"], [role="switch"], img, svg {
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.no-callout {
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 /* Canvas surfaces capture the pointer — no scrolling while drawing */
 .draw-surface {
   touch-action: none;

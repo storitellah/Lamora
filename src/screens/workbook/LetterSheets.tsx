@@ -69,9 +69,9 @@ export function FirstLetter({ onBack }: { onBack: () => void }) {
 
       {/* Mode switch — parents/teachers can pick tapping or writing */}
       <div className="mb-4 flex justify-center gap-2">
-        <Btn kind={mode === "tap" ? "primary" : "soft"} className="!min-h-10 !px-5 !py-2 text-sm"
+        <Btn kind={mode === "tap" ? "primary" : "soft"} className="!min-h-11 !px-5 !py-2 text-sm"
           onClick={() => setMode("tap")}><Hand size={16} aria-hidden /> Tap it</Btn>
-        <Btn kind={mode === "write" ? "primary" : "soft"} className="!min-h-10 !px-5 !py-2 text-sm"
+        <Btn kind={mode === "write" ? "primary" : "soft"} className="!min-h-11 !px-5 !py-2 text-sm"
           onClick={() => { setMode("write"); setResetKey(k => k + 1); }}><PenLine size={16} aria-hidden /> Write it</Btn>
       </div>
 

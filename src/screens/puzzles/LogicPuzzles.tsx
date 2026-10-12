@@ -25,7 +25,7 @@ function DiffBar({ diff, set }: { diff: Difficulty; set: (d: Difficulty) => void
   return (
     <div className="mb-4 flex justify-center gap-2">
       {(["easy", "medium", "hard"] as Difficulty[]).map(d => (
-        <Btn key={d} kind={diff === d ? "primary" : "soft"} className="!min-h-10 !px-5 !py-2 text-sm"
+        <Btn key={d} kind={diff === d ? "primary" : "soft"} className="!min-h-11 !px-5 !py-2 text-sm"
           onClick={() => set(d)}>
           {d === "easy" ? "🟢 Easy" : d === "medium" ? "🟡 Medium" : "🔴 Hard"}
         </Btn>

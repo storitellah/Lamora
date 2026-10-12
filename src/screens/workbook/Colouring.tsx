@@ -13,6 +13,7 @@ import { Shell, Btn, toast } from "../../components/UI";
 import { sfx, speak, haptic } from "../../lib/audio";
 import { useStore } from "../../lib/store";
 import { COLOURING_PAGES, ColouringPage } from "../../data/colouringPages";
+import { saveBlob, saveMessage } from "../../lib/saveFile";
 
 const PALETTE = [
   "#d63031", "#e17055", "#fdcb6e", "#ffeaa7", "#00b894", "#55efc4",
@@ -117,16 +118,16 @@ function ColourPage({ page, onBack, onNext }: { page: ColouringPage; onBack: () 
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement("canvas");
-      canvas.width = 1000; canvas.height = 1000;
+      canvas.width = 2000; canvas.height = 2000;
       const g = canvas.getContext("2d")!;
       g.fillStyle = "#fff";
-      g.fillRect(0, 0, 1000, 1000);
-      g.drawImage(img, 0, 0, 1000, 1000);
-      const a = document.createElement("a");
-      a.href = canvas.toDataURL("image/png");
-      a.download = `${page.id}-colouring.png`;
-      a.click();
-      toast("Saved as a picture 🎉");
+      g.fillRect(0, 0, 2000, 2000);
+      g.drawImage(img, 0, 0, 2000, 2000);
+      canvas.toBlob(async blob => {
+        if (!blob) return;
+        const m = saveMessage(await saveBlob(blob, `${page.id}-colouring.png`, "My colouring"));
+        if (m) toast(m);
+      }, "image/png");
     };
     img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(xml);
   }

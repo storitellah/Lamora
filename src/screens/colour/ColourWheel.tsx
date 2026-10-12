@@ -52,13 +52,13 @@ export default function ColourWheel({ onBack }: { onBack: () => void }) {
     <Shell title="Colour Wheel 🎡" subtitle="Tap a colour to learn how it is made" onBack={onBack} wide>
       {/* View modes */}
       <div className="mb-4 flex flex-wrap justify-center gap-2">
-        <Btn kind={mode === "all" ? "primary" : "soft"} className="!min-h-10 !px-4 !py-2 text-sm"
+        <Btn kind={mode === "all" ? "primary" : "soft"} className="!min-h-11 !px-4 !py-2 text-sm"
           onClick={() => setMode("all")}>🎨 All colours</Btn>
-        <Btn kind={mode === "temp" ? "primary" : "soft"} className="!min-h-10 !px-4 !py-2 text-sm"
+        <Btn kind={mode === "temp" ? "primary" : "soft"} className="!min-h-11 !px-4 !py-2 text-sm"
           onClick={() => { setMode("temp"); speak("Warm colours are reds, oranges and yellows. Cool colours are greens, blues and purples."); }}>
           <Flame size={15} aria-hidden /> Warm &amp; cool
         </Btn>
-        <Btn kind={mode === "comp" ? "primary" : "soft"} className="!min-h-10 !px-4 !py-2 text-sm"
+        <Btn kind={mode === "comp" ? "primary" : "soft"} className="!min-h-11 !px-4 !py-2 text-sm"
           onClick={() => { setMode("comp"); speak("Colours opposite each other on the wheel are called complementary. Side by side, they make each other pop."); }}>
           <ArrowLeftRight size={15} aria-hidden /> Opposites
         </Btn>

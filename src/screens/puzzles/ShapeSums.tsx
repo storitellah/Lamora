@@ -85,7 +85,7 @@ export default function ShapeSums({ onBack }: { onBack: () => void }) {
       {/* Difficulty */}
       <div className="mb-4 flex justify-center gap-2">
         {(["easy", "medium", "hard"] as Difficulty[]).map(d => (
-          <Btn key={d} kind={diff === d ? "primary" : "soft"} className="!min-h-10 !px-5 !py-2 text-sm"
+          <Btn key={d} kind={diff === d ? "primary" : "soft"} className="!min-h-11 !px-5 !py-2 text-sm"
             onClick={() => { setDiff(d); setSolved(0); setPicked(null); setHint(null); setRound(r => r + 1); }}>
             {d === "easy" ? "🟢 Easy" : d === "medium" ? "🟡 Medium" : "🔴 Hard"}
           </Btn>

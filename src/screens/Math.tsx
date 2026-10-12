@@ -48,9 +48,13 @@ function distractors(answer: number, spread: number, count: number): number[] {
  * exactly like counters on a table. Only shown when numbers are small
  * enough to count (≤ 20 total).
  */
-function Counters({ groups, colors }: { groups: number[]; colors: string[] }) {
+let counterSeq = 0;
+function Counters({ groups, colors, max = 20 }: { groups: number[]; colors: string[]; max?: number }) {
+  // Counted state lives in React (not the DOM), so a new question can never
+  // inherit faded counters from the previous one.
+  const [counted, setCounted] = useState<Set<string>>(new Set());
   const total = groups.reduce((a, b) => a + b, 0);
-  if (total > 20 || total === 0) return null;
+  if (total > max || total === 0) return null;
   return (
     <div className="flex flex-wrap items-center justify-center gap-4" aria-label={`Counters showing ${groups.join(" and ")}`}>
       {groups.map((n, gi) => (
@@ -61,10 +65,15 @@ function Counters({ groups, colors }: { groups: number[]; colors: string[] }) {
               aria-label="counter"
               whileTap={{ scale: 1.5 }}
               transition={{ type: "spring", stiffness: 500, damping: 12 }}
-              className={`h-7 w-7 rounded-full ${colors[gi % colors.length]} shadow-sm`}
-              onClick={e => {
-                // Visual "counted" state helps children keep track.
-                (e.currentTarget as HTMLElement).style.opacity = "0.35";
+              className={`h-7 w-7 rounded-full ${colors[gi % colors.length]} shadow-sm transition-opacity`}
+              style={{ opacity: counted.has(`${gi}-${i}`) ? 0.35 : 1 }}
+              onClick={() => {
+                // Visual "counted" state helps children keep track; tap again to undo.
+                setCounted(c => {
+                  const n = new Set(c), k = `${gi}-${i}`;
+                  n.has(k) ? n.delete(k) : n.add(k);
+                  return n;
+                });
               }}
             />
           ))}
@@ -82,7 +91,7 @@ function buildQuestion(op: Op, tier: Tier): QuizQuestion {
     return {
       prompt: `${a} + ${b} = ?`,
       speakText: `What is ${a} plus ${b}?`,
-      visual: <Counters groups={[a, b]} colors={["bg-tint", "bg-sky"]} />,
+      visual: <Counters key={++counterSeq} groups={[a, b]} colors={["bg-tint", "bg-sky"]} />,
       choices: distractors(a + b, Math.max(2, Math.floor(hi / 8)), 3).map(String),
       answer: String(a + b),
       hint: `Count on from ${Math.max(a, b)}.`,
@@ -95,7 +104,7 @@ function buildQuestion(op: Op, tier: Tier): QuizQuestion {
     return {
       prompt: `${a} − ${b} = ?`,
       speakText: `What is ${a} take away ${b}?`,
-      visual: <Counters groups={[a]} colors={["bg-coral"]} />,
+      visual: <Counters key={++counterSeq} groups={[a]} colors={["bg-coral"]} />,
       choices: distractors(a - b, Math.max(2, Math.floor(hi / 8)), 3).map(String),
       answer: String(a - b),
       hint: `Start at ${a} and count back ${b}. Tap ${b} counters to take them away!`,
@@ -110,7 +119,7 @@ function buildQuestion(op: Op, tier: Tier): QuizQuestion {
     return {
       prompt: `${a} × ${b} = ?`,
       speakText: `What is ${a} times ${b}?`,
-      visual: <Counters groups={Array.from({ length: Math.min(a, 4) }, () => b)} colors={["bg-sun", "bg-mint", "bg-sky", "bg-tint"]} />,
+      visual: <Counters key={++counterSeq} groups={Array.from({ length: a }, () => b)} colors={["bg-sun", "bg-mint", "bg-sky", "bg-tint"]} max={36} />,
       choices: distractors(a * b, a + 2, 3).map(String),
       answer: String(a * b),
       hint: `${a} groups of ${b} — count them group by group.`,
@@ -124,7 +133,7 @@ function buildQuestion(op: Op, tier: Tier): QuizQuestion {
   return {
     prompt: `${totalN} ÷ ${share} = ?`,
     speakText: `Share ${totalN} between ${share}. How many each?`,
-    visual: <Counters groups={[totalN]} colors={["bg-mint"]} />,
+    visual: <Counters key={++counterSeq} groups={[totalN]} colors={["bg-mint"]} />,
     choices: distractors(each, 3, 3).map(String),
     answer: String(each),
     hint: `Deal them out into ${share} equal groups.`,

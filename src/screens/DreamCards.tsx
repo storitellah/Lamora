@@ -13,6 +13,8 @@ import { Camera, Upload, Trash2, Download, Printer, ShieldCheck } from "lucide-r
 import { Shell, Tile, Btn, toast } from "../components/UI";
 import { speak, sfx } from "../lib/audio";
 import { useStore } from "../lib/store";
+import { canvasToBlob, saveBlob, saveMessage } from "../lib/saveFile";
+import { jpegToPdf } from "../lib/pdf";
 import { PROFESSIONS, Profession } from "../data/content";
 
 export default function DreamCards({ onExit }: { onExit: () => void }) {
@@ -167,28 +169,22 @@ function CardBuilder({ pro, onBack }: { pro: Profession; onBack: () => void }) {
     g.closePath();
   }
 
-  function exportPNG() {
-    const a = document.createElement("a");
-    a.href = canvasRef.current!.toDataURL("image/png");
-    a.download = `dream-card-${(name || "me").toLowerCase().replace(/\s+/g, "-")}.png`;
-    a.click();
-    toast("Card saved as a high-resolution PNG 🎉");
-    sfx.chime();
+  const fileBase = `dream-card-${(name || "me").toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+
+  async function exportPNG() {
+    const blob = await canvasToBlob(canvasRef.current!, "image/png");
+    const m = saveMessage(await saveBlob(blob, `${fileBase}.png`, "My Dream Card"), "Card");
+    if (m) { toast(m); sfx.chime(); }
   }
 
-  /** PDF export: open the card in a print window — every platform's print
-   *  dialog offers "Save as PDF", which keeps us dependency-free. */
-  function exportPDF() {
-    const url = canvasRef.current!.toDataURL("image/png");
-    const w = window.open("", "_blank");
-    if (!w) { toast("Please allow pop-ups to export a PDF"); return; }
-    w.document.write(
-      `<html><head><title>Dream Card</title><style>
-        body{margin:0;display:grid;place-items:center;min-height:100vh}
-        img{width:105mm;height:147mm;object-fit:contain}
-      </style></head><body><img src="${url}" onload="setTimeout(()=>{window.print()},200)"></body></html>`
-    );
-    w.document.close();
+  /** PDF export: a real PDF file built on the device (see lib/pdf.ts) —
+   *  works in every browser, home-screen app and the installed app. */
+  async function exportPDF() {
+    const c = canvasRef.current!;
+    const jpeg = new Uint8Array(await (await canvasToBlob(c, "image/jpeg", 0.95)).arrayBuffer());
+    const pdf = jpegToPdf(jpeg, c.width, c.height, 105, 147); // A6 portrait card
+    const m = saveMessage(await saveBlob(pdf, `${fileBase}.pdf`, "My Dream Card"), "PDF");
+    if (m) { toast(m); sfx.chime(); }
   }
 
   return (
@@ -272,7 +268,7 @@ function PhotoButton({ capture, onPick, children }: {
         accept="image/*"
         {...(capture ? { capture: "user" as const } : {})}
         className="hidden"
-        onChange={e => onPick(e.target.files?.[0])}
+        onChange={e => { onPick(e.target.files?.[0]); e.target.value = ""; /* lets the same photo be picked again */ }}
       />
       <Btn kind="soft" onClick={() => ref.current?.click()}>{children}</Btn>
     </>

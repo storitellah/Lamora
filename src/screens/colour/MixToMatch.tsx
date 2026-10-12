@@ -108,7 +108,7 @@ export default function MixToMatch({ onBack }: { onBack: () => void }) {
 
       <div className="mb-4 flex justify-center gap-2">
         {(["easy", "medium", "hard"] as Level[]).map(l => (
-          <Btn key={l} kind={lvl === l ? "primary" : "soft"} className="!min-h-10 !px-5 !py-2 text-sm"
+          <Btn key={l} kind={lvl === l ? "primary" : "soft"} className="!min-h-11 !px-5 !py-2 text-sm"
             onClick={() => { setLvl(l); setSolved(0); setDrops({}); setShowHint(false); setRound(r => r + 1); }}>
             {l === "easy" ? "🟢 Easy" : l === "medium" ? "🟡 Medium" : "🔴 Hard"}
           </Btn>

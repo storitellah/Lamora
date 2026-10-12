@@ -65,6 +65,22 @@ Other automated checks:
 - Screenshots reviewed at **430×930 (phone)** and **1100×900 (tablet/desktop)** for every new sheet.
 - No requests to any third-party origin.
 
+## Cross-device sweep (v2.1)
+
+Automated in Chromium with device emulation (scripts kept with the release notes):
+
+| Suite | What it drives | Result |
+| --- | --- | --- |
+| Screen crawl | Every pathway and its sub-screens (99 screens) on **iPhone 390×844, Android 412×915, iPad portrait 820×1180, iPad landscape 1180×820, desktop 1440×900**: JS errors, console errors, sideways scrolling, controls cut off, touch targets under **44 pt** | 0 issues on all five |
+| Art Studio | Mouse, **pen with pressure** and **multi-touch** through Chrome DevTools input: strokes, undo/redo (buttons, Ctrl+Z, ⌘⇧Z), pressure width (3 px light → 11 px hard), palm rejection, pinch zoom, shapes, fill stays inside outlines, stickers + move, mirror, eraser, layers, eyedropper, JPG 2400×1800 and 4000×3000 (checked from the JPEG header), gallery, autosave, all colouring pictures, phone layout | 23 / 23 |
+| Voice | A stand-in speech engine with iOS and Android rules (no speech before the first tap; `speak()` within 50 ms of `cancel()` is dropped; network voices fail offline) | 5 / 5 |
+| Parent lock | Real touch: quick tap shows a hint, 2 s hold with a **drifting** finger opens, sliding off the button still opens, early release cancels, fast PIN taps, keyboard digits, wrong PIN, forgot-PIN reset | 7 / 7 |
+| Join the Dots | Every letter and numeral playable end to end, including the 12 with shared dots | ✔ |
+| Colour Lab · Workbooks · Puzzles · Core | Existing suites | all green |
+
+**What emulation cannot prove** — please check on the real devices before handing them to children:
+Safari's own speech voices and Apple Pencil hardware on iPad (Chromium stands in for WebKit here), the installed Android APK (built by CI, not in this sandbox), and Windows' touch keyboard.
+
 ## Manual test checklist (for release on real devices)
 
 ### Installation

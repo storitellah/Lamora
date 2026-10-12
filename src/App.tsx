@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   BookOpen, Calculator, Globe2, Gamepad2, Crown, Sparkles, Trophy,
-  Home, Lock, Volume2, VolumeX, Hourglass, Moon, NotebookPen, Puzzle, Palette
+  Home, Lock, Volume2, VolumeX, Hourglass, Moon, NotebookPen, Puzzle, Palette, Brush
 } from "lucide-react";
 import { useStore, Screen, todayKey } from "./lib/store";
 import { Btn, Tile, Shell, ToastHost, toast } from "./components/UI";
@@ -20,6 +20,7 @@ import DreamCards from "./screens/DreamCards";
 import Workbooks from "./screens/Workbooks";
 import Puzzles from "./screens/Puzzles";
 import ColourLab from "./screens/ColourLab";
+import ArtStudio from "./screens/ArtStudio";
 import { ParentGate, ParentDashboard } from "./screens/Parent";
 
 export default function App() {
@@ -78,23 +79,6 @@ export default function App() {
 
 function TopBar({ screen, go }: { screen: Screen; go: (s: Screen) => void }) {
   const { state, dispatch, profile, remainingSeconds } = useStore();
-  const holdTimer = useRef<number | null>(null);
-  const [holding, setHolding] = useState(false);
-
-  // Press-and-hold (3s) is the child-safe gesture for the parent zone.
-  function holdStart() {
-    setHolding(true);
-    holdTimer.current = window.setTimeout(() => {
-      setHolding(false);
-      go({ name: "parent-gate" });
-    }, 3000);
-  }
-  function holdEnd(fromClick = false) {
-    setHolding(false);
-    if (holdTimer.current) { clearTimeout(holdTimer.current); holdTimer.current = null; }
-    if (fromClick) toast("Grown-ups: press and hold for 3 seconds 🔒");
-  }
-
   const mins = Math.ceil(remainingSeconds / 60);
 
   return (
@@ -139,19 +123,96 @@ function TopBar({ screen, go }: { screen: Screen; go: (s: Screen) => void }) {
         >
           {state.settings.muted ? <VolumeX size={20} aria-hidden /> : <Volume2 size={20} className="text-tint" aria-hidden />}
         </button>
-        <button
-          onPointerDown={holdStart}
-          onPointerUp={() => holdEnd(true)}
-          onPointerLeave={() => holdEnd()}
-          onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go({ name: "parent-gate" }); } }}
-          aria-label="Parent zone. Press and hold for three seconds."
-          className={`grid h-11 w-11 place-items-center rounded-full shadow-sm transition-colors
-            ${holding ? "bg-tint text-white" : "bg-white/80"}`}
-        >
-          <Lock size={20} aria-hidden className={holding ? "" : "text-ink-2"} />
-        </button>
+        <HoldLock onUnlock={() => go({ name: "parent-gate" })} />
       </div>
     </header>
+  );
+}
+
+/* ---------------- Parent lock (press and hold) ---------------- */
+
+const HOLD_MS = 2000;
+
+/**
+ * Press-and-hold lock for the parent zone. The hold is a speed bump for small
+ * children; the PIN behind it is the real protection.
+ *
+ * Why the earlier version only "sometimes" worked on tablets:
+ *  - a finger drifting a couple of pixels made the browser start a scroll,
+ *    which fires `pointercancel` and abandons the press;
+ *  - the finger leaving the 44px button fired `pointerleave` and reset it;
+ *  - iOS and Android open a long-press callout / context menu at ~500ms,
+ *    which steals the gesture.
+ * So: `touch-action: none` (no scroll can start here), pointer capture (the
+ * press stays ours even if the finger slides off), and the callout and
+ * context menu are suppressed. A ring fills up so grown-ups can see it working.
+ */
+function HoldLock({ onUnlock }: { onUnlock: () => void }) {
+  const [progress, setProgress] = useState(0);
+  const start = useRef<number | null>(null);
+  const raf = useRef<number | null>(null);
+  const done = useRef(false);
+
+  const stop = () => {
+    if (raf.current) cancelAnimationFrame(raf.current);
+    raf.current = null;
+    start.current = null;
+  };
+  useEffect(() => stop, []);
+
+  function tick() {
+    if (start.current == null) return;
+    const p = Math.min(1, (performance.now() - start.current) / HOLD_MS);
+    setProgress(p);
+    if (p >= 1) {
+      done.current = true;
+      stop();
+      haptic(30);
+      sfx.chime();
+      onUnlock();
+      return;
+    }
+    raf.current = requestAnimationFrame(tick);
+  }
+
+  function down(e: React.PointerEvent<HTMLButtonElement>) {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* old browsers */ }
+    done.current = false;
+    start.current = performance.now();
+    haptic(8);
+    raf.current = requestAnimationFrame(tick);
+  }
+
+  function up() {
+    if (done.current || start.current == null) return;
+    const held = performance.now() - start.current;
+    stop();
+    setProgress(0);
+    if (held < 600) toast("Grown-ups: press and hold the lock for 2 seconds 🔒");
+  }
+
+  const R = 19, C = 2 * Math.PI * R;
+  return (
+    <button
+      onPointerDown={down}
+      onPointerUp={up}
+      onPointerCancel={up}
+      onLostPointerCapture={up}
+      onContextMenu={e => e.preventDefault()}
+      onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onUnlock(); } }}
+      aria-label="Parent zone. Press and hold for two seconds."
+      className="no-callout relative grid h-11 w-11 place-items-center rounded-full bg-white/80 shadow-sm"
+      style={{ touchAction: "none" }}
+    >
+      <svg className="pointer-events-none absolute inset-0 -rotate-90" viewBox="0 0 44 44" aria-hidden>
+        <circle cx="22" cy="22" r={R} fill="none" stroke="var(--color-tint)" strokeWidth="3.5"
+          strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * (1 - progress)}
+          opacity={progress > 0 ? 1 : 0} />
+      </svg>
+      <Lock size={20} aria-hidden className={progress > 0 ? "text-tint" : "text-ink-2"} />
+    </button>
   );
 }
 
@@ -171,6 +232,7 @@ function ScreenView({ screen, go }: { screen: Screen; go: (s: Screen) => void })
     case "workbooks": return <Workbooks onExit={home} />;
     case "puzzles": return <Puzzles onExit={home} />;
     case "colourlab": return <ColourLab onExit={home} />;
+    case "art": return <ArtStudio onExit={home} />;
     case "rewards": return <Rewards go={go} />;
     case "parent-gate": return <ParentGate onPass={() => go({ name: "parent" })} onBack={home} />;
     case "parent": return <ParentDashboard onExit={home} />;
@@ -237,6 +299,7 @@ function HomeScreen({ go }: { go: (s: Screen) => void }) {
     { icon: <NotebookPen className="text-coral" />, label: "Workbooks", sub: "Write, trace & colour", screen: { name: "workbooks" }, tint: "from-coral/15 to-sun/10" },
     { icon: <Calculator className="text-mint" />, label: "Maths Journey", sub: "Count, add & multiply", screen: { name: "math" }, tint: "from-mint/15 to-mint/5" },
     { icon: <Puzzle className="text-tint" />, label: "Puzzles", sub: "Shapes, mazes & logic", screen: { name: "puzzles" }, tint: "from-tint/15 to-coral/10" },
+    { icon: <Brush className="text-tint" />, label: "Art Studio", sub: "Draw, paint & save", screen: { name: "art" }, tint: "from-sky/15 to-tint/10" },
     { icon: <Palette className="text-coral" />, label: "Colour Lab", sub: "Mix & learn colours", screen: { name: "colourlab" }, tint: "from-coral/15 to-sun/10" },
     { icon: <Globe2 className="text-sky" />, label: "Did You Know?", sub: "World curiosities", screen: { name: "trivia" }, tint: "from-sky/15 to-sky/5" },
     { icon: <Gamepad2 className="text-coral" />, label: "Play", sub: "Reward games", screen: { name: "games" }, tint: "from-coral/15 to-coral/5" },
