@@ -40,10 +40,15 @@
     <!-- Permissions — deliberately minimal for a children's app.
          INTERNET is required by Android's WebView to load the app's own
          bundled pages (served from inside the APK); Lamora makes no network
-         requests of its own. No camera, microphone, location, contacts or
-         advertising-ID permissions are requested. Photos for Dream Cards are
-         picked through the system picker, which needs no permission. -->
+         requests of its own. No camera, location, contacts or advertising-ID
+         permissions are requested. Photos for Dream Cards are picked through
+         the system picker, which needs no permission.
+         The microphone is used only in the PIN-protected Parent Zone, when a
+         grown-up records language words; Android asks before first use and
+         the recordings never leave the device. -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <!-- Only Android 9 and older need this to save pictures to Documents. -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
 </manifest>

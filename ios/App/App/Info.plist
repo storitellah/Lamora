@@ -72,6 +72,8 @@
 	<string>Lamora lets a grown-up choose a photo for a Dream Card. Photos stay on this device.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Lamora saves your child's drawings and cards to Photos when you choose to.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Only in the Parent Zone: lets a grown-up record Portuguese and Kiswahili words in their own voice. Recordings stay on this device.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 </dict>

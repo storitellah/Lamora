@@ -6,14 +6,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   Music, Volume2, Timer, Star, Users, Accessibility, ShieldCheck,
-  Download, KeyRound, Trash2, Delete, Check, Plus
+  Download, KeyRound, Trash2, Delete, Check, Plus, Globe2, Mic
 } from "lucide-react";
+import { VoiceRecorder } from "./VoiceRecorder";
 import { Shell, Btn, toast } from "../components/UI";
 import { sfx, haptic, previewVoice } from "../lib/audio";
 import { useStore, todayKey, Profile } from "../lib/store";
 import { STAGES, stageForAge } from "../data/curriculum";
 import { saveBlob, saveMessage } from "../lib/saveFile";
 import { wipeArt } from "../lib/gallery";
+import { wipeRecordings } from "../lib/voiceRecordings";
 
 /* ---------------- PIN gate ---------------- */
 
@@ -210,6 +212,8 @@ export function ParentDashboard({ onExit }: { onExit: () => void }) {
   const { state, dispatch, profile } = useStore();
   const s = state.settings;
   const set = (patch: Partial<typeof s>) => dispatch({ type: "settings", patch });
+  const [recorder, setRecorder] = useState(false);
+  if (recorder) return <VoiceRecorder variant={s.ptVariant ?? "br"} onBack={() => setRecorder(false)} />;
 
   return (
     <Shell title="Parent Dashboard 🔒" subtitle="Everything stays on this device. Nothing is uploaded, ever." onBack={onExit} wide>
@@ -246,6 +250,22 @@ export function ParentDashboard({ onExit }: { onExit: () => void }) {
           <p className="pt-1 text-sm text-ink-2">
             Voices come from this device. The most natural one for your choice is used automatically;
             some devices may only offer one.
+          </p>
+        </Section>
+
+        <Section icon={<Globe2 className="text-mint" aria-hidden />} title="Languages">
+          <Row label="Portuguese">
+            <Select value={s.ptVariant ?? "br"} onChange={v => set({ ptVariant: v as "br" | "pt" })} label="Portuguese variety"
+              options={[["br", "🇧🇷 Brazil"], ["pt", "🇵🇹 Portugal"]]} />
+          </Row>
+          <Row label="Your voice">
+            <Btn kind="soft" className="!min-h-11 !px-4 !py-2 text-sm" onClick={() => setRecorder(true)}>
+              <Mic size={16} aria-hidden /> Record words
+            </Btn>
+          </Row>
+          <p className="pt-2 text-xs text-ink-2">
+            Words are spoken by a recording you make here, otherwise by this device's own voice for that language, otherwise by the voice built into Lamora.
+            Recordings stay on this device.
           </p>
         </Section>
 
@@ -324,6 +344,7 @@ export function ParentDashboard({ onExit }: { onExit: () => void }) {
                   confirm("Are you completely sure? This cannot be undone.")) {
                 dispatch({ type: "wipe" });
                 await wipeArt();
+                await wipeRecordings();
                 localStorage.clear();
                 location.reload();
               }

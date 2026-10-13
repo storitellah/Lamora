@@ -142,12 +142,16 @@ const FEMALE_TOKENS = [
   "female", "woman", "samantha", "victoria", "vicki", "karen", "moira", "tessa",
   "fiona", "serena", "allison", "ava", "susan", "zira", "aria", "jenny", "michelle",
   "sonia", "libby", "catherine", "kate", "zoe", "amelie", "anna", "nicky", "flo",
-  "google us english", "google uk english female", "eddie (female)"
+  "google us english", "google uk english female", "eddie (female)",
+  // Portuguese and Kiswahili voices on Apple, Microsoft and Android devices
+  "luciana", "joana", "catarina", "francisca", "raquel", "fernanda", "thalita",
+  "maria", "helia", "ines", "inês", "zuri", "rehema"
 ];
 const MALE_TOKENS = [
   "male", "\\bman\\b", "daniel", "aaron", "arthur", "fred", "alex", "tom", "oliver",
   "gordon", "david", "mark", "guy", "ryan", "george", "james", "reed", "rishi",
-  "eddy", "rocko", "google uk english male", "grandpa"
+  "eddy", "rocko", "google uk english male", "grandpa",
+  "felipe", "duarte", "antonio", "antónio", "daudi", "rafiki"
 ];
 
 function classifyGender(name: string): VoiceGender | "unknown" {
@@ -447,10 +451,160 @@ export function availableVoiceGenders(): Record<VoiceGender, boolean> {
 
 export function stopSpeaking() {
   generation++;
+  stopClip();
   pendingText = null;
   stopKeepAlive();
   live.clear();
   try { if (window.speechSynthesis) { window.speechSynthesis.cancel(); lastCancelAt = performance.now(); } } catch { /* noop */ }
   const tts = typeof window !== "undefined" ? nativeTTS() : null;
   if (tts) void tts.stop().catch(() => {});
+}
+
+/* ---------------- Other languages (Portuguese, Kiswahili) ----------------
+ *
+ * A word in another language is said with the best voice we can find:
+ *   1. a recording a grown-up made on this device (Parent Zone),
+ *   2. a natural voice for that language installed on the device,
+ *   3. the clip bundled with the app (always there, works offline).
+ * If a device voice fails — e.g. an online-only voice while offline — the
+ * bundled clip plays instead, so a child never taps 🔊 and hears nothing.
+ */
+
+let clipSource: AudioBufferSourceNode | null = null;
+const clipCache = new Map<string, Promise<AudioBuffer | null>>();
+
+function stopClip() {
+  try { clipSource?.stop(); } catch { /* already stopped */ }
+  clipSource = null;
+}
+
+async function decode(src: string | Blob): Promise<AudioBuffer | null> {
+  const a = ac(); if (!a) return null;
+  try {
+    const data = typeof src === "string" ? await (await fetch(src)).arrayBuffer() : await src.arrayBuffer();
+    return await new Promise<AudioBuffer>((res, rej) => {
+      // Safari < 14.1 only has the callback form of decodeAudioData.
+      const p = a.decodeAudioData(data, res, rej);
+      if (p && typeof (p as Promise<AudioBuffer>).then === "function") (p as Promise<AudioBuffer>).then(res, rej);
+    });
+  } catch { return null; }
+}
+
+/** Preload clips so the first tap plays instantly. */
+export function preloadClips(urls: string[]) {
+  for (const u of urls) if (!clipCache.has(u)) clipCache.set(u, decode(u));
+}
+
+/** Play an audio clip (URL or recorded Blob) through Web Audio. Resolves when it ends. */
+export async function playClip(src: string | Blob, gen = ++generation): Promise<boolean> {
+  if (muted) return false;
+  const a = ac(); if (!a) return false;
+  let buf: AudioBuffer | null;
+  if (typeof src === "string") {
+    if (!clipCache.has(src)) clipCache.set(src, decode(src));
+    buf = await clipCache.get(src)!;
+    if (!buf) clipCache.delete(src); // let a later tap retry
+  } else buf = await decode(src);
+  if (!buf || gen !== generation) return false;
+  stopClip();
+  const node = a.createBufferSource();
+  const g = a.createGain();
+  g.gain.value = Math.max(0.05, volume) * 1.1;
+  node.buffer = buf;
+  node.connect(g).connect(a.destination);
+  clipSource = node;
+  return new Promise(res => {
+    node.onended = () => { if (clipSource === node) clipSource = null; res(true); };
+    node.start();
+  });
+}
+
+/** Best installed voice for one of these language tags (e.g. ["sw-KE","sw"]). */
+function voiceFor(langs: string[]): SpeechSynthesisVoice | null {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return null;
+  const all = window.speechSynthesis.getVoices();
+  const offline = typeof navigator !== "undefined" && navigator.onLine === false;
+  for (const tag of langs) {
+    const t = tag.toLowerCase().replace("_", "-");
+    const cands = all.filter(v => {
+      const l = (v.lang || "").toLowerCase().replace("_", "-");
+      if (!(l === t || (!t.includes("-") && l.startsWith(t + "-")) || l === t.split("-")[0])) return false;
+      if (/espeak/i.test(v.name)) return false; // robotic — our clips are the same engine
+      if (offline && !v.localService) return false;
+      return true;
+    });
+    if (!cands.length) continue;
+    cands.sort((a, b) => {
+      const ga = classifyGender(a.name) === voiceGender ? 5 : 0, gb = classifyGender(b.name) === voiceGender ? 5 : 0;
+      return gb + qualityScore(b) - (ga + qualityScore(a));
+    });
+    return cands[0];
+  }
+  return null;
+}
+
+/** Does this device have its own voice for the language? (for the parent screen) */
+export function hasDeviceVoice(langs: string[]): boolean { return !!voiceFor(langs); }
+
+export interface LangSay { text: string; langs: string[]; clip: string; recording?: Blob | null }
+
+/** Tells the page (and the automated tests) what was said and by which voice. */
+function announce(clip: string, source: "recording" | "device" | "native" | "clip") {
+  try { window.dispatchEvent(new CustomEvent("lamora-say", { detail: { clip, source } })); } catch { /* old browsers */ }
+}
+
+/** Say a word or phrase in another language, with graceful fallbacks. */
+export function sayIn(o: LangSay) {
+  if (muted || typeof window === "undefined") return;
+  stopClip();
+  const gen = ++generation;
+  try { window.speechSynthesis?.cancel(); lastCancelAt = performance.now(); } catch { /* ignore */ }
+  const clip = (g: number) => { announce(o.clip, "clip"); return playClip(o.clip, g); };
+
+  if (o.recording) { announce(o.clip, "recording"); void playClip(o.recording, gen); return; }
+
+  const tts = nativeTTS();
+  if (tts) {
+    void (async () => {
+      const t = tts as unknown as NativeTTS & { isLanguageSupported?(x: { lang: string }): Promise<{ supported: boolean }> };
+      for (const lang of o.langs) {
+        try {
+          if (t.isLanguageSupported && (await t.isLanguageSupported({ lang })).supported) {
+            if (gen !== generation) return;
+            announce(o.clip, "native");
+            await tts.speak({ text: o.text, lang, rate: 0.85, pitch: 1.05, volume, category: "playback" });
+            return;
+          }
+        } catch { /* try the next tag */ }
+      }
+      if (gen === generation) void clip(gen);
+    })();
+    return;
+  }
+
+  const v = voiceFor(o.langs);
+  if (!v) { void clip(gen); return; }
+  const go = () => {
+    if (gen !== generation) return;
+    announce(o.clip, "device");
+    const u = new SpeechSynthesisUtterance(o.text);
+    u.voice = v; u.lang = v.lang;
+    u.rate = 0.85;            // a little slower for learners
+    u.pitch = 1.05;
+    u.volume = volume;
+    let started = false;
+    live.add(u);
+    u.onstart = () => { started = true; };
+    u.onend = () => live.delete(u);
+    u.onerror = (e: SpeechSynthesisErrorEvent) => {
+      live.delete(u);
+      if (e.error === "interrupted" || e.error === "canceled") return;
+      if (gen === generation) void clip(gen);
+    };
+    window.speechSynthesis.speak(u);
+    // Some engines fail silently (no start, no error): fall back after a moment.
+    setTimeout(() => { if (!started && gen === generation && !window.speechSynthesis.speaking) void clip(gen); }, 1500);
+  };
+  const wait = SETTLE_MS - (performance.now() - lastCancelAt);
+  if (wait > 0) setTimeout(go, wait); else go();
 }

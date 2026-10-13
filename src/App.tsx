@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   BookOpen, Calculator, Globe2, Gamepad2, Crown, Sparkles, Trophy,
-  Home, Lock, Volume2, VolumeX, Hourglass, Moon, NotebookPen, Puzzle, Palette, Brush
+  Home, Lock, Volume2, VolumeX, Hourglass, Moon, NotebookPen, Puzzle, Palette, Brush, Languages as LanguagesIcon
 } from "lucide-react";
 import { useStore, Screen, todayKey } from "./lib/store";
 import { Btn, Tile, Shell, ToastHost, toast } from "./components/UI";
@@ -21,6 +21,7 @@ import Workbooks from "./screens/Workbooks";
 import Puzzles from "./screens/Puzzles";
 import ColourLab from "./screens/ColourLab";
 import ArtStudio from "./screens/ArtStudio";
+import Languages from "./screens/Languages";
 import { ParentGate, ParentDashboard } from "./screens/Parent";
 
 export default function App() {
@@ -233,6 +234,7 @@ function ScreenView({ screen, go }: { screen: Screen; go: (s: Screen) => void })
     case "puzzles": return <Puzzles onExit={home} />;
     case "colourlab": return <ColourLab onExit={home} />;
     case "art": return <ArtStudio onExit={home} />;
+    case "languages": return <Languages onExit={home} />;
     case "rewards": return <Rewards go={go} />;
     case "parent-gate": return <ParentGate onPass={() => go({ name: "parent" })} onBack={home} />;
     case "parent": return <ParentDashboard onExit={home} />;
@@ -299,6 +301,7 @@ function HomeScreen({ go }: { go: (s: Screen) => void }) {
     { icon: <NotebookPen className="text-coral" />, label: "Workbooks", sub: "Write, trace & colour", screen: { name: "workbooks" }, tint: "from-coral/15 to-sun/10" },
     { icon: <Calculator className="text-mint" />, label: "Maths Journey", sub: "Count, add & multiply", screen: { name: "math" }, tint: "from-mint/15 to-mint/5" },
     { icon: <Puzzle className="text-tint" />, label: "Puzzles", sub: "Shapes, mazes & logic", screen: { name: "puzzles" }, tint: "from-tint/15 to-coral/10" },
+    { icon: <LanguagesIcon className="text-mint" />, label: "Languages", sub: "Português & Kiswahili", screen: { name: "languages" }, tint: "from-mint/15 to-sky/10" },
     { icon: <Brush className="text-tint" />, label: "Art Studio", sub: "Draw, paint & save", screen: { name: "art" }, tint: "from-sky/15 to-tint/10" },
     { icon: <Palette className="text-coral" />, label: "Colour Lab", sub: "Mix & learn colours", screen: { name: "colourlab" }, tint: "from-coral/15 to-sun/10" },
     { icon: <Globe2 className="text-sky" />, label: "Did You Know?", sub: "World curiosities", screen: { name: "trivia" }, tint: "from-sky/15 to-sky/5" },

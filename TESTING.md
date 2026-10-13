@@ -75,6 +75,8 @@ Automated in Chromium with device emulation (scripts kept with the release notes
 | Art Studio | Mouse, **pen with pressure** and **multi-touch** through Chrome DevTools input: strokes, undo/redo (buttons, Ctrl+Z, ⌘⇧Z), pressure width (3 px light → 11 px hard), palm rejection, pinch zoom, shapes, fill stays inside outlines, stickers + move, mirror, eraser, layers, eyedropper, JPG 2400×1800 and 4000×3000 (checked from the JPEG header), gallery, autosave, all colouring pictures, phone layout | 23 / 23 |
 | Voice | A stand-in speech engine with iOS and Android rules (no speech before the first tap; `speak()` within 50 ms of `cancel()` is dropped; network voices fail offline) | 5 / 5 |
 | Parent lock | Real touch: quick tap shows a hint, 2 s hold with a **drifting** finger opens, sliding off the button still opens, early release cancels, fast PIN taps, keyboard digits, wrong PIN, forgot-PIN reset | 7 / 7 |
+| Languages | Picture cards speak on arrival, “I said it!” cheers in the target language and records progress, Listen & find (6/6), Match, conversations with per-line audio, Brazilian vs European Portuguese words and clips, a parent recording replacing the built-in clip, phone layout; all 330 clips decode | 13 / 13 |
+| Language voices | Natural device voice used when installed (Portuguese), built-in clip when none exists (Kiswahili), clip fallback when an online-only voice fails | 3 / 3 |
 | Join the Dots | Every letter and numeral playable end to end, including the 12 with shared dots | ✔ |
 | Colour Lab · Workbooks · Puzzles · Core | Existing suites | all green |
 

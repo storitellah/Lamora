@@ -22,7 +22,7 @@ None of this ever leaves the device. Lamora has no server, no accounts, no cloud
 - ❌ No accounts or logins — children never enter an email or password
 - ❌ No chat, social features or public profiles
 - ❌ No location access
-- ❌ No microphone access
+- ❌ No microphone access for children. The only use is optional and grown-up-only: in the PIN-protected Parent Zone you can record Portuguese or Kiswahili words in your own voice. The microphone is on only while you hold a word's record button, and recordings stay on this device
 - ❌ No camera access (photo upload is a manual file choice by a parent)
 - ❌ No cloud upload of any kind
 - ❌ No facial recognition or biometric processing
@@ -43,7 +43,9 @@ If a parent adds a photo to a Dream Card — by device **camera** or by **choosi
 
 ## Speech and sound
 
-Read-aloud uses the speech voices built into your device's operating system (Web Speech API); sound effects and the optional background music are synthesised on the device (Web Audio API). No audio files are downloaded, no audio is recorded, and no audio data is sent anywhere. The microphone is never accessed.
+Read-aloud uses the speech voices built into your device's operating system (Web Speech API); sound effects and the optional background music are synthesised on the device (Web Audio API). The Portuguese and Kiswahili word clips are ordinary audio files packaged inside the app (made with open-source speech software), so they play offline. No audio data is ever sent anywhere.
+
+The microphone is used only if a grown-up chooses **Parent Zone → Languages → Record words**. It switches on when you tap a word's record button and off as soon as you stop (5 seconds at most). Recordings are stored only on this device, are played back only inside Lamora, and are removed by **Delete all data**. Children cannot reach the recorder, and nothing in the child area uses the microphone.
 
 ## Your controls
 

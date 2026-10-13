@@ -28,6 +28,8 @@ export interface Profile {
   mazeBest?: Record<number, number>;
   /** Highest Reading Gym drill unlocked (1-based). */
   readingLevel?: number;
+  /** Language words this child has learned, e.g. { pt: ["hello", …], sw: [...] }. */
+  langWords?: Partial<Record<"pt" | "sw", string[]>>;
 }
 
 export interface Settings {
@@ -40,6 +42,8 @@ export interface Settings {
   playMinutes: number;       // length of one reward game session
   dailyLimitMin: number;
   reducedMotion: boolean;
+  /** Portuguese as spoken in Brazil (default) or Portugal. */
+  ptVariant: "br" | "pt";
 }
 
 export interface AppState {
@@ -53,7 +57,7 @@ export interface AppState {
 export type Screen =
   | { name: "profiles" }
   | { name: "home" }
-  | { name: "reading" } | { name: "math" } | { name: "trivia" } | { name: "workbooks" } | { name: "puzzles" } | { name: "colourlab" } | { name: "art" }
+  | { name: "reading" } | { name: "math" } | { name: "trivia" } | { name: "workbooks" } | { name: "puzzles" } | { name: "colourlab" } | { name: "art" } | { name: "languages" }
   | { name: "games" } | { name: "chess" } | { name: "dreamcards" }
   | { name: "rewards" }
   | { name: "parent-gate" } | { name: "parent" }
@@ -89,7 +93,8 @@ function defaults(): AppState {
       starsPerToken: 5,
       playMinutes: 5,
       dailyLimitMin: 45,
-      reducedMotion: false
+      reducedMotion: false,
+      ptVariant: "br"
     }
   };
 }
@@ -121,6 +126,7 @@ type Action =
   | { type: "resetRewards"; id: string }
   | { type: "mazeCleared"; levelIndex: number; steps: number }
   | { type: "readingCleared"; levelIndex: number }
+  | { type: "langLearned"; lang: "pt" | "sw"; ids: string[] }
   | { type: "wipe" };
 
 export function todayKey() {
@@ -161,6 +167,12 @@ function reducer(state: AppState, a: Action): AppState {
         ...p,
         readingLevel: Math.max(p.readingLevel ?? 1, a.levelIndex + 2)
       }));
+    case "langLearned":
+      return withActive(p => {
+        const have = new Set(p.langWords?.[a.lang] ?? []);
+        a.ids.forEach(id => have.add(id));
+        return { ...p, langWords: { ...(p.langWords ?? {}), [a.lang]: [...have] } };
+      });
     case "spendToken":
       return withActive(p => ({ ...p, tokens: Math.max(0, p.tokens - 1) }));
     case "tickUsage":
@@ -192,7 +204,7 @@ function reducer(state: AppState, a: Action): AppState {
         ...state,
         profiles: state.profiles.map(p =>
           p.id === a.id
-            ? { ...p, stars: 0, totalStars: 0, tokens: 0, done: {}, mazeLevel: 1, mazeBest: {}, readingLevel: 1 }
+            ? { ...p, stars: 0, totalStars: 0, tokens: 0, done: {}, mazeLevel: 1, mazeBest: {}, readingLevel: 1, langWords: {} }
             : p
         )
       };

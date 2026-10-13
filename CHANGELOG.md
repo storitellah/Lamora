@@ -5,6 +5,13 @@ All notable changes to Lamora are documented here.
 ## [Unreleased]
 
 ### Added
+- **Languages: Portuguese and Kiswahili** — a new pathway for ages 4–10.
+  - 90 words and phrases with a picture each, in nine topics: hello & greetings (taught as whole phrases, with a “say it like” guide and little cultural notes such as *Shikamoo* for elders), numbers 1–10, colours, family, animals, food & drink, my body, home & school, nature.
+  - Three ways to play every topic: **Learn** picture cards that speak each word and ask the child to say it back, **Listen & find** (hear a word, tap its picture) and **Match** (pair pictures with words). Correct answers are cheered in the language being learned.
+  - **Conversations**: three short scenes (meeting a friend, good morning grandma, bedtime) to act out line by line.
+  - Brazilian Portuguese by default; European Portuguese words and voice can be chosen in the Parent Zone.
+  - **Audio that always works**: a family member's own recording if one was made (Parent Zone → Languages → Record words; stays on the device), otherwise the device's natural voice for that language, otherwise one of 330 clips built into the app, so Kiswahili is heard even on iPads, which have no Swahili voice. The clips are generated with open-source eSpeak NG by `scripts/generate-language-audio.ts`.
+  - Words learned are tracked per child.
 - **Art Studio** — a drawing and painting studio built for tablets and Apple Pencil:
   - Pressure-sensitive strokes from a stylus or Apple Pencil, with every high-frequency sample used (coalesced pointer events) and adjustable line smoothing.
   - **Palm rejection** turns on automatically the first time a pencil touches the screen; fingers then pan and pinch-zoom instead of drawing.
