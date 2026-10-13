@@ -1,8 +1,8 @@
 /**
  * Portuguese and Kiswahili for young learners.
  *
- * Every item has a picture (emoji), the English meaning, Brazilian
- * Portuguese (`pt`, with the European form in `ptPT` where it differs) and
+ * Every item has a picture (emoji), the English meaning, European
+ * Portuguese (`pt` — the Portuguese of Portugal, never Brazilian forms) and
  * Kiswahili (`sw`, standard East African Swahili as taught in Kenya and
  * Tanzania).
  *
@@ -24,7 +24,6 @@ export interface LangItem {
   emoji: string;
   en: string;
   pt: string;
-  ptPT?: string;
   sw: string;
   /** Pronunciation help for English speakers. */
   ptSay?: string;
@@ -44,10 +43,11 @@ export interface LangTopic {
 
 export const LANGS: Record<LangId, { name: string; native: string; flag: string; greeting: string; cheer: string[]; tryAgain: string[]; voiceLangs: string[] }> = {
   pt: {
-    name: "Portuguese", native: "Português", flag: "🇧🇷🇵🇹", greeting: "Olá!",
-    cheer: ["Muito bem!", "Parabéns!", "Fantástico!", "Que legal!", "Excelente!"],
-    tryAgain: ["Quase! Vamos de novo!", "Tente outra vez!"],
-    voiceLangs: ["pt-BR", "pt-PT", "pt"]
+    name: "Portuguese", native: "Português", flag: "🇵🇹", greeting: "Olá!",
+    cheer: ["Muito bem!", "Parabéns!", "Fantástico!", "Boa!", "Excelente!"],
+    tryAgain: ["Quase! Tenta outra vez.", "Vamos tentar de novo!"],
+    // European Portuguese voices only — a Brazilian voice is never used.
+    voiceLangs: ["pt-PT"]
   },
   sw: {
     name: "Kiswahili", native: "Kiswahili", flag: "🇰🇪🇹🇿", greeting: "Jambo!",
@@ -62,24 +62,25 @@ export const TOPICS: LangTopic[] = [
     id: "greet", emoji: "👋", en: "Hello & greetings", pt: "Olá!", sw: "Salamu",
     items: [
       { id: "hello", emoji: "👋", en: "Hello", pt: "Olá", sw: "Jambo", ptSay: "oh-LAH", swSay: "JAHM-boh",
-        note: { pt: "Friends in Brazil also say “Oi!”", sw: "“Hujambo?” means “How are you?” — answer “Sijambo!”" } },
-      { id: "good-morning", emoji: "🌅", en: "Good morning", pt: "Bom dia", sw: "Habari za asubuhi", ptSay: "bong DEE-ah", swSay: "ha-BAH-ree zah ah-soo-BOO-hee" },
-      { id: "good-afternoon", emoji: "🌤️", en: "Good afternoon", pt: "Boa tarde", sw: "Habari za mchana", ptSay: "BOH-ah TAR-jee", swSay: "ha-BAH-ree zah m-CHAH-nah" },
-      { id: "good-night", emoji: "🌙", en: "Good night", pt: "Boa noite", sw: "Lala salama", ptSay: "BOH-ah NOY-chee", swSay: "LAH-lah sah-LAH-mah",
+        note: { pt: "You can say “Olá” at any time of day.", sw: "“Hujambo?” means “How are you?” — answer “Sijambo!”" } },
+      { id: "good-morning", emoji: "🌅", en: "Good morning", pt: "Bom dia", sw: "Habari za asubuhi", ptSay: "bõ DEE-uh", swSay: "ha-BAH-ree zah ah-soo-BOO-hee" },
+      { id: "good-afternoon", emoji: "🌤️", en: "Good afternoon", pt: "Boa tarde", sw: "Habari za mchana", ptSay: "BOH-uh TARD", swSay: "ha-BAH-ree zah m-CHAH-nah" },
+      { id: "good-night", emoji: "🌙", en: "Good night", pt: "Boa noite", sw: "Lala salama", ptSay: "BOH-uh NOYT", swSay: "LAH-lah sah-LAH-mah",
         note: { sw: "“Lala salama” means “sleep peacefully”." } },
-      { id: "how-are-you", emoji: "🙂", en: "How are you?", pt: "Como você está?", ptPT: "Como estás?", sw: "Habari yako?", ptSay: "KOH-moo voh-SAY ish-TAH", swSay: "ha-BAH-ree YAH-koh" },
-      { id: "im-fine", emoji: "😊", en: "I'm fine!", pt: "Estou bem!", sw: "Nzuri!", ptSay: "ish-TOH bayng", swSay: "n-ZOO-ree",
+      { id: "how-are-you", emoji: "🙂", en: "How are you?", pt: "Como estás?", sw: "Habari yako?", ptSay: "KOH-moo shTAHSH", swSay: "ha-BAH-ree YAH-koh" },
+      { id: "im-fine", emoji: "😊", en: "I'm fine!", pt: "Estou bem!", sw: "Nzuri!", ptSay: "shTOH bãy", swSay: "n-ZOO-ree",
         note: { sw: "Answer “Habari?” with “Nzuri!” — it means “good”." } },
-      { id: "thank-you", emoji: "🙏", en: "Thank you", pt: "Obrigada", sw: "Asante", ptSay: "oh-bree-GAH-dah", swSay: "ah-SAHN-teh",
+      { id: "thank-you", emoji: "🙏", en: "Thank you", pt: "Obrigada", sw: "Asante", ptSay: "oh-bree-GAH-duh", swSay: "ah-SAHN-teh",
         note: { pt: "Girls say “obrigada”, boys say “obrigado”.", sw: "“Asante sana” means “thank you very much”." } },
-      { id: "please", emoji: "🤲", en: "Please", pt: "Por favor", sw: "Tafadhali", ptSay: "por fah-VOR", swSay: "tah-fah-THAH-lee" },
-      { id: "welcome", emoji: "🤗", en: "Welcome / You're welcome", pt: "De nada", sw: "Karibu", ptSay: "jee NAH-dah", swSay: "kah-REE-boo",
+      { id: "please", emoji: "🤲", en: "Please", pt: "Por favor", sw: "Tafadhali", ptSay: "poor fuh-VOR", swSay: "tah-fah-THAH-lee" },
+      { id: "welcome", emoji: "🤗", en: "Welcome / You're welcome", pt: "De nada", sw: "Karibu", ptSay: "duh NAH-duh", swSay: "kah-REE-boo",
         note: { pt: "“De nada” is the answer to “obrigada”.", sw: "“Karibu” means “welcome” and “come in” too!" } },
-      { id: "goodbye", emoji: "🫡", en: "Goodbye", pt: "Tchau", ptPT: "Adeus", sw: "Kwaheri", ptSay: "chow", swSay: "kwah-HEH-ree" },
-      { id: "my-name", emoji: "📛", en: "My name is…", pt: "Meu nome é…", ptPT: "O meu nome é…", sw: "Jina langu ni…", ptSay: "MAY-oo NOH-mee eh", swSay: "JEE-nah LAHN-goo nee" },
+      { id: "goodbye", emoji: "🫡", en: "Goodbye", pt: "Adeus", sw: "Kwaheri", ptSay: "uh-DAY-oosh", swSay: "kwah-HEH-ree",
+        note: { pt: "Friends also say “Até logo!” — see you later!" } },
+      { id: "my-name", emoji: "📛", en: "My name is…", pt: "O meu nome é…", sw: "Jina langu ni…", ptSay: "oo MAY-oo NOHM eh", swSay: "JEE-nah LAHN-goo nee" },
       { id: "yes", emoji: "👍", en: "Yes", pt: "Sim", sw: "Ndiyo", ptSay: "seeng", swSay: "n-DEE-yoh" },
-      { id: "no", emoji: "🙅", en: "No", pt: "Não", sw: "Hapana", ptSay: "nowng", swSay: "hah-PAH-nah" },
-      { id: "elder", emoji: "👵🏾", en: "Respectful hello to an elder", pt: "Bom dia, senhora", sw: "Shikamoo", ptSay: "bong DEE-ah sen-YOR-ah", swSay: "shee-kah-MOH",
+      { id: "no", emoji: "🙅", en: "No", pt: "Não", sw: "Hapana", ptSay: "nõw", swSay: "hah-PAH-nah" },
+      { id: "elder", emoji: "👵🏾", en: "Respectful hello to an elder", pt: "Bom dia, senhora", sw: "Shikamoo", ptSay: "bõ DEE-uh sin-YOR-uh", swSay: "shee-kah-MOH",
         note: { sw: "Children greet grown-ups with “Shikamoo”. The grown-up answers “Marahaba!”" } }
     ]
   },
@@ -107,8 +108,8 @@ export const TOPICS: LangTopic[] = [
       { id: "green", emoji: "🟢", en: "green", pt: "verde", sw: "kijani" },
       { id: "orange", emoji: "🟠", en: "orange", pt: "laranja", sw: "rangi ya chungwa" },
       { id: "purple", emoji: "🟣", en: "purple", pt: "roxo", sw: "zambarau" },
-      { id: "pink", emoji: "🩷", en: "pink", pt: "rosa", ptPT: "cor-de-rosa", sw: "waridi" },
-      { id: "brown", emoji: "🟤", en: "brown", pt: "marrom", ptPT: "castanho", sw: "kahawia" },
+      { id: "pink", emoji: "🩷", en: "pink", pt: "cor-de-rosa", sw: "waridi" },
+      { id: "brown", emoji: "🟤", en: "brown", pt: "castanho", sw: "kahawia" },
       { id: "black", emoji: "⚫", en: "black", pt: "preto", sw: "nyeusi" },
       { id: "white", emoji: "⚪", en: "white", pt: "branco", sw: "nyeupe" }
     ]
@@ -122,7 +123,7 @@ export const TOPICS: LangTopic[] = [
       { id: "brother", emoji: "👦🏽", en: "brother", pt: "irmão", sw: "kaka" },
       { id: "grandma", emoji: "👵🏾", en: "grandma", pt: "avó", sw: "bibi" },
       { id: "grandpa", emoji: "👴🏾", en: "grandpa", pt: "avô", sw: "babu" },
-      { id: "baby", emoji: "👶🏽", en: "baby", pt: "bebê", ptPT: "bebé", sw: "mtoto" },
+      { id: "baby", emoji: "👶🏽", en: "baby", pt: "bebé", sw: "mtoto" },
       { id: "friend", emoji: "🧒🏽", en: "friend", pt: "amiga", sw: "rafiki",
         note: { pt: "A girl friend is “amiga”, a boy friend is “amigo”." } }
     ]
@@ -130,7 +131,7 @@ export const TOPICS: LangTopic[] = [
   {
     id: "animals", emoji: "🦁", en: "Animals", pt: "Animais", sw: "Wanyama",
     items: [
-      { id: "dog", emoji: "🐶", en: "dog", pt: "cachorro", ptPT: "cão", sw: "mbwa" },
+      { id: "dog", emoji: "🐶", en: "dog", pt: "cão", sw: "mbwa" },
       { id: "cat", emoji: "🐱", en: "cat", pt: "gato", sw: "paka" },
       { id: "bird", emoji: "🐦", en: "bird", pt: "pássaro", sw: "ndege",
         note: { sw: "“Ndege” also means aeroplane — both fly!" } },
@@ -158,7 +159,7 @@ export const TOPICS: LangTopic[] = [
       { id: "apple", emoji: "🍎", en: "apple", pt: "maçã", sw: "tufaha" },
       { id: "rice", emoji: "🍚", en: "rice", pt: "arroz", sw: "wali" },
       { id: "egg", emoji: "🥚", en: "egg", pt: "ovo", sw: "yai" },
-      { id: "ice-cream", emoji: "🍦", en: "ice cream", pt: "sorvete", ptPT: "gelado", sw: "aiskrimu" }
+      { id: "ice-cream", emoji: "🍦", en: "ice cream", pt: "gelado", sw: "aiskrimu" }
     ]
   },
   {
@@ -205,26 +206,26 @@ export const TOPICS: LangTopic[] = [
 ];
 
 /** Short scenes that put greetings together, read as a conversation. */
-export interface Dialogue { id: string; title: string; emoji: string; lines: { who: "a" | "b"; pt: string; ptPT?: string; sw: string; en: string }[] }
+export interface Dialogue { id: string; title: string; emoji: string; lines: { who: "a" | "b"; pt: string; sw: string; en: string }[] }
 
 export const DIALOGUES: Dialogue[] = [
   {
     id: "meet", title: "Meeting a friend", emoji: "👧🏽👧🏾",
     lines: [
       { who: "a", en: "Hello!", pt: "Olá!", sw: "Jambo!" },
-      { who: "b", en: "Hello! How are you?", pt: "Oi! Como você está?", ptPT: "Olá! Como estás?", sw: "Jambo! Habari yako?" },
+      { who: "b", en: "Hello! How are you?", pt: "Olá! Como estás?", sw: "Jambo! Habari yako?" },
       { who: "a", en: "I'm fine, thank you!", pt: "Estou bem, obrigada!", sw: "Nzuri, asante!" },
-      { who: "b", en: "My name is Lara.", pt: "Meu nome é Lara.", ptPT: "O meu nome é Lara.", sw: "Jina langu ni Lara." },
-      { who: "a", en: "Goodbye!", pt: "Tchau!", ptPT: "Adeus!", sw: "Kwaheri!" }
+      { who: "b", en: "My name is Lara.", pt: "O meu nome é Lara.", sw: "Jina langu ni Lara." },
+      { who: "a", en: "See you later!", pt: "Até logo!", sw: "Kwaheri!" }
     ]
   },
   {
     id: "morning", title: "Good morning, Grandma", emoji: "👧🏽👵🏾",
     lines: [
-      { who: "a", en: "Good morning, Grandma!", pt: "Bom dia, vovó!", ptPT: "Bom dia, avó!", sw: "Shikamoo, bibi!" },
-      { who: "b", en: "Good morning, my dear!", pt: "Bom dia, querida!", sw: "Marahaba, mjukuu wangu!" },
-      { who: "a", en: "May I have some milk, please?", pt: "Posso tomar leite, por favor?", ptPT: "Posso beber leite, por favor?", sw: "Naomba maziwa, tafadhali." },
-      { who: "b", en: "Here you are!", pt: "Aqui está!", sw: "Haya, chukua!" },
+      { who: "a", en: "Good morning, Grandma!", pt: "Bom dia, avó!", sw: "Shikamoo, bibi!" },
+      { who: "b", en: "Good morning, my dear!", pt: "Bom dia, minha querida!", sw: "Marahaba, mjukuu wangu!" },
+      { who: "a", en: "May I have some milk, please?", pt: "Posso beber leite, por favor?", sw: "Naomba maziwa, tafadhali." },
+      { who: "b", en: "Here you are!", pt: "Aqui tens!", sw: "Haya, chukua!" },
       { who: "a", en: "Thank you!", pt: "Obrigada!", sw: "Asante!" }
     ]
   },
@@ -232,16 +233,15 @@ export const DIALOGUES: Dialogue[] = [
     id: "bedtime", title: "Bedtime", emoji: "👩🏾🛏️",
     lines: [
       { who: "b", en: "Time for bed!", pt: "Hora de dormir!", sw: "Ni wakati wa kulala!" },
-      { who: "a", en: "Good night, Mum!", pt: "Boa noite, mamãe!", ptPT: "Boa noite, mãe!", sw: "Lala salama, mama!" },
-      { who: "b", en: "Good night, sleep well!", pt: "Boa noite, durma bem!", ptPT: "Boa noite, dorme bem!", sw: "Lala salama, mpenzi!" }
+      { who: "a", en: "Good night, Mum!", pt: "Boa noite, mãe!", sw: "Lala salama, mama!" },
+      { who: "b", en: "Good night, sleep well!", pt: "Boa noite, dorme bem!", sw: "Lala salama, mpenzi!" }
     ]
   }
 ];
 
-/** The word a child should see/hear for the chosen Portuguese variant. */
-export function word(item: { pt: string; ptPT?: string; sw: string }, lang: LangId, variant: "br" | "pt" = "br"): string {
-  if (lang === "sw") return item.sw;
-  return variant === "pt" && item.ptPT ? item.ptPT : item.pt;
+/** The word a child sees and hears in the chosen language. */
+export function word(item: { pt: string; sw: string }, lang: LangId): string {
+  return lang === "sw" ? item.sw : item.pt;
 }
 
 /** Stable audio id for a dialogue line. */

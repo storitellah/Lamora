@@ -21,13 +21,13 @@ function pickMime(): string | undefined {
   return ["audio/mp4", "audio/webm;codecs=opus", "audio/webm", "audio/ogg;codecs=opus"].find(t => MR.isTypeSupported(t));
 }
 
-export function VoiceRecorder({ variant, onBack }: { variant: "br" | "pt"; onBack: () => void }) {
+export function VoiceRecorder({ onBack }: { onBack: () => void }) {
   const [lang, setLang] = useState<LangId>("sw");
   const [open, setOpen] = useState<string>("greet");
   const [recs, setRecs] = useState<Map<string, Blob>>(new Map());
   const [busy, setBusy] = useState<string | null>(null);
   const rec = useRef<{ mr: MediaRecorder; stream: MediaStream; timer: number } | null>(null);
-  const dir = clipDir(lang, variant);
+  const dir = clipDir(lang);
   const supported = typeof window !== "undefined" && "MediaRecorder" in window && !!navigator.mediaDevices?.getUserMedia;
 
   const refresh = async () => setRecs(new Map(await allRecordings()));
@@ -73,7 +73,7 @@ export function VoiceRecorder({ variant, onBack }: { variant: "br" | "pt"; onBac
         {(["sw", "pt"] as LangId[]).map(l => (
           <button key={l} role="tab" aria-selected={lang === l} onClick={() => setLang(l)}
             className={`min-h-11 rounded-full px-5 font-bold ${lang === l ? "bg-tint text-white" : "glass"}`}>
-            {LANGS[l].flag} {LANGS[l].native}{l === "pt" ? ` (${variant === "pt" ? "Portugal" : "Brazil"})` : ""}
+            {LANGS[l].flag} {LANGS[l].native}{l === "pt" ? " (Portugal)" : ""}
           </button>
         ))}
       </div>
@@ -94,7 +94,7 @@ export function VoiceRecorder({ variant, onBack }: { variant: "br" | "pt"; onBac
                 <ul className="border-t border-ink/5 px-3 pb-2">
                   {t.items.map(it => {
                     const key = recKey(dir, it.id), has = recs.has(key), live = busy === it.id;
-                    const w = word(it, lang, variant);
+                    const w = word(it, lang);
                     return (
                       <li key={it.id} className="flex items-center gap-2 border-b border-ink/5 py-2 last:border-0">
                         <span className="w-10 text-center text-2xl" aria-hidden>{it.emoji}</span>

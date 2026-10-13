@@ -21,24 +21,32 @@ import { allRecordings, cachedRecording, recKey } from "../lib/voiceRecordings";
 
 /* ---------------- Audio helper ---------------- */
 
-/** Folder for bundled clips: Brazilian vs European Portuguese, or Kiswahili. */
-export const clipDir = (lang: LangId, variant: "br" | "pt") => (lang === "sw" ? "sw" : variant === "pt" ? "ptpt" : "pt");
-export const voiceTags = (lang: LangId, variant: "br" | "pt") =>
-  lang === "sw" ? LANGS.sw.voiceLangs : variant === "pt" ? ["pt-PT", "pt"] : ["pt-BR", "pt"];
+/** Folder for bundled clips: European Portuguese ("pt") or Kiswahili ("sw"). */
+export const clipDir = (lang: LangId) => lang;
+export const voiceTags = (lang: LangId) => LANGS[lang].voiceLangs;
+
+/**
+ * voices.json says how the bundled clips were made. Natural (neural) clips
+ * are warmer than most built-in device voices, so they are used first;
+ * the robotic fallback clips are only used when a device has no voice.
+ */
+let naturalClips: boolean | null = null;
+const voicesInfo = typeof fetch === "function"
+  ? fetch("/audio/voices.json").then(r => r.json()).then(j => { naturalClips = !!j.natural; }).catch(() => { naturalClips = false; })
+  : Promise.resolve();
+void voicesInfo;
 
 function useSay(lang: LangId) {
-  const { state } = useStore();
-  const variant = state.settings.ptVariant ?? "br";
-  const dir = clipDir(lang, variant);
+  const dir = clipDir(lang);
   return {
-    variant,
     // Recordings are looked up at the moment of speaking (not from React
     // state), so a word said as a screen opens already uses the family voice.
     say: (id: string, text: string) => sayIn({
       text: text.replace(/…/g, ""),
-      langs: voiceTags(lang, variant),
+      langs: voiceTags(lang),
       clip: `/audio/${dir}/${id}.mp3`,
-      recording: cachedRecording(recKey(dir, id))
+      recording: cachedRecording(recKey(dir, id)),
+      preferClip: naturalClips === true
     }),
     preload: (ids: string[]) => preloadClips(ids.map(id => `/audio/${dir}/${id}.mp3`))
   };
@@ -94,7 +102,7 @@ function LangPick({ onExit, onPick }: { onExit: () => void; onPick: (l: LangId) 
   return (
     <Shell title="Languages 🌍" subtitle="Learn to say hello to the world!" onBack={onExit} wide>
       <div className="grid gap-5 sm:grid-cols-2">
-        {card("pt", "bg-gradient-to-br from-[#1aa260] to-[#0a7a8a]", "Olá!", "Brazil · Portugal · Mozambique")}
+        {card("pt", "bg-gradient-to-br from-[#1aa260] to-[#0a7a8a]", "Olá!", "Portugal · Madeira · Azores")}
         {card("sw", "bg-gradient-to-br from-[#e0622a] to-[#a8327a]", "Jambo!", "Kenya · Tanzania · Uganda")}
       </div>
       <p className="mt-6 text-center text-ink-2">Tap 🔊 to hear every word — then say it out loud!</p>
@@ -194,12 +202,12 @@ function Cheer({ lang, text }: { lang: LangId; text: string | null }) {
 /** Picture cards: see it, hear it, say it. */
 function LearnCards({ lang, topic, onDone }: { lang: LangId; topic: LangTopic; onDone: () => void }) {
   const { dispatch, profile } = useStore();
-  const { say, variant } = useSay(lang);
+  const { say } = useSay(lang);
   const [i, setI] = useState(0);
   const [dir, setDir] = useState(1);
   const [cheer, setCheer] = useState<string | null>(null);
   const it = topic.items[i];
-  const w = word(it, lang, variant);
+  const w = word(it, lang);
   const learned = new Set(profile?.langWords?.[lang] ?? []);
   const sayHint = lang === "sw" ? it.swSay : it.ptSay;
   const note = it.note?.[lang];
@@ -239,7 +247,7 @@ function LearnCards({ lang, topic, onDone }: { lang: LangId; topic: LangTopic; o
               className="mx-auto grid h-44 w-44 place-items-center rounded-[2rem] bg-gradient-to-br from-sky/15 to-tint/10 text-[6.5rem] leading-none">
               <span aria-hidden>{it.emoji}</span>
             </button>
-            <div className="mt-4 text-4xl font-extrabold tracking-tight" lang={lang === "sw" ? "sw" : variant === "pt" ? "pt-PT" : "pt-BR"}>{w}</div>
+            <div className="mt-4 text-4xl font-extrabold tracking-tight" lang={lang === "sw" ? "sw" : "pt-PT"}>{w}</div>
             {sayHint && <div className="mt-1 text-sm font-semibold text-tint">say it like: <span className="font-mono">{sayHint}</span></div>}
             <div className="mt-1 text-lg text-ink-2">{it.en}</div>
             {learned.has(it.id) && <div className="mt-1 text-sm font-bold text-mint">⭐ learned</div>}
@@ -266,7 +274,7 @@ function LearnCards({ lang, topic, onDone }: { lang: LangId; topic: LangTopic; o
 /** Hear a word, tap the matching picture. */
 function ListenFind({ lang, topic }: { lang: LangId; topic: LangTopic }) {
   const { dispatch } = useStore();
-  const { say, variant } = useSay(lang);
+  const { say } = useSay(lang);
   const ROUNDS = Math.min(6, topic.items.length);
   const [order, setOrder] = useState(() => shuffle(topic.items).slice(0, ROUNDS));
   const [r, setR] = useState(0);
@@ -278,7 +286,7 @@ function ListenFind({ lang, topic }: { lang: LangId; topic: LangTopic }) {
   const target = order[r];
   const options = useMemo(() => target ? shuffle([target, ...shuffle(topic.items.filter(x => x.id !== target.id)).slice(0, 3)]) : [], [target]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => { if (target && !finished) { const t = setTimeout(() => say(target.id, word(target, lang, variant)), 350); return () => clearTimeout(t); } }, [r, finished]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (target && !finished) { const t = setTimeout(() => say(target.id, word(target, lang)), 350); return () => clearTimeout(t); } }, [r, finished]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function choose(it: LangItem) {
     if (right || finished) return;
@@ -303,7 +311,7 @@ function ListenFind({ lang, topic }: { lang: LangId; topic: LangTopic }) {
       setWrong(new Set(wrong).add(it.id));
       const k = Math.floor(Math.random() * LANGS[lang].tryAgain.length);
       say(`again-${k}`, LANGS[lang].tryAgain[k]);
-      setTimeout(() => say(target.id, word(target, lang, variant)), 1500);
+      setTimeout(() => say(target.id, word(target, lang)), 1500);
     }
   }
 
@@ -325,7 +333,7 @@ function ListenFind({ lang, topic }: { lang: LangId; topic: LangTopic }) {
     <div>
       <Cheer lang={lang} text={cheer} />
       <div className="mb-4 text-center">
-        <button onClick={() => say(target.id, word(target, lang, variant))} aria-label="Hear the word again"
+        <button onClick={() => say(target.id, word(target, lang))} aria-label="Hear the word again"
           className="mx-auto flex items-center gap-3 rounded-full bg-tint px-7 py-4 text-xl font-bold text-white shadow-lg shadow-tint/30">
           <Volume2 aria-hidden /> Listen!
         </button>
@@ -342,7 +350,7 @@ function ListenFind({ lang, topic }: { lang: LangId; topic: LangTopic }) {
           </motion.button>
         ))}
       </div>
-      {right && <p className="mt-4 text-center text-2xl font-extrabold">{word(target, lang, variant)} <span className="text-base font-normal text-ink-2">= {target.en}</span></p>}
+      {right && <p className="mt-4 text-center text-2xl font-extrabold">{word(target, lang)} <span className="text-base font-normal text-ink-2">= {target.en}</span></p>}
     </div>
   );
 }
@@ -350,7 +358,7 @@ function ListenFind({ lang, topic }: { lang: LangId; topic: LangTopic }) {
 /** Pair each picture with its word. */
 function MatchPairs({ lang, topic }: { lang: LangId; topic: LangTopic }) {
   const { dispatch } = useStore();
-  const { say, variant } = useSay(lang);
+  const { say } = useSay(lang);
   const N = Math.min(5, topic.items.length);
   const [round, setRound] = useState(0);
   const items = useMemo(() => shuffle(topic.items).slice(0, N), [round]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -368,7 +376,7 @@ function MatchPairs({ lang, topic }: { lang: LangId; topic: LangTopic }) {
     if (p === w) {
       const it = items.find(x => x.id === p)!;
       sfx.correct(); haptic(12);
-      say(it.id, word(it, lang, variant));
+      say(it.id, word(it, lang));
       const next = new Set(done).add(p);
       setDone(next);
       dispatch({ type: "langLearned", lang, ids: [p] });
@@ -401,10 +409,10 @@ function MatchPairs({ lang, topic }: { lang: LangId; topic: LangTopic }) {
           {words.map(it => (
             <motion.button key={it.id} disabled={done.has(it.id)} aria-pressed={wd === it.id}
               animate={miss === it.id ? { x: [0, -8, 8, -4, 0] } : {}}
-              onClick={() => { setWd(it.id); say(it.id, word(it, lang, variant)); attempt(pic, it.id); }}
+              onClick={() => { setWd(it.id); say(it.id, word(it, lang)); attempt(pic, it.id); }}
               className={`h-20 rounded-2xl px-3 text-lg font-bold leading-tight transition-all
                 ${done.has(it.id) ? "bg-mint/20 text-mint" : wd === it.id ? "bg-tint/15 ring-4 ring-tint" : "glass"}`}>
-              {word(it, lang, variant)}
+              {word(it, lang)}
             </motion.button>
           ))}
         </div>
@@ -440,12 +448,12 @@ function DialogueList({ lang, onBack, onOpen }: { lang: LangId; onBack: () => vo
 
 function DialogueView({ lang, d, onBack }: { lang: LangId; d: Dialogue; onBack: () => void }) {
   const { dispatch } = useStore();
-  const { say, variant, preload } = useSay(lang);
+  const { say, preload } = useSay(lang);
   const [shown, setShown] = useState(1);
   const [english, setEnglish] = useState(true);
   const [playing, setPlaying] = useState<number | null>(null);
   const chars = Array.from(d.emoji.match(/\p{Extended_Pictographic}(\p{Emoji_Modifier})?/gu) ?? ["👧🏽", "👩🏾"]);
-  const text = (i: number) => (lang === "sw" ? d.lines[i].sw : variant === "pt" ? d.lines[i].ptPT ?? d.lines[i].pt : d.lines[i].pt);
+  const text = (i: number) => (lang === "sw" ? d.lines[i].sw : d.lines[i].pt);
 
   useEffect(() => { preload(d.lines.map((_, i) => lineId(d, i))); const t = setTimeout(() => play(0), 300); return () => clearTimeout(t); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

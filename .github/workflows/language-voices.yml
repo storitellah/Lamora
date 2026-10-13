@@ -1,0 +1,83 @@
+# Generates the warm, natural Portuguese (Portugal) and Kiswahili voices for
+# the Languages section with Azure neural text-to-speech, commits the clips,
+# and rebuilds the Android app. Runs on demand (Actions → Language voices →
+# Run workflow) and whenever the word list changes.
+#
+# Needs two repository secrets (see docs/VOICES.md):
+#   AZURE_SPEECH_KEY     — key of a free Azure "Speech" resource
+#   AZURE_SPEECH_REGION  — its region, e.g. westeurope
+# The key is used only here, at build time. The app itself never contacts Azure.
+name: Language voices
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/data/languages.ts
+      - scripts/generate-language-audio.ts
+
+permissions:
+  contents: write   # commit the generated clips
+  actions: write    # start a fresh APK build afterwards
+
+concurrency:
+  group: language-voices
+  cancel-in-progress: false
+
+jobs:
+  voices:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Check for the Azure key
+        id: key
+        env:
+          KEY: ${{ secrets.AZURE_SPEECH_KEY }}
+        run: |
+          if [ -z "$KEY" ]; then
+            echo "::warning::AZURE_SPEECH_KEY is not set — keeping the current clips. See docs/VOICES.md."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.key.outputs.ok == 'true'
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Generate natural voices
+        if: steps.key.outputs.ok == 'true'
+        env:
+          AZURE_SPEECH_KEY: ${{ secrets.AZURE_SPEECH_KEY }}
+          AZURE_SPEECH_REGION: ${{ secrets.AZURE_SPEECH_REGION }}
+        run: |
+          npm ci
+          npm run voices
+
+      - name: Commit the clips
+        id: commit
+        if: steps.key.outputs.ok == 'true'
+        run: |
+          git config user.name "lamora-voices"
+          git config user.email "lamora-voices@users.noreply.github.com"
+          git add public/audio
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "Regenerate language voices (Azure neural: pt-PT Raquel, sw-KE Zuri)"
+            git push origin HEAD:main
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Rebuild the Android app with the new voices
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run android-apk.yml --ref main

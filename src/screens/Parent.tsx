@@ -213,7 +213,7 @@ export function ParentDashboard({ onExit }: { onExit: () => void }) {
   const s = state.settings;
   const set = (patch: Partial<typeof s>) => dispatch({ type: "settings", patch });
   const [recorder, setRecorder] = useState(false);
-  if (recorder) return <VoiceRecorder variant={s.ptVariant ?? "br"} onBack={() => setRecorder(false)} />;
+  if (recorder) return <VoiceRecorder onBack={() => setRecorder(false)} />;
 
   return (
     <Shell title="Parent Dashboard 🔒" subtitle="Everything stays on this device. Nothing is uploaded, ever." onBack={onExit} wide>
@@ -255,8 +255,7 @@ export function ParentDashboard({ onExit }: { onExit: () => void }) {
 
         <Section icon={<Globe2 className="text-mint" aria-hidden />} title="Languages">
           <Row label="Portuguese">
-            <Select value={s.ptVariant ?? "br"} onChange={v => set({ ptVariant: v as "br" | "pt" })} label="Portuguese variety"
-              options={[["br", "🇧🇷 Brazil"], ["pt", "🇵🇹 Portugal"]]} />
+            <span className="font-semibold text-ink-2">🇵🇹 European Portuguese (Portugal)</span>
           </Row>
           <Row label="Your voice">
             <Btn kind="soft" className="!min-h-11 !px-4 !py-2 text-sm" onClick={() => setRecorder(true)}>

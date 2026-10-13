@@ -528,7 +528,9 @@ function voiceFor(langs: string[]): SpeechSynthesisVoice | null {
     const t = tag.toLowerCase().replace("_", "-");
     const cands = all.filter(v => {
       const l = (v.lang || "").toLowerCase().replace("_", "-");
-      if (!(l === t || (!t.includes("-") && l.startsWith(t + "-")) || l === t.split("-")[0])) return false;
+      // Exact region match ("pt-PT" never accepts "pt-BR" or a bare "pt",
+      // which is usually Brazilian); a bare tag like "sw" accepts any region.
+      if (!(l === t || (!t.includes("-") && l.startsWith(t + "-")))) return false;
       if (/espeak/i.test(v.name)) return false; // robotic — our clips are the same engine
       if (offline && !v.localService) return false;
       return true;
@@ -546,7 +548,11 @@ function voiceFor(langs: string[]): SpeechSynthesisVoice | null {
 /** Does this device have its own voice for the language? (for the parent screen) */
 export function hasDeviceVoice(langs: string[]): boolean { return !!voiceFor(langs); }
 
-export interface LangSay { text: string; langs: string[]; clip: string; recording?: Blob | null }
+export interface LangSay {
+  text: string; langs: string[]; clip: string; recording?: Blob | null;
+  /** The bundled clips are natural neural voices: use them before any device voice. */
+  preferClip?: boolean;
+}
 
 /** Tells the page (and the automated tests) what was said and by which voice. */
 function announce(clip: string, source: "recording" | "device" | "native" | "clip") {
@@ -562,21 +568,32 @@ export function sayIn(o: LangSay) {
   const clip = (g: number) => { announce(o.clip, "clip"); return playClip(o.clip, g); };
 
   if (o.recording) { announce(o.clip, "recording"); void playClip(o.recording, gen); return; }
+  if (o.preferClip) { void clip(gen); return; }
 
   const tts = nativeTTS();
   if (tts) {
     void (async () => {
-      const t = tts as unknown as NativeTTS & { isLanguageSupported?(x: { lang: string }): Promise<{ supported: boolean }> };
-      for (const lang of o.langs) {
-        try {
-          if (t.isLanguageSupported && (await t.isLanguageSupported({ lang })).supported) {
-            if (gen !== generation) return;
-            announce(o.clip, "native");
-            await tts.speak({ text: o.text, lang, rate: 0.85, pitch: 1.05, volume, category: "playback" });
-            return;
-          }
-        } catch { /* try the next tag */ }
-      }
+      // Pick an installed voice whose language matches exactly (e.g. pt-PT),
+      // rather than asking the engine for "Portuguese" and getting Brazilian.
+      try {
+        const { voices } = await tts.getSupportedVoices();
+        const norm = (x: string) => (x || "").toLowerCase().replace("_", "-");
+        let idx = -1, best = -Infinity;
+        voices.forEach((v, i) => {
+          const l = norm(v.lang);
+          if (!o.langs.some(t => l === norm(t) || (!t.includes("-") && l.startsWith(norm(t) + "-")))) return;
+          const n = `${v.name} ${v.voiceURI ?? ""}`.toLowerCase();
+          let sc = classifyGender(n) === voiceGender ? 10 : 0;
+          if (/enhanced|premium|neural|natural/.test(n)) sc += 6;
+          if (/network/.test(n)) sc -= 8;
+          if (sc > best) { best = sc; idx = i; }
+        });
+        if (idx >= 0 && gen === generation) {
+          announce(o.clip, "native");
+          await tts.speak({ text: o.text, lang: voices[idx].lang, voice: idx, rate: 0.88, pitch: 1.05, volume, category: "playback" });
+          return;
+        }
+      } catch { /* fall through to the clip */ }
       if (gen === generation) void clip(gen);
     })();
     return;

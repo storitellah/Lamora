@@ -1,71 +1,134 @@
 /**
- * Generate the built-in Portuguese and Kiswahili audio clips.
+ * Generate the built-in European Portuguese and Kiswahili audio clips.
  *
- *   npx tsx scripts/generate-language-audio.ts
+ *   AZURE_SPEECH_KEY=… AZURE_SPEECH_REGION=westeurope npx tsx scripts/generate-language-audio.ts
  *
- * Needs (Ubuntu/Debian): apt install espeak-ng lame
+ * Warm, natural voices (used whenever a key is provided):
+ *   European Portuguese — Microsoft Azure neural voice "pt-PT-RaquelNeural"
+ *   Kiswahili            — Microsoft Azure neural voice "sw-KE-ZuriNeural"
+ * Both are female, spoken a little slower than normal for young learners.
+ * Override with AZURE_VOICE_PT / AZURE_VOICE_SW (e.g. sw-TZ-RehemaNeural).
  *
- * These clips are the always-available fallback: the app prefers a grown-up's
- * own recording, then a natural voice installed on the device, then these.
- * They are made with open-source synthesis (eSpeak NG), entirely on
- * the build machine — no cloud service, so they can ship inside the app and
- * play offline on every device, including iPads that have no Swahili voice.
+ * Without a key the script falls back to eSpeak NG (open source, offline,
+ * accurate but robotic) so the app always has audio:
+ *   apt install espeak-ng lame
  *
- * Output: public/audio/{pt,ptpt,sw}/<id>.mp3 (mono, 22 kHz, ~40 kbps).
+ * The clips are generated once, at build time, and shipped inside the app.
+ * Children's devices never contact Azure or any other service.
+ *
+ * Output: public/audio/{pt,sw}/<id>.mp3 and public/audio/voices.json, which
+ * tells the app whether the clips are natural (then preferred over a
+ * device's own voice) or the robotic fallback (then used only as a last resort).
  */
 import { execFileSync } from "node:child_process";
-import { mkdirSync, existsSync, rmSync, readdirSync, statSync } from "node:fs";
+import { mkdirSync, rmSync, readdirSync, statSync, writeFileSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { TOPICS, DIALOGUES, LANGS, lineId } from "../src/data/languages";
+import { TOPICS, DIALOGUES, LANGS, lineId, LangId } from "../src/data/languages";
 
 const OUT = join(process.cwd(), "public", "audio");
-const VOICES = {
-  // MBROLA's Portuguese voices sound smoother but drop sounds a learner
-  // needs (pt1 has no open "ó" — "Olá" loses its O; br4 silences the r in
-  // "verde", "porta"), so eSpeak NG's complete phoneme sets are used.
-  pt: { voice: "pt-br+f3", speed: "128", label: "Brazilian Portuguese (eSpeak NG, female variant)" },
-  ptpt: { voice: "pt+f3", speed: "128", label: "European Portuguese (eSpeak NG, female variant)" },
-  sw: { voice: "sw+f3", speed: "128", label: "Kiswahili (eSpeak NG, female variant)" }
-} as const;
-type Out = keyof typeof VOICES;
+const KEY = process.env.AZURE_SPEECH_KEY?.trim();
+const REGION = process.env.AZURE_SPEECH_REGION?.trim() || "westeurope";
+const ENDPOINT = process.env.AZURE_TTS_ENDPOINT || `https://${REGION}.tts.speech.microsoft.com/cognitiveservices/v1`;
+const AZURE: Record<LangId, { voice: string; lang: string }> = {
+  pt: { voice: process.env.AZURE_VOICE_PT || "pt-PT-RaquelNeural", lang: "pt-PT" },
+  sw: { voice: process.env.AZURE_VOICE_SW || "sw-KE-ZuriNeural", lang: "sw-KE" }
+};
+const ESPEAK: Record<LangId, string> = { pt: "pt+f3", sw: "sw+f3" };
+type Kind = "word" | "line" | "cheer";
 
-/**
- * Spelling → sound fixes. eSpeak reads Swahili "ng'" (the single sound in
- * "singer") as the letters "en-g", so "ng'ombe" (cow) is given as phonemes.
- */
-const SAY_AS: [RegExp, string][] = [[/ng'ombe/gi, "[[N'ombe]]"]];
-const clean = (t: string) => SAY_AS.reduce((s, [re, to]) => s.replace(re, to), t.replace(/…/g, "")).trim();
-const jobs: { out: Out; id: string; text: string }[] = [];
+/* ---- What to say ---- */
 
+const jobs: { lang: LangId; id: string; text: string; kind: Kind }[] = [];
 for (const topic of TOPICS) for (const it of topic.items) {
-  jobs.push({ out: "pt", id: it.id, text: it.pt });
-  jobs.push({ out: "ptpt", id: it.id, text: it.ptPT ?? it.pt });
-  jobs.push({ out: "sw", id: it.id, text: it.sw });
+  jobs.push({ lang: "pt", id: it.id, text: it.pt, kind: "word" });
+  jobs.push({ lang: "sw", id: it.id, text: it.sw, kind: "word" });
 }
 for (const d of DIALOGUES) d.lines.forEach((l, i) => {
-  jobs.push({ out: "pt", id: lineId(d, i), text: l.pt });
-  jobs.push({ out: "ptpt", id: lineId(d, i), text: l.ptPT ?? l.pt });
-  jobs.push({ out: "sw", id: lineId(d, i), text: l.sw });
+  jobs.push({ lang: "pt", id: lineId(d, i), text: l.pt, kind: "line" });
+  jobs.push({ lang: "sw", id: lineId(d, i), text: l.sw, kind: "line" });
 });
-LANGS.pt.cheer.forEach((c, i) => { jobs.push({ out: "pt", id: `cheer-${i}`, text: c }); jobs.push({ out: "ptpt", id: `cheer-${i}`, text: c }); });
-LANGS.sw.cheer.forEach((c, i) => jobs.push({ out: "sw", id: `cheer-${i}`, text: c }));
-LANGS.pt.tryAgain.forEach((c, i) => { jobs.push({ out: "pt", id: `again-${i}`, text: c }); jobs.push({ out: "ptpt", id: `again-${i}`, text: c }); });
-LANGS.sw.tryAgain.forEach((c, i) => jobs.push({ out: "sw", id: `again-${i}`, text: c }));
-
-for (const o of Object.keys(VOICES)) { rmSync(join(OUT, o), { recursive: true, force: true }); mkdirSync(join(OUT, o), { recursive: true }); }
-const wav = join(tmpdir(), "lamora-clip.wav");
-
-for (const j of jobs) {
-  const v = VOICES[j.out];
-  const mp3 = join(OUT, j.out, `${j.id}.mp3`);
-  // -g adds a little space between words; -a keeps volume consistent.
-  execFileSync("espeak-ng", ["-v", v.voice, "-s", v.speed, "-g", "4", "-a", "160", "-w", wav, clean(j.text)]);
-  execFileSync("lame", ["--quiet", "-m", "m", "--resample", "22.05", "-b", "40", wav, mp3]);
+for (const lang of ["pt", "sw"] as LangId[]) {
+  LANGS[lang].cheer.forEach((c, i) => jobs.push({ lang, id: `cheer-${i}`, text: c, kind: "cheer" }));
+  LANGS[lang].tryAgain.forEach((c, i) => jobs.push({ lang, id: `again-${i}`, text: c, kind: "cheer" }));
 }
-if (existsSync(wav)) rmSync(wav);
 
-let bytes = 0, files = 0;
-for (const o of Object.keys(VOICES)) for (const f of readdirSync(join(OUT, o))) { bytes += statSync(join(OUT, o, f)).size; files++; }
-console.log(`${files} clips, ${(bytes / 1024).toFixed(0)} KB`);
-for (const [k, v] of Object.entries(VOICES)) console.log(`  ${k}: ${v.label}`);
+const plain = (t: string) => t.replace(/…/g, "").trim();
+const xml = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
+
+/* ---- Azure neural voices ---- */
+
+/**
+ * SSML for a warm, unhurried delivery: slower than normal speech and a touch
+ * brighter in pitch. Cheers are livelier; a short lead-in pause means the
+ * first sound is never clipped when a device wakes its audio output.
+ */
+function ssml(lang: LangId, text: string, kind: Kind) {
+  const v = AZURE[lang];
+  const rate = kind === "cheer" ? "-2%" : kind === "word" ? "-14%" : "-8%";
+  const pitch = kind === "cheer" ? "+6%" : "+3%";
+  return `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="${v.lang}">` +
+    `<voice name="${v.voice}"><break time="80ms"/><prosody rate="${rate}" pitch="${pitch}">${xml(plain(text))}</prosody></voice></speak>`;
+}
+
+async function azure(lang: LangId, text: string, kind: Kind): Promise<Buffer> {
+  for (let attempt = 1; ; attempt++) {
+    const res = await fetch(ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Ocp-Apim-Subscription-Key": KEY!,
+        "Content-Type": "application/ssml+xml",
+        "X-Microsoft-OutputFormat": "audio-24khz-48kbitrate-mono-mp3",
+        "User-Agent": "lamora-audio-build"
+      },
+      body: ssml(lang, text, kind)
+    });
+    if (res.ok) return Buffer.from(await res.arrayBuffer());
+    if ((res.status === 429 || res.status >= 500) && attempt < 6) { await new Promise(r => setTimeout(r, 1500 * attempt)); continue; }
+    throw new Error(`Azure TTS ${res.status} for "${text}": ${(await res.text()).slice(0, 200)}`);
+  }
+}
+
+/* ---- eSpeak fallback ---- */
+
+/** eSpeak reads Swahili "ng'" as "en-g", so "ng'ombe" (cow) is given as phonemes. */
+const SAY_AS: [RegExp, string][] = [[/ng'ombe/gi, "[[N'ombe]]"]];
+function espeak(lang: LangId, text: string): Buffer {
+  const wav = join(tmpdir(), "lamora-clip.wav"), mp3 = join(tmpdir(), "lamora-clip.mp3");
+  const t = SAY_AS.reduce((s, [re, to]) => s.replace(re, to), plain(text));
+  execFileSync("espeak-ng", ["-v", ESPEAK[lang], "-s", "128", "-g", "4", "-a", "160", "-w", wav, t]);
+  execFileSync("lame", ["--quiet", "-m", "m", "--resample", "22.05", "-b", "40", wav, mp3]);
+  return readFileSync(mp3);
+}
+
+/* ---- Run ---- */
+
+async function main() {
+  const engine = KEY ? "azure" : "espeak";
+  for (const d of ["pt", "sw", "ptpt"]) rmSync(join(OUT, d), { recursive: true, force: true });
+  for (const d of ["pt", "sw"]) mkdirSync(join(OUT, d), { recursive: true });
+
+  let done = 0;
+  for (const j of jobs) {
+    const audio = engine === "azure" ? await azure(j.lang, j.text, j.kind) : espeak(j.lang, j.text);
+    if (audio.length < 1200) throw new Error(`Suspiciously small clip for "${j.text}"`);
+    writeFileSync(join(OUT, j.lang, `${j.id}.mp3`), audio);
+    if (++done % 50 === 0) console.log(`  ${done}/${jobs.length}`);
+  }
+
+  const voices = {
+    engine,
+    natural: engine === "azure",
+    pt: engine === "azure" ? `Azure neural · ${AZURE.pt.voice}` : "eSpeak NG · European Portuguese",
+    sw: engine === "azure" ? `Azure neural · ${AZURE.sw.voice}` : "eSpeak NG · Kiswahili",
+    generated: new Date().toISOString().slice(0, 10)
+  };
+  writeFileSync(join(OUT, "voices.json"), JSON.stringify(voices, null, 2) + "\n");
+
+  let bytes = 0, files = 0;
+  for (const d of ["pt", "sw"]) for (const f of readdirSync(join(OUT, d))) { bytes += statSync(join(OUT, d, f)).size; files++; }
+  console.log(`${files} clips, ${(bytes / 1024).toFixed(0)} KB — ${voices.pt} / ${voices.sw}`);
+  if (!KEY) console.log("No AZURE_SPEECH_KEY set: built the robotic fallback clips. See docs/VOICES.md.");
+}
+
+main().catch(e => { console.error(e.message ?? e); process.exit(1); });

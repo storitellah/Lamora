@@ -42,8 +42,6 @@ export interface Settings {
   playMinutes: number;       // length of one reward game session
   dailyLimitMin: number;
   reducedMotion: boolean;
-  /** Portuguese as spoken in Brazil (default) or Portugal. */
-  ptVariant: "br" | "pt";
 }
 
 export interface AppState {
@@ -93,8 +91,7 @@ function defaults(): AppState {
       starsPerToken: 5,
       playMinutes: 5,
       dailyLimitMin: 45,
-      reducedMotion: false,
-      ptVariant: "br"
+      reducedMotion: false
     }
   };
 }

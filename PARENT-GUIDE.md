@@ -66,7 +66,7 @@ In **Dream Cards**, a child (with your help) can add a photo — by **camera** o
 
 ## Troubleshooting
 
-- **Languages sound robotic?** Lamora uses your device's own Portuguese or Kiswahili voice when it has one, and its built-in clips otherwise. For a warmer sound: on iPad, Settings → Accessibility → Spoken Content → Voices → Portuguese → download an *Enhanced* voice; on Android, install Google's Text-to-speech languages. Best of all, record the words in a family voice: Parent Zone → Languages → **Record words**.
+- **Languages sound robotic?** Lamora uses your device's own Portuguese or Kiswahili voice when it has one, and its built-in clips otherwise. For warm, natural voices on every device, set up the free neural voices in [docs/VOICES.md](docs/VOICES.md). Otherwise, on iPad: Settings → Accessibility → Spoken Content → Voices → Portuguese (Portugal) → download an *Enhanced* voice; on Android, install Google's Text-to-speech languages. Best of all, record the words in a family voice: Parent Zone → Languages → **Record words**.
 - **No sound?** Check the 🔊 button in the top bar, the volume setting in the dashboard, and your device's silent switch. On iOS, the first tap in the app enables audio.
 - **No speech?** Read-aloud uses your device's built-in voices; everything works without them too.
 - **Update banner appeared?** A new version is available online — it applies quietly on the next visit.

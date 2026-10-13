@@ -9,7 +9,8 @@ All notable changes to Lamora are documented here.
   - 90 words and phrases with a picture each, in nine topics: hello & greetings (taught as whole phrases, with a “say it like” guide and little cultural notes such as *Shikamoo* for elders), numbers 1–10, colours, family, animals, food & drink, my body, home & school, nature.
   - Three ways to play every topic: **Learn** picture cards that speak each word and ask the child to say it back, **Listen & find** (hear a word, tap its picture) and **Match** (pair pictures with words). Correct answers are cheered in the language being learned.
   - **Conversations**: three short scenes (meeting a friend, good morning grandma, bedtime) to act out line by line.
-  - Brazilian Portuguese by default; European Portuguese words and voice can be chosen in the Parent Zone.
+  - **European Portuguese only** — the Portuguese of Portugal throughout: words (*cão*, *gelado*, *castanho*, *bebé*), phrases (*Como estás?*, *O meu nome é…*, *Até logo!*, *Aqui tens!*), pronunciation guides, cheers (*Boa!*) and voices. A Brazilian voice is never used, on the web or in the app.
+  - **Warm, natural voices**: the built-in clips can be generated with Azure neural voices (Raquel for Portuguese, Zuri for Kiswahili) by a GitHub workflow once a free key is added (`docs/VOICES.md`). Natural clips are then preferred over device voices so every device sounds the same.
   - **Audio that always works**: a family member's own recording if one was made (Parent Zone → Languages → Record words; stays on the device), otherwise the device's natural voice for that language, otherwise one of 330 clips built into the app, so Kiswahili is heard even on iPads, which have no Swahili voice. The clips are generated with open-source eSpeak NG by `scripts/generate-language-audio.ts`.
   - Words learned are tracked per child.
 - **Art Studio** — a drawing and painting studio built for tablets and Apple Pencil:
