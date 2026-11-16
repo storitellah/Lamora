@@ -1,36 +1,80 @@
 @import "tailwindcss";
 
 /*
-  Lamora design system — Apple-HIG-flavoured.
+  Lamora design system — "storybook daylight".
 
-  Typography: the system font stack resolves to SF Pro on iOS/macOS,
-  Roboto on Android and Segoe UI on Windows — native feel everywhere,
-  zero font downloads, perfect offline behaviour.
+  The feel: a beautifully printed children's book that happens to be alive.
+  Warm paper, deep ink, one confident violet, and a family of saturated
+  "world" colours — every learning pathway owns one.
 
-  Color: a calm "paper" ground with one confident tint (indigo) and a
-  small set of content accents. Surfaces are translucent + blurred
-  (glassmorphism) over a soft gradient wash.
+  Typography: Fraunces (a soft, characterful display serif) for headlines,
+  Nunito (rounded, highly legible for early readers) for everything else.
+  Both are bundled with the app and precached, so there are still zero
+  network font requests and the app is fully offline.
+
+  Surfaces: crisp paper cards with layered, tinted shadows rather than heavy
+  blur — it reads as more premium and is far kinder to low-cost tablets.
 */
 
-@theme {
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-    "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", system-ui, sans-serif;
-  --font-rounded: ui-rounded, "SF Pro Rounded", -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 1000;
+  src: url("@fontsource-variable/nunito/files/nunito-latin-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
-  --color-tint: #5b5bd6;        /* primary indigo */
-  --color-tint-soft: #eceafd;
-  --color-sky: #38b6f5;
-  --color-sun: #ffb545;
-  --color-mint: #2bbd8e;
-  --color-coral: #ff6b6b;
-  --color-ink: #1d1d2f;
-  --color-ink-2: #6e6e87;
-  --color-paper: #f5f6fb;
+@theme {
+  --font-sans: "Nunito", ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, system-ui, sans-serif;
+  --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+
+  --color-tint: #5a47f0;        /* primary violet-indigo */
+  --color-tint-deep: #3b2bc2;
+  --color-tint-soft: #ece9ff;
+  --color-sky: #1fa6f2;
+  --color-sun: #ffb224;
+  --color-mint: #12b886;
+  --color-coral: #ff5c6c;
+  --color-plum: #b04ad8;
+  --color-ink: #17153b;
+  --color-ink-2: #625f85;
+  --color-paper: #fbf8f2;
+  --color-line: #ebe6dc;
 
   --radius-card: 1.75rem;
-  --shadow-card: 0 8px 30px rgba(29, 29, 47, 0.08);
-  --shadow-pop: 0 16px 44px rgba(29, 29, 47, 0.16);
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 1px 2px rgba(23, 21, 59, 0.05),
+    0 10px 28px -8px rgba(23, 21, 59, 0.12);
+  --shadow-pop: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 2px 4px rgba(23, 21, 59, 0.06),
+    0 24px 60px -12px rgba(23, 21, 59, 0.24);
+  --shadow-lift: 0 2px 4px rgba(23, 21, 59, 0.06), 0 18px 40px -10px rgba(23, 21, 59, 0.22);
+
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-slow: float 11s ease-in-out infinite;
+  --animate-drift: drift 26s ease-in-out infinite alternate;
+  --animate-shine: shine 2.6s ease-in-out infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(var(--tilt, 0deg)); }
+    50% { transform: translateY(-14px) rotate(calc(var(--tilt, 0deg) + 4deg)); }
+  }
+  @keyframes drift {
+    0% { transform: translate3d(0, 0, 0) scale(1); }
+    100% { transform: translate3d(4%, -3%, 0) scale(1.12); }
+  }
+  @keyframes shine {
+    0%, 60% { transform: translateX(-120%) skewX(-18deg); }
+    100% { transform: translateX(220%) skewX(-18deg); }
+  }
 }
 
 html,
@@ -41,40 +85,112 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Larger default type for young readers */
+:root { font-size: 17px; }
+
 body {
   font-family: var(--font-sans);
+  font-weight: 500;
   color: var(--color-ink);
-  background:
-    radial-gradient(60rem 40rem at 110% -10%, #dceafe 0%, transparent 60%),
-    radial-gradient(50rem 36rem at -20% 110%, #f3e6fb 0%, transparent 55%),
-    var(--color-paper);
-  background-attachment: fixed;
+  background: var(--color-paper);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   /* Block double-tap-zoom & pinch on the app UI; children tap fast. */
   touch-action: manipulation;
 }
 
-/* Larger default type for young readers */
-:root { font-size: 17px; }
+/* The backdrop: three slow colour clouds on warm paper, plus a whisper of
+   print grain. Fixed and behind everything; purely decorative. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--color-paper);
+}
+.backdrop::before,
+.backdrop::after,
+.backdrop > i {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.55;
+  animation: var(--animate-drift);
+  will-change: transform;
+}
+.backdrop::before { width: 52rem; height: 40rem; right: -16rem; top: -18rem; background: #cfd9ff; }
+.backdrop::after { width: 44rem; height: 36rem; left: -18rem; bottom: -16rem; background: #ffe2c2; animation-delay: -9s; }
+.backdrop > i { width: 34rem; height: 30rem; left: 30%; top: 38%; background: #f6d6ff; opacity: 0.35; animation-delay: -17s; }
+.backdrop > b {
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .09 0 0 0 0 .08 0 0 0 0 .23 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
 
-/* ---- Reusable material classes ---- */
+/* ---- Type ---- */
 
-/* Frosted glass card — the app's primary surface */
+h1, h2, .font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  letter-spacing: -0.022em;
+  font-weight: 700;
+}
+h1 { text-wrap: balance; }
+p { text-wrap: pretty; }
+
+/* Small all-caps label used above headings */
+.eyebrow {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-tint);
+}
+
+/* ---- Surfaces ---- */
+
+/* Paper card — the app's primary surface */
 .glass {
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  border: 1px solid rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(23, 21, 59, 0.06);
   box-shadow: var(--shadow-card);
 }
 
-/* Stronger glass for overlays/sheets */
+/* Elevated card for overlays, sheets and hero cards */
 .glass-heavy {
-  background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(28px) saturate(1.6);
-  -webkit-backdrop-filter: blur(28px) saturate(1.6);
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(18px) saturate(1.5);
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  border: 1px solid rgba(23, 21, 59, 0.07);
   box-shadow: var(--shadow-pop);
 }
+
+/* Cards that respond to a pointer (desktop) with a gentle lift */
+@media (hover: hover) {
+  .lift { transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2), box-shadow 0.35s ease; }
+  .lift:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
+}
+
+/* A moving highlight across primary call-to-action buttons */
+.shine { position: relative; overflow: hidden; }
+.shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  animation: var(--animate-shine);
+  pointer-events: none;
+}
+
+/* Form controls pick up the brand */
+input[type="range"], input[type="checkbox"] { accent-color: var(--color-tint); }
+select { appearance: auto; }
 
 /* Focus ring: high-visibility for keyboard users, hidden for touch */
 :focus-visible {
@@ -88,11 +204,13 @@ body {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
 .reduce-motion *, .reduce-motion *::before, .reduce-motion *::after {
   animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
 }
 
@@ -120,7 +238,12 @@ button, [role="button"], [role="switch"], img, svg {
   touch-action: none;
 }
 
+/* Thin, quiet scrollbars on desktop */
+@media (hover: hover) {
+  * { scrollbar-width: thin; scrollbar-color: rgba(23, 21, 59, 0.2) transparent; }
+}
+
 @media print {
   body { background: #fff; }
-  .no-print { display: none !important; }
+  .backdrop, .no-print { display: none !important; }
 }

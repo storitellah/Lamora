@@ -26,8 +26,8 @@ export default defineConfig({
           "A safe, offline-first learning and play app for children aged 5-10. No ads, no tracking, no accounts.",
         start_url: ".",
         display: "standalone",
-        background_color: "#f5f6fb",
-        theme_color: "#5b5bd6",
+        background_color: "#fbf8f2",
+        theme_color: "#5a47f0",
         lang: "en",
         categories: ["education", "kids", "games"],
         icons: [
@@ -44,7 +44,7 @@ export default defineConfig({
       workbox: {
         // Precache everything the build emits — the whole app works offline.
         // …including the Portuguese and Kiswahili word clips (≈2.4 MB).
-        globPatterns: ["**/*.{js,css,html,png,svg,webmanifest,mp3,json}"],
+        globPatterns: ["**/*.{js,css,html,png,svg,webmanifest,mp3,json,woff2}"],
         navigateFallback: "index.html"
       }
     })

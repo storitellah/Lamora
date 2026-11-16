@@ -4,6 +4,13 @@ All notable changes to Lamora are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **Complete visual redesign ("storybook daylight").**
+  - New design system: warm paper background with slow colour clouds, deep ink text, crisp layered cards, and a colour "world" for each of the twelve pathways. Headlines are set in Fraunces and text in Nunito; both fonts are bundled and precached, so there are still no network font requests.
+  - **Welcome page** rebuilt as a landing page: a headline hero, a large "Who's playing today?" picker, trust badges, the twelve worlds, a grown-ups section (privacy, limits, curriculum), install instructions and the dedication.
+  - **Home** rebuilt as a dashboard: a greeting card with a star ring toward the next game, saved games, total stars and time left, a "Today's idea" suggestion, and the worlds grouped into Learn, Create and Think & play.
+  - Floating top bar, new buttons, tiles, toasts, rewards and break screens; every inner screen inherits the new look.
+
 ### Added
 - **Languages: Portuguese and Kiswahili** — a new pathway for ages 4–10.
   - 90 words and phrases with a picture each, in nine topics: hello & greetings (taught as whole phrases, with a “say it like” guide and little cultural notes such as *Shikamoo* for elders), numbers 1–10, colours, family, animals, food & drink, my body, home & school, nature.

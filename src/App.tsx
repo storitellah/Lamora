@@ -4,13 +4,12 @@
  */
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import {
-  BookOpen, Calculator, Globe2, Gamepad2, Crown, Sparkles, Trophy,
-  Home, Lock, Volume2, VolumeX, Hourglass, Moon, NotebookPen, Puzzle, Palette, Brush, Languages as LanguagesIcon
-} from "lucide-react";
-import { useStore, Screen, todayKey } from "./lib/store";
-import { Btn, Tile, Shell, ToastHost, toast } from "./components/UI";
+import { Home, Lock, Volume2, VolumeX, Hourglass, Moon } from "lucide-react";
+import { useStore, Screen } from "./lib/store";
+import { Btn, Shell, ToastHost, toast } from "./components/UI";
 import { sfx, speak, stopSpeaking, haptic } from "./lib/audio";
+import Welcome from "./screens/Welcome";
+import HomeScreen from "./screens/Home";
 import Reading from "./screens/Reading";
 import MathScreen from "./screens/Math";
 import Trivia from "./screens/Trivia";
@@ -56,19 +55,23 @@ export default function App() {
 
   return (
     <div className="flex min-h-dvh flex-col">
+      {/* Decorative backdrop: slow colour clouds on warm paper */}
+      <div className="backdrop" aria-hidden><i /><b /></div>
+
       {showChrome && <TopBar screen={screen} go={go} />}
 
       {/* Screens remount on name change (key), so each Shell plays its own
-          entrance spring. No AnimatePresence here: exit-waiting on plain
+          entrance. No AnimatePresence here: exit-waiting on plain
           (non-motion) children can wedge navigation. */}
-      <main id="main" className="flex-1 pt-4" tabIndex={-1}>
+      <main id="main" className={`flex-1 ${screen.name === "profiles" ? "" : "pt-4"}`} tabIndex={-1}>
         <ScreenView key={screen.name} screen={screen} go={go} />
       </main>
 
-      {/* Footer attribution — visible on the profile screen and home */}
+      {/* Footer dedication — visible on the welcome page and home */}
       {(screen.name === "profiles" || screen.name === "home") && (
-        <footer className="pb-6 pt-10 text-center text-sm text-ink-2">
-          Made for Luna, Lara, Arica and all their friends.
+        <footer className="px-5 pb-8 pt-8 text-center">
+          <p className="font-display text-lg italic text-ink-2">Made for Luna, Lara, Arica and all their friends.</p>
+          <p className="mt-1 text-xs font-semibold text-ink-2/70">No ads · No tracking · Everything stays on this device</p>
         </footer>
       )}
       <ToastHost />
@@ -82,49 +85,53 @@ function TopBar({ screen, go }: { screen: Screen; go: (s: Screen) => void }) {
   const { state, dispatch, profile, remainingSeconds } = useStore();
   const mins = Math.ceil(remainingSeconds / 60);
 
+  const chip = "grid h-11 w-11 place-items-center rounded-full bg-white shadow-[0_1px_2px_rgba(23,21,59,.08),0_4px_12px_-4px_rgba(23,21,59,.18)] ring-1 ring-ink/5";
   return (
-    <header className="glass-heavy sticky top-0 z-40 flex items-center justify-between gap-1.5 rounded-b-3xl px-2.5 py-2.5 sm:gap-2 sm:px-4"
-      style={{ paddingTop: "max(0.625rem, env(safe-area-inset-top))" }}>
-      <button
-        onClick={() => { sfx.tap(); haptic(); go({ name: "home" }); }}
-        aria-label="Go to home screen"
-        className="grid h-11 w-11 place-items-center rounded-full bg-white/80 shadow-sm"
-      >
-        <Home size={22} className="text-tint" aria-hidden />
-      </button>
-
-      {profile && (
+    <header className="sticky top-0 z-40 px-2.5 pb-1 sm:px-4"
+      style={{ paddingTop: "max(0.6rem, env(safe-area-inset-top))" }}>
+      <div className="glass-heavy mx-auto flex max-w-6xl items-center justify-between gap-1.5 rounded-full p-1.5 sm:gap-2">
         <button
-          onClick={() => go({ name: "rewards" })}
-          aria-label={`${profile.name}. ${profile.totalStars} stars. View rewards`}
-          className="flex min-h-11 min-w-0 shrink items-center gap-1.5 rounded-full bg-white/80 px-3 shadow-sm sm:gap-2 sm:px-4"
+          onClick={() => { sfx.tap(); haptic(); go({ name: "home" }); }}
+          aria-label="Go to home screen"
+          aria-current={screen.name === "home" ? "page" : undefined}
+          className={chip}
         >
-          <span className="text-xl" aria-hidden>{profile.avatar}</span>
-          <span className="max-w-16 truncate font-bold sm:max-w-none">{profile.name}</span>
-          <span className="whitespace-nowrap rounded-full bg-sun/20 px-2 py-0.5 text-sm font-bold text-ink max-[419px]:hidden">
-            ⭐ {profile.totalStars}
+          <Home size={21} className="text-tint" strokeWidth={2.4} aria-hidden />
+        </button>
+
+        {profile && (
+          <button
+            onClick={() => go({ name: "rewards" })}
+            aria-label={`${profile.name}. ${profile.totalStars} stars. View rewards`}
+            className="flex min-h-11 min-w-0 shrink items-center gap-1.5 rounded-full bg-white px-3 shadow-[0_1px_2px_rgba(23,21,59,.08),0_4px_12px_-4px_rgba(23,21,59,.18)] ring-1 ring-ink/5 sm:gap-2 sm:px-4"
+          >
+            <span className="text-xl" aria-hidden>{profile.avatar}</span>
+            <span className="max-w-16 truncate font-extrabold sm:max-w-none">{profile.name}</span>
+            <span className="whitespace-nowrap rounded-full bg-sun/25 px-2 py-0.5 text-sm font-extrabold text-ink max-[419px]:hidden">
+              ⭐ {profile.totalStars}
+            </span>
+          </button>
+        )}
+
+        <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+          <span
+            role="timer"
+            aria-label={`${mins} minutes left today`}
+            className={`flex min-h-9 items-center gap-1 rounded-full px-3 text-sm font-extrabold tabular-nums ring-1 ring-ink/5
+              ${remainingSeconds <= 300 ? "bg-sun text-ink" : "bg-white"}`}
+          >
+            <Hourglass size={14} aria-hidden /> {mins}m
           </span>
-        </button>
-      )}
-
-      <div className="flex shrink-0 items-center gap-1">
-        <span
-          role="timer"
-          aria-label={`${mins} minutes left today`}
-          className={`flex min-h-9 items-center gap-1 rounded-full px-3 text-sm font-bold shadow-sm
-            ${remainingSeconds <= 300 ? "bg-sun text-ink" : "bg-white/80"}`}
-        >
-          <Hourglass size={14} aria-hidden /> {mins}m
-        </span>
-        <button
-          onClick={() => dispatch({ type: "settings", patch: { muted: !state.settings.muted } })}
-          aria-label={state.settings.muted ? "Unmute sounds" : "Mute sounds"}
-          aria-pressed={state.settings.muted}
-          className="grid h-11 w-11 place-items-center rounded-full bg-white/80 shadow-sm"
-        >
-          {state.settings.muted ? <VolumeX size={20} aria-hidden /> : <Volume2 size={20} className="text-tint" aria-hidden />}
-        </button>
-        <HoldLock onUnlock={() => go({ name: "parent-gate" })} />
+          <button
+            onClick={() => dispatch({ type: "settings", patch: { muted: !state.settings.muted } })}
+            aria-label={state.settings.muted ? "Unmute sounds" : "Mute sounds"}
+            aria-pressed={state.settings.muted}
+            className={chip}
+          >
+            {state.settings.muted ? <VolumeX size={20} aria-hidden /> : <Volume2 size={20} className="text-tint" aria-hidden />}
+          </button>
+          <HoldLock onUnlock={() => go({ name: "parent-gate" })} />
+        </div>
       </div>
     </header>
   );
@@ -204,7 +211,7 @@ function HoldLock({ onUnlock }: { onUnlock: () => void }) {
       onContextMenu={e => e.preventDefault()}
       onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onUnlock(); } }}
       aria-label="Parent zone. Press and hold for two seconds."
-      className="no-callout relative grid h-11 w-11 place-items-center rounded-full bg-white/80 shadow-sm"
+      className="no-callout relative grid h-11 w-11 place-items-center rounded-full bg-white shadow-[0_1px_2px_rgba(23,21,59,.08),0_4px_12px_-4px_rgba(23,21,59,.18)] ring-1 ring-ink/5"
       style={{ touchAction: "none" }}
     >
       <svg className="pointer-events-none absolute inset-0 -rotate-90" viewBox="0 0 44 44" aria-hidden>
@@ -222,7 +229,7 @@ function HoldLock({ onUnlock }: { onUnlock: () => void }) {
 function ScreenView({ screen, go }: { screen: Screen; go: (s: Screen) => void }) {
   const home = () => go({ name: "home" });
   switch (screen.name) {
-    case "profiles": return <ProfileSelect go={go} />;
+    case "profiles": return <Welcome go={go} />;
     case "home": return <HomeScreen go={go} />;
     case "reading": return <Reading onExit={home} />;
     case "math": return <MathScreen onExit={home} />;
@@ -241,84 +248,6 @@ function ScreenView({ screen, go }: { screen: Screen; go: (s: Screen) => void })
     case "break": return <BreakScreen go={go} />;
     default: return <HomeScreen go={go} />;
   }
-}
-
-/* ---------------- Profile select ---------------- */
-
-function ProfileSelect({ go }: { go: (s: Screen) => void }) {
-  const { state, dispatch, remainingSeconds } = useStore();
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="mx-auto max-w-2xl px-4 pt-[8vh] text-center"
-    >
-      {/* Brand mark (in-app only — exported keepsakes carry no branding) */}
-      <img src="/icons/icon-192.png" alt="" aria-hidden className="mx-auto h-24 w-24 rounded-[1.6rem] shadow-lg" />
-      <h1 className="mt-4 bg-gradient-to-r from-tint to-sky bg-clip-text text-5xl font-extrabold tracking-tight text-transparent">
-        Lamora
-      </h1>
-      <p className="mt-2 text-lg text-ink-2">Learn, play and grow — who is playing today?</p>
-
-      <div className="mt-8 flex flex-wrap justify-center gap-4">
-        {state.profiles.map(p => (
-          <motion.button
-            key={p.id}
-            whileTap={{ scale: 0.94 }}
-            whileHover={{ y: -4 }}
-            onClick={() => {
-              sfx.chime(); haptic(15);
-              dispatch({ type: "select", id: p.id });
-              const used = p.usage[todayKey()] ?? 0;
-              if (state.settings.dailyLimitMin * 60 - used <= 0) go({ name: "break" });
-              else { go({ name: "home" }); speak(`Hello ${p.name}! Let's learn and play!`); }
-            }}
-            aria-label={`Play as ${p.name}`}
-            className="glass flex w-40 flex-col items-center gap-2 rounded-[1.75rem] p-6"
-          >
-            <span className="text-5xl" aria-hidden>{p.avatar}</span>
-            <span className="text-xl font-bold">{p.name}</span>
-            <span className="text-sm text-ink-2">⭐ {p.totalStars}</span>
-          </motion.button>
-        ))}
-      </div>
-
-      <div className="mt-8">
-        <Btn kind="ghost" onClick={() => go({ name: "parent-gate" })}>
-          <Lock size={16} aria-hidden /> Parent zone
-        </Btn>
-      </div>
-    </motion.div>
-  );
-}
-
-/* ---------------- Home ---------------- */
-
-function HomeScreen({ go }: { go: (s: Screen) => void }) {
-  const { profile } = useStore();
-  const tiles: { icon: React.ReactNode; label: string; sub: string; screen: Screen; tint: string }[] = [
-    { icon: <BookOpen className="text-tint" />, label: "Reading & Writing", sub: "Letters, words & stories", screen: { name: "reading" }, tint: "from-tint/15 to-tint/5" },
-    { icon: <NotebookPen className="text-coral" />, label: "Workbooks", sub: "Write, trace & colour", screen: { name: "workbooks" }, tint: "from-coral/15 to-sun/10" },
-    { icon: <Calculator className="text-mint" />, label: "Maths Journey", sub: "Count, add & multiply", screen: { name: "math" }, tint: "from-mint/15 to-mint/5" },
-    { icon: <Puzzle className="text-tint" />, label: "Puzzles", sub: "Shapes, mazes & logic", screen: { name: "puzzles" }, tint: "from-tint/15 to-coral/10" },
-    { icon: <LanguagesIcon className="text-mint" />, label: "Languages", sub: "Português & Kiswahili", screen: { name: "languages" }, tint: "from-mint/15 to-sky/10" },
-    { icon: <Brush className="text-tint" />, label: "Art Studio", sub: "Draw, paint & save", screen: { name: "art" }, tint: "from-sky/15 to-tint/10" },
-    { icon: <Palette className="text-coral" />, label: "Colour Lab", sub: "Mix & learn colours", screen: { name: "colourlab" }, tint: "from-coral/15 to-sun/10" },
-    { icon: <Globe2 className="text-sky" />, label: "Did You Know?", sub: "World curiosities", screen: { name: "trivia" }, tint: "from-sky/15 to-sky/5" },
-    { icon: <Gamepad2 className="text-coral" />, label: "Play", sub: "Reward games", screen: { name: "games" }, tint: "from-coral/15 to-coral/5" },
-    { icon: <Crown className="text-sun" />, label: "Chess", sub: "Puzzles & play", screen: { name: "chess" }, tint: "from-sun/15 to-sun/5" },
-    { icon: <Sparkles className="text-tint" />, label: "Dream Cards", sub: "When I grow up…", screen: { name: "dreamcards" }, tint: "from-tint/15 to-sky/10" },
-    { icon: <Trophy className="text-sun" />, label: "My Rewards", sub: "See your progress", screen: { name: "rewards" }, tint: "from-sun/15 to-coral/5" }
-  ];
-  return (
-    <Shell title={`Hello, ${profile?.name ?? "friend"}! 👋`} subtitle="What would you like to do today?" wide>
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {tiles.map(t => (
-          <Tile key={t.label} icon={t.icon} label={t.label} sub={t.sub} tintClass={t.tint} onClick={() => go(t.screen)} />
-        ))}
-      </div>
-    </Shell>
-  );
 }
 
 /* ---------------- Rewards ---------------- */
@@ -341,13 +270,13 @@ function Rewards({ go }: { go: (s: Screen) => void }) {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {stats.map(([label, value]) => (
           <div key={label} className="glass rounded-3xl p-5 text-center">
-            <div className="text-3xl font-extrabold text-tint">{value}</div>
-            <div className="mt-1 text-sm text-ink-2">{label}</div>
+            <div className="font-display text-[2.4rem] font-bold leading-none text-tint">{value}</div>
+            <div className="mt-2 text-sm font-semibold text-ink-2">{label}</div>
           </div>
         ))}
       </div>
       <div className="glass mt-5 rounded-3xl p-5">
-        <p className="mb-2 font-semibold">Next play session</p>
+        <p className="mb-2 font-extrabold">Next play session</p>
         <div className="h-4 overflow-hidden rounded-full bg-ink/10">
           <motion.div
             className="h-full rounded-full bg-gradient-to-r from-sun to-coral"
@@ -384,8 +313,10 @@ function BreakScreen({ go }: { go: (s: Screen) => void }) {
   useEffect(() => { speak("Time for a break! " + idea[1]); }, [idea]);
   return (
     <Shell title="Time for a break! 🌙">
-      <div className="glass rounded-[1.75rem] p-10 text-center">
-        <Moon size={56} className="mx-auto text-tint" aria-hidden />
+      <div className="glass-heavy rounded-[2rem] p-10 text-center">
+        <span className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-gradient-to-br from-[#7566ff] to-[#3b2bc2] text-white shadow-[0_18px_40px_-14px_rgba(59,43,194,.8)]" style={{ animation: "var(--animate-float-slow)" }}>
+          <Moon size={46} aria-hidden />
+        </span>
         <p className="mt-4 text-lg">You did some wonderful learning today. See you soon!</p>
         <p className="mt-4 text-2xl font-bold">{idea[0]} {idea[1]}</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">

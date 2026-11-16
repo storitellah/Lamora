@@ -96,7 +96,7 @@ Lamora makes **zero network requests** after loading: no fonts from CDNs, no ana
 
 ## Under the hood
 
-React 18 + TypeScript, Tailwind CSS 4, Framer Motion (fluid, spring-based micro-interactions), Lucide icons, Vite, and `vite-plugin-pwa` for offline precaching. System font stack (SF Pro on Apple devices) — no font downloads. State lives in `localStorage` behind a single typed reducer. ~120 KB gzipped, all-in.
+React 18 + TypeScript, Tailwind CSS 4, Framer Motion (fluid, spring-based micro-interactions), Lucide icons, Vite, and `vite-plugin-pwa` for offline precaching. Typography is Fraunces (headlines) and Nunito (text), bundled with the app and precached — no network font requests. State lives in `localStorage` behind a single typed reducer. ~120 KB gzipped, all-in.
 
 ```
 src/

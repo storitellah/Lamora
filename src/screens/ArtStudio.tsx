@@ -893,7 +893,7 @@ function Studio({ initial, artId, profileId, onClose, onSavedToGallery }: {
           {TOOLS.map(toolBtn)}
         </nav>
 
-        <div ref={wrapRef} className="relative min-h-0 flex-1 overflow-hidden rounded-[1.5rem] bg-[#e9eaf2] shadow-inner">
+        <div ref={wrapRef} className="relative min-h-0 flex-1 overflow-hidden rounded-[1.5rem] bg-[#ece6da] shadow-inner">
           <canvas
             ref={canvasRef}
             className="draw-surface no-callout absolute inset-0 h-full w-full"
